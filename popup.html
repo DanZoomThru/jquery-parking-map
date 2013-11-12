@@ -1,0 +1,57 @@
+<div id='parking-popup' class='main'>
+    <div>
+        <span>From:</span>
+        <input id="time_from" type='text' />
+        <span>on</span>
+        <input id='date_from' type='text' />
+    </div>
+    
+    <div>
+        <span>To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <input id="time_to" type='text' />
+        <span>on</span>
+        <input id='date_to' type='text' />
+    </div>
+
+    <input class="apply-button" type="button" value="Apply" />
+</div>
+
+<style>
+    .main {
+        width: 270px;
+        height: 75px;
+        border: 1px solid black;
+        background-color: white;
+        position: relative;
+        top: 70px;
+        left: 298px;
+        display: none;
+        padding: 10px;
+    }
+    
+    input {
+        width: 100px;
+    }
+    
+    .apply-button {
+        float: right;
+        position: relative;
+        right: 10px;
+        width: 106px;
+    }
+</style>
+
+<script>
+    $(document).ready(function(){
+        $(function() {
+            var myDate = new Date();
+            var prettyDate =(myDate.getMonth()+1) + '/' + myDate.getDate() + '/' + myDate.getFullYear();
+
+            $( "#date_from" ).datepicker().val(prettyDate).trigger('change');
+            $( "#date_to" ).datepicker().val(prettyDate).trigger('change');
+
+            $( "#time_to" ).timepicker();
+            $( "#time_from" ).timepicker();
+        });
+    });
+</script>
