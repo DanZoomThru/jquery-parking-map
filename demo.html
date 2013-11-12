@@ -7,6 +7,7 @@
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   
   <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/popup.css">
   <link rel="stylesheet" type="text/css" href="timepicker/jquery.timepicker.css">
   <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css">
   
@@ -35,9 +36,9 @@
           var map = new $.parkingMap($(".parking-map-widget-container"), {
             parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
             location : {
-              type: 'venue',
-              //destination: "1500 Sugar Bowl Drive, New Orleans, Louisiana, United States"
-              destination: "mercedes-benz-superdome-parking"
+              type: 'address',
+              destination: "1500 Sugar Bowl Drive, New Orleans, Louisiana, United States"
+              //destination: "mercedes-benz-superdome-parking"
               /* Alternatively you could provide 'lat' and 'lng' values */
               // lat: 41.878598, lng: -87.638836 
             },
@@ -48,7 +49,7 @@
             },
             zoom: 14,
             //icon: "http://maps.google.com/mapfiles/marker_green.png",
-            //venue_url: 'mercedes-benz-superdome-parking',
+            venue_url: 'mercedes-benz-superdome-parking',
             width: '60%',
             /*showChosenEvent: true,*/
             showEventList: true,
@@ -66,9 +67,9 @@
   
   <div id="parkwhiz-widget-conteiner">
   
-      <div style="float: right; margin-left: 20px; margin-top: -10px; height: 390px; max-height: 390px; overflow: auto; padding-left: 10px;">
+      <div class="event-block">
           <br />
-          <span class='parking-locations-title' style="padding-left: 76px; padding-right: 86px;">Events</span>
+          <span class='parking-locations-title event-title'>Events</span>
           <ul class='parking events'></ul>
       </div>
       

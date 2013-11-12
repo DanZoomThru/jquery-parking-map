@@ -81,3 +81,18 @@ ul.parking {
     position: relative;
     bottom: 20px;
 }
+
+.event-block {
+    float: right; 
+    margin-left: 20px; 
+    margin-top: -10px; 
+    height: 390px; 
+    max-height: 390px; 
+    overflow: auto; 
+    padding-left: 10px;
+}
+
+.event-title {
+    padding-left: 76px; 
+    padding-right: 86px;
+}

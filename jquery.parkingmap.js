@@ -247,12 +247,12 @@
             controlUI.appendChild(controlText);
             
             var button = document.createElement('div');
-            jQuery(button).addClass('map-button');
-            jQuery(button).html('3 hours');
+            $(button).addClass('map-button');
+            $(button).html('3 hours');
             
             var eventName = document.createElement('div');
-            jQuery(eventName).addClass('for-event');
-            jQuery(eventName).html('');
+            $(eventName).addClass('for-event');
+            $(eventName).html('');
             
             controlUI.appendChild(button);
             controlUI.appendChild(eventName);
@@ -271,7 +271,7 @@
             } else {
                 $('#parking-popup').hide();
             }
-        }
+        };
 
         var init = function() {
             
@@ -292,7 +292,7 @@
                 plugin._iconMeta.shadow.scaledSize = new google.maps.Size(477, 1098);
             }
            
-        }
+        };
 
         plugin.createMap = function() {
             
@@ -458,7 +458,6 @@
                                 dataType: 'jsonp',
                                 data: searchOptions,
                                 success: function(searchResults) {
-                                    console.log(searchResults);
                                     _setLocations(searchResults.parking_listings, 'location-place');
                                     _putListingsOnMap(searchResults.parking_listings);
                                 },
@@ -472,8 +471,6 @@
                         alert(err1 + " " + err2);
                     },
                 });
-                
-                //plugin.createMap();
                 return;
             }
             
