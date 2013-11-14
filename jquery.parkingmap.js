@@ -32,84 +32,48 @@
     $.parkingMap = function($el, options) {
         
         var firstEvent = {};
+        var defaultConfig = {};
         
-        var _icon = false;
-        var _showEventList = true;
-        var _showMarker = true;
-        var _loadFirstEvent = false;
-        var _showPrice = false;
-        var _showTimePicker = true;
-        var _width = '600px';
-        var _height = '400px';
-        var _showChosenEvent = true;
+        defaultConfig.icon = false;
+        defaultConfig.showEventList = true;
+        defaultConfig.showMarker = true;
+        defaultConfig.loadFirstEvent = false;
+        defaultConfig.showPrice = false;
+        defaultConfig.showTimePicker = true;
+        defaultConfig.width = '600px';
+        defaultConfig.height = '400px';
+        defaultConfig.showChosenEvent = true;
         
-        var _defaultTime = {
+        defaultConfig.defaultTime = {
             start: Math.round((new Date()).getTime() / 1000),
             end: Math.round((new Date()).getTime() / 1000) + 10800, // + 3 hrs
             hours: 3
         };
         
-        var _venue_url = '';
-        var _zoom = 14;
-        var _location = {
+        defaultConfig.zoom = 14;
+        defaultConfig.location = {
                 type: 'address',
                 destination: "208 S. Jefferson St, Chicago, IL 60661"
                 /* Alternatively you could provide 'lat' and 'lng' float values */
                 /* { lat: 41.878598, lng: -87.638836 } */
                 };
-        var _parkwhizKey = 'd4c5b1639a3e443de77c43bb4d4bc888';
+        defaultConfig.parkwhizKey = 'd4c5b1639a3e443de77c43bb4d4bc888';
         
-        _showEventList = options.showEventList;
-        _showMarker = options.showMarker;
-        _showChosenEvent = options.showChosenEvent;
-        _showTimePicker = options.showTimePicker;
-        _loadFirstEvent = options.loadFirstEvent;
-        if ( options.venue_url ) {
-            _venue_url = options.venue_url;
-        }
-       
-        _showPrice = options.showPrice;
-        _defaultTime = options.defaultTime;
-        if ( options.width ) {
-            _width = options.width;
-        }
+        defaultConfig.showEventList = options.showEventList;
+        defaultConfig.showMarker = options.showMarker;
+        defaultConfig.showChosenEvent = options.showChosenEvent;
+        defaultConfig.showTimePicker = options.showTimePicker;
+        defaultConfig.loadFirstEvent = options.loadFirstEvent;
+        defaultConfig.showPrice = options.showPrice;
+        defaultConfig.defaultTime = options.defaultTime;
+        defaultConfig.width = options.width;
+        defaultConfig.height = options.height;
+        defaultConfig.icon = options.icon;
+        defaultConfig.zoom = options.zoom;
+        defaultConfig.location = options.location;
+        defaultConfig.parkwhizKey = options.parkwhizKey;
         
-        if ( options.height ) {
-            _height = options.height;
-        }
-        
-        if ( options.icon ) {
-            _icon = options.icon;
-        }
-        
-        if ( options.zoom ) {
-            _zoom = options.zoom;
-        }
-        
-        if ( options.location ) {
-            _location = options.location;
-        }
-        
-        if ( options.parkwhizKey ) {
-            _parkwhizKey = options.parkwhizKey;
-        }
-
-        var config  = {
-            width: _width,
-            height: _height,
-            icon: _icon,
-            showTimePicker: _showTimePicker,
-            zoom: _zoom,
-            defaultTime: _defaultTime,
-            loadFirstEvent:_loadFirstEvent,
-            venue_url: _venue_url,
-            location: _location,
-            showMarker:_showMarker,
-            showEventList: _showEventList,
-            showPrice:_showPrice,
-            showChosenEvent:_showChosenEvent,
-            parkwhizKey: _parkwhizKey
-        };
+        var config  = defaultConfig;
 
         var plugin = this;
 
@@ -137,14 +101,9 @@
             });
         }
 
-        
-        function convertDateToUTC(date) { 
-            return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()); 
-        }
-
         function parkingPopup(controlDiv, map) {
             
-            if ( ( config.location.type == 'address' || config.location.type == 'latlng') && ( config.showTimePicker === true ) ) {
+            if ( ( config.location.type === 'address' || config.location.type === 'latlng') && ( config.showTimePicker === true ) ) {
             $.get('popup.html', function(resp){
                 $(controlDiv).html(resp);
 
@@ -221,17 +180,11 @@
             // Set CSS styles for the DIV containing the control
             // Setting padding to 5 px will offset the control
             // from the edge of the map
-            controlDiv.style.padding = '5px';
-
+            
+            controlDiv.className = 'control';
             // Set CSS for the control border
             var controlUI = document.createElement('div');
-            controlUI.style.backgroundColor = 'rgba(255, 255, 255, .6)';
-            controlUI.style.borderStyle = 'solid';
-            controlUI.style.borderWidth = '2px';
-            controlUI.style.cursor = 'pointer';
-            controlUI.style.padding = '20px';
-            controlUI.style.width = '200px';
-            controlUI.style.textAlign = 'left';
+            
             controlUI.className = 'psf';
             controlUI.title = 'Click to set the time';
            
@@ -239,11 +192,8 @@
 
             // Set CSS for the control interior
             var controlText = document.createElement('div');
-            controlText.style.fontFamily = 'Arial,sans-serif';
-            controlText.style.fontSize = '12px';
-            controlText.style.paddingLeft = '4px';
-            controlText.style.paddingRight = '4px';
-            controlText.innerHTML = '<b>Parking shown for</b>';
+            controlText.className = 'control-text';
+            controlText.innerHTML = '<span>Parking shown for</span>';
             controlUI.appendChild(controlText);
             
             var button = document.createElement('div');
@@ -279,7 +229,7 @@
             plugin.$el = $el;
 
             plugin._iconMeta = {
-                size: new google.maps.Size(38,33),
+                size: new google.maps.Size(53,43), // 38, 33
                 shadow: {
                     url: plugin.settings.MAIN_SPRITE,
                     size: new google.maps.Size(53,23),
@@ -288,6 +238,7 @@
                     scaledSize: null
                 }
             };
+            
             if (plugin.settings.HDPI) {
                 plugin._iconMeta.shadow.scaledSize = new google.maps.Size(477, 1098);
             }
@@ -342,7 +293,7 @@
             }
             
             var markerOptions = {};
-            if (config.location.destination && (config.location.type == 'address' || config.location.type == 'latlng') ) {
+            if (config.location.destination && (config.location.type === 'address' || config.location.type === 'latlng') ) {
                 mapOptions.address = config.location.destination;
                 if (config.showMarker) {
                     markerOptions.address = mapOptions.address;
@@ -408,6 +359,7 @@
             parkingShownForDiv.index = 1;
             map.controls[google.maps.ControlPosition.TOP_RIGHT].push(parkingShownForDiv); 
             Control = '';
+            
             var popupDiv = document.createElement('div');
             Control = new parkingPopup(popupDiv, map);
             popupDiv.index = 2;
@@ -427,13 +379,13 @@
 
             searchOptions.key = this.settings.parkwhizKey;
 
-            /*if ( ( config.location.type === 'address' || config.location.type === 'latlng' ) && ( !searchOptions.start && config.defaultTime.start ) ) {
+            if ( ( config.location.type === 'address' || config.location.type === 'latlng' ) && ( !searchOptions.start && config.defaultTime.start ) ) {
                 searchOptions.start = config.defaultTime.start;
             }
             
             if ( ( config.location.type === 'address' || config.location.type === 'latlng' ) && ( !searchOptions.end && config.defaultTime.end ) ) {
                 searchOptions.end = config.defaultTime.end;
-            }*/
+            }
 
             if (!searchOptions.start) {
                 searchOptions.start = Math.round((new Date()).getTime() / 1000);
@@ -447,7 +399,7 @@
                     dataType: 'jsonp',
                     data: searchOptions,
                     success: function(searchResults) {
-                        //console.log(searchResults);
+
                         if ( searchResults.num_events ) {
                             searchOptions.lat = searchResults.lat;
                             searchOptions.lng = searchResults.lng;
@@ -493,7 +445,7 @@
                 },
             });
     
-            if ( config.venue_url ) {
+            /*if ( config.venue_url ) {
                 $.ajax('http://api.parkwhiz.com/' + config.venue_url + '/', {
                     dataType: 'jsonp',
                     data: searchOptions,
@@ -506,7 +458,7 @@
                         alert(err1 + " " + err2);
                     },
                 });
-            }
+            }*/
            
         };
 
