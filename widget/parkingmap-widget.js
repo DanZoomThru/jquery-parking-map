@@ -50,7 +50,7 @@ var ___parkingWidgetAlreadyLoaded;
                     //"http://stratman.pw/map/jquery.parkingmap.js"
                 ],
                 function() {
-                    //var map = new $.parkingMap($(".parking-map-widget-container"));
+            		//var map = new $.parkingMap($(".parking-map-widget-container"));
                     //map.createMap();
                 }
             );

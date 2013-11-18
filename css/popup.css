@@ -1,35 +1,35 @@
 /* 
-    Document   : popup
-    Created on : 12.11.2013, 19:56:31
-    Author     : Ilya
-    Description:
-        Purpose of the stylesheet follows.
+	Document   : popup
+	Created on : 12.11.2013, 19:56:31
+	Author     : Ilya
+	Description:
+	Purpose of the stylesheet follows.
 */
 
 root { 
-    display: block;
+	display: block;
 }
 
 
 .main {
-    width: 270px;
-    height: 75px;
-    border: 1px solid black;
-    background-color: white;
-    position: relative;
-    top: 70px;
-    left: 298px;
-    display: none;
-    padding: 10px;
+	width: 270px;
+	height: 75px;
+	border: 1px solid black;
+	background-color: white;
+	position: relative;
+	top: 70px;
+	left: 298px;
+	display: none;
+	padding: 10px;
 }
 
 input {
-    width: 100px;
+	width: 100px;
 }
 
 .apply-button {
-    float: right;
-    position: relative;
-    right: 10px;
-    width: 106px;
+	float: right;
+	position: relative;
+	right: 10px;
+	width: 106px;
 }
