@@ -6,30 +6,42 @@
 	Purpose of the stylesheet follows.
 */
 
-root { 
-	display: block;
-}
-
-
 .main {
-	width: 270px;
-	height: 75px;
-	border: 1px solid black;
-	background-color: white;
 	position: relative;
 	top: 70px;
-	left: 298px;
+	left: 228px;
 	display: none;
 	padding: 10px;
+    border: 1px solid #ddd;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, .9);
+    cursor: pointer;
+    text-align: left;
 }
 
 input {
-	width: 100px;
+    width: 70px;
 }
 
 .apply-button {
-	float: right;
-	position: relative;
-	right: 10px;
-	width: 106px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+    -moz-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+    border: none;
+    background: #0f5ebc;
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px !important;
+    font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 700 !important;
+    display: block;
+    padding: 10px;
+    line-height: 1;
+    position: relative;
+    margin: 10px auto 0;
 }

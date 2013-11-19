@@ -6,117 +6,125 @@
 	Purpose of the stylesheet follows.
 */
 
-root { 
-	display: block;
+h1, h2, h3 {
+    margin: 0;
+    font-weight: 400;
+    color: #333;
+    font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 1.2;
 }
 
-ul.events li{
-	width: 200px !important;
+#parkwhiz-widget-container {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #333;
+    white-space: nowrap;
 }
 
-ul.parking li {
-	border: 1px solid rgb(202, 201, 202);
-	list-style: none;
-	width: 170px;
-	padding: 6px;
-	position: relative;
-	right: 40px;
-	bottom: 12px;
-	font-weight: bold;
-	height: 30px;
-	text-align: center;
-	line-height: 29px;
-	cursor: pointer;
+ul.parking,
+ul.events {
+    height: 350px;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
 }
 
-.parking-locations-title {
-	border-radius: 6px; 
-	border: 1px solid rgb(202, 201, 202);  
-	background-color: rgb(209, 209, 209);
-	color: white;
-	font-weight: bold;
-	padding: 10px;
-	right: 10px;
-	position: relative;
-	padding-left: 32px;
-	padding-right: 29px;
+ul.parking li,
+ul.events li {
+    border-top: 1px solid #ddd;
+    list-style: none;
+    padding: 6px;
+    white-space: normal;
 }
 
-.parking-locations-block {
-	position: relative;
-	top: 0px;
-	left: 0px;
-	float: right;
-	height: 382px; 
-	max-height: 390px; 
-	overflow: auto;
-	padding-top: 13px;
-	padding-left: 10px;
-	width: 201px;
+ul.parking li a,
+ul.events li a {
+    text-decoration: none;
+    color: #0f5ebc;
+    display: block;
+    line-height: 30px;
 }
 
-ul.parking {
-	position: relative;
-	top: 21px;
-	margin: 0px;
-	right: 10px;
+ul.parking li a:hover,
+ul.events li a:hover {
+    text-decoration: underline;
+}
+
+.parking-locations-block,
+.event-block {
+    background: #f8f8f8;
+    display: inline-block;
+    height: 400px;
+    width: 200px;
+}
+
+.parking-locations-block h2,
+.event-block h2 {
+    line-height: 50px;
+    padding: 0 6px;
 }
 
 .parking-map-widget-container {
-	float: right;
+    display: inline-block;
 }
 
 .additionalPlaces {
-	background-color: rgba(20, 120, 20, 0.4);
-	cursor: pointer;
-	color: white;
+    background-color: rgba(20, 120, 20, 0.4);
+    cursor: pointer;
+    color: white;
 }
 
 .map-button {
-	border: 1px solid black;
-	border-radius: 5px;
-	float:right;
-	padding: 4px 8px;
-	background-color: rgb(2, 117, 206);
-	position: relative;
-	bottom: 20px;
-}
-
-.event-block {
-	float: right; 
-	margin-left: 20px; 
-	margin-top: -10px; 
-	height: 390px; 
-	max-height: 390px; 
-	overflow: auto; 
-	padding-left: 10px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+    -moz-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+    border: none;
+    background: #0f5ebc;
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px !important;
+    font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 700 !important;
+    display: inline-block;
+    padding: 10px;
+    line-height: 1;
+    position: relative;
+    margin: 0 10px;
 }
 
 .event-title {
-	padding-left: 76px; 
-	padding-right: 86px;
+    padding-left: 76px;
+    padding-right: 86px;
 }
 
 .psf {
-	background-color: rgba(255, 255, 255, .6);
-	border: 2px solid;
-	padding: 20px;
-	cursor: pointer;
-	width: 200px;
-	text-align: left;
+    border: 1px solid #ddd;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, .9);
+    padding: 10px;
+    cursor: pointer;
+    width: 200px;
+    text-align: left;
 }
 
 .control {
-	padding: 5px;
+    padding: 5px;
 }
 
 .control-text {
-	padding-left: 4px;
-	padding-right: 4px;
-	font-size: 12px;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-size: 12px;
+    display: inline-block;
 }
 
 .control-text span {
-	font-weight: bold;
-	font-size: 12px;
+    font-weight: bold;
+    font-size: 12px;
 }
