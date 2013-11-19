@@ -1,82 +1,82 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii"/>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=us-ascii"/>
 
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/popup.css">
-    <link rel="stylesheet" type="text/css" href="timepicker/jquery.timepicker.css">
-    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/popup.css">
+	<link rel="stylesheet" type="text/css" href="timepicker/jquery.timepicker.css">
+	<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css">
 
-    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 
-    <script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
-    <script type="text/javascript" src="contrib/gmap3.min.js"></script>
-    <script type="text/javascript" src="jquery.parkingmap.js"></script>
-    <script type="text/javascript" src="utils.js"></script>
-    <script type="text/javascript" src="timepicker/jquery.timepicker.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+	<script type="text/javascript" src="contrib/gmap3.min.js"></script>
+	<script type="text/javascript" src="jquery.parkingmap.js"></script>
+	<script type="text/javascript" src="utils.js"></script>
+	<script type="text/javascript" src="timepicker/jquery.timepicker.js"></script>
 
 </head>
 <body>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        /*
-         * locations type:
-         * 1. address - default
-         * 2. latlng
-         * 3. venue
-         * 4. event
-         */
+	$(document).ready(function () {
+		/*
+		 * locations type:
+		 * 1. address - default
+		 * 2. latlng
+		 * 3. venue
+		 * 4. event
+		 */
 
-        var map = new $.parkingMap($(".parking-map-widget-container"), {
-            parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
-            location: {
-                //destination: "1500 Sugar Bowl Drive, New Orleans, Louisiana, United States"
-                //destination: "mercedes-benz-superdome-parking"
-                /* Alternatively you could provide 'lat' and 'lng' values */
-                // lat: 41.878598, lng: -87.638836
+		var map = new $.parkingMap($(".parking-map-widget-container"), {
+			parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+			location: {
+				//destination: "1500 Sugar Bowl Drive, New Orleans, Louisiana, United States"
+				//destination: "mercedes-benz-superdome-parking"
+				/* Alternatively you could provide 'lat' and 'lng' values */
+				// lat: 41.878598, lng: -87.638836
 
-                venue: 'mercedes-benz-superdome-parking'
-            },
-            defaultTime: {
-                //start: 1485294400,
-                //end: 1485296200,
-                hours: 3
-            },
-            zoom: 14,
-            //additionalMarkers: "http://maps.google.com/mapfiles/marker_green.png",
-            width: '60%',
-            event: '/2014-sugar-bowl-174589/',
-            showChosenEvent: true,
-            showEventList: true,
-            height: '400px',
-            loadFirstEvent: false,
-            showLocationMarker: true,
-            showPrice: false,
-            showTimePicker: true
-        });
-        map.createMap();
+				venue: 'mercedes-benz-superdome-parking'
+			},
+			defaultTime: {
+				//start: 1485294400,
+				//end: 1485296200,
+				hours: 3
+			},
+			zoom: 14,
+			//additionalMarkers: "http://maps.google.com/mapfiles/marker_green.png",
+			width: '60%',
+			event: '/2014-sugar-bowl-174589/',
+			showChosenEvent: true,
+			showEventList: true,
+			height: '400px',
+			loadFirstEvent: false,
+			showLocationMarker: true,
+			showPrice: false,
+			showTimePicker: true
+		});
+		map.createMap();
 
-    });
+	});
 </script>
 
 <div id="parkwhiz-widget-container">
 
-    <div class="event-block">
-        <h2>Events</h2>
-        <ul class="parking events"></ul>
-    </div>
+	<div class="event-block">
+		<h2>Events</h2>
+		<ul class="parking events"></ul>
+	</div>
 
-    <div class="parking-map-widget-container"></div>
+	<div class="parking-map-widget-container"></div>
 
-    <div class="parking-locations-block">
-        <h2>Parking Locations</h2>
-        <ul class="location-place parking"></ul>
-    </div>
+	<div class="parking-locations-block">
+		<h2>Parking Locations</h2>
+		<ul class="location-place parking"></ul>
+	</div>
 
 </div>
 

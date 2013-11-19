@@ -7,124 +7,124 @@
 */
 
 h1, h2, h3 {
-    margin: 0;
-    font-weight: 400;
-    color: #333;
-    font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    line-height: 1.2;
+	margin: 0;
+	font-weight: 400;
+	color: #333;
+	font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	line-height: 1.2;
 }
 
 #parkwhiz-widget-container {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 13px;
-    line-height: 18px;
-    color: #333;
-    white-space: nowrap;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	line-height: 18px;
+	color: #333;
+	white-space: nowrap;
 }
 
 ul.parking,
 ul.events {
-    height: 350px;
-    overflow: auto;
-    margin: 0;
-    padding: 0;
+	height: 350px;
+	overflow: auto;
+	margin: 0;
+	padding: 0;
 }
 
 ul.parking li,
 ul.events li {
-    border-top: 1px solid #ddd;
-    list-style: none;
-    padding: 6px;
-    white-space: normal;
+	border-top: 1px solid #ddd;
+	list-style: none;
+	padding: 6px;
+	white-space: normal;
 }
 
 ul.parking li a,
 ul.events li a {
-    text-decoration: none;
-    color: #0f5ebc;
-    display: block;
-    line-height: 30px;
+	text-decoration: none;
+	color: #0f5ebc;
+	display: block;
+	line-height: 30px;
 }
 
 ul.parking li a:hover,
 ul.events li a:hover {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 
 .parking-locations-block,
 .event-block {
-    background: #f8f8f8;
-    display: inline-block;
-    height: 400px;
-    width: 200px;
+	background: #f8f8f8;
+	display: inline-block;
+	height: 400px;
+	width: 200px;
 }
 
 .parking-locations-block h2,
 .event-block h2 {
-    line-height: 50px;
-    padding: 0 6px;
+	line-height: 50px;
+	padding: 0 6px;
 }
 
 .parking-map-widget-container {
-    display: inline-block;
+	display: inline-block;
 }
 
 .additionalPlaces {
-    background-color: rgba(20, 120, 20, 0.4);
-    cursor: pointer;
-    color: white;
+	background-color: rgba(20, 120, 20, 0.4);
+	cursor: pointer;
+	color: white;
 }
 
 .map-button {
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    -webkit-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
-    -moz-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
-    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
-    border: none;
-    background: #0f5ebc;
-    color: white;
-    text-transform: uppercase;
-    font-size: 14px !important;
-    font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 700 !important;
-    display: inline-block;
-    padding: 10px;
-    line-height: 1;
-    position: relative;
-    margin: 0 10px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+	border: none;
+	background: #0f5ebc;
+	color: white;
+	text-transform: uppercase;
+	font-size: 14px !important;
+	font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: 700 !important;
+	display: inline-block;
+	padding: 10px;
+	line-height: 1;
+	position: relative;
+	margin: 0 10px;
 }
 
 .event-title {
-    padding-left: 76px;
-    padding-right: 86px;
+	padding-left: 76px;
+	padding-right: 86px;
 }
 
 .psf {
-    border: 1px solid #ddd;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, .9);
-    padding: 10px;
-    cursor: pointer;
-    width: 200px;
-    text-align: left;
+	border: 1px solid #ddd;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background-color: rgba(255, 255, 255, .9);
+	padding: 10px;
+	cursor: pointer;
+	width: 200px;
+	text-align: left;
 }
 
 .control {
-    padding: 5px;
+	padding: 5px;
 }
 
 .control-text {
-    padding-left: 4px;
-    padding-right: 4px;
-    font-size: 12px;
-    display: inline-block;
+	padding-left: 4px;
+	padding-right: 4px;
+	font-size: 12px;
+	display: inline-block;
 }
 
 .control-text span {
-    font-weight: bold;
-    font-size: 12px;
+	font-weight: bold;
+	font-size: 12px;
 }
