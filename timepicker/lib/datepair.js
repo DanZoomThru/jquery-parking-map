@@ -1,225 +1,223 @@
 $(function() {
-	var DATEPICKER_FORMAT = 'yyyy-m-d';
-	var TIMEPICKER_FORMAT = 'g:ia';
-	var DATE_FORMAT = 'Y-n-j'; // for this format see http://php.net/manual/function.date.php
+    var DATEPICKER_FORMAT = 'yyyy-m-d';
+    var TIMEPICKER_FORMAT = 'g:ia';
+    var DATE_FORMAT = 'Y-n-j'; // for this format see http://php.net/manual/function.date.php
 
-	$('.datepair input.date').each(function(){
-		var $this = $(this);
+    $('.datepair input.date').each(function(){
+        var $this = $(this);
 
-		$this.datepicker({
-			'format': DATEPICKER_FORMAT,
-			'autoclose': true
-		});
+        $this.datepicker({
+            'format': DATEPICKER_FORMAT,
+            'autoclose': true
+        });
 
-		if ($this.hasClass('start') || $this.hasClass('end')) {
-			$this.on('changeDate change', doDatepair);
-		}
+        if ($this.hasClass('start') || $this.hasClass('end')) {
+            $this.on('change', doDatepair);
+        }
 
-	});
+    });
 
-	$('.datepair input.time').each(function() {
-		var $this = $(this);
-		
-		$this.timepicker({
-			'showDuration': true,
-			'timeFormat': TIMEPICKER_FORMAT,
-			'scrollDefaultNow': true
-		});
+    $('.datepair input.time').each(function() {
+        var $this = $(this);
 
-		if ($this.hasClass('start') || $this.hasClass('end')) {
-			$this.on('changeTime change', doDatepair);
-		}
-		
-		if ($this.hasClass('end')) {
-			$this.on('focus', function(){$('.ui-timepicker-with-duration').scrollTop(0);});
-		}		
+        $this.timepicker({
+            'showDuration': true,
+            'timeFormat': TIMEPICKER_FORMAT,
+            'scrollDefaultNow': true
+        });
 
-	});
+        if ($this.hasClass('start') || $this.hasClass('end')) {
+            $this.on('change', doDatepair);
+        }
 
-	$('.datepair').each(initDatepair);
+        if ($this.hasClass('end')) {
+            $this.on('focus', function(){$('.ui-timepicker-with-duration').scrollTop(0);});
+        }
 
-	function initDatepair()
-	{
-		var container = $(this);
+    });
 
-		var startDateInput = container.find('input.start.date');
-		var endDateInput = container.find('input.end.date');
-		var dateDelta = 0;
+    $('.datepair').each(initDatepair);
 
-		if (startDateInput.length && endDateInput.length) {
-			var startDate = parseDate(startDateInput.val(), DATEPICKER_FORMAT);
-			var endDate =  parseDate(endDateInput.val(), DATEPICKER_FORMAT);
+    function initDatepair()
+    {
+        var container = $(this);
 
-			dateDelta = endDate.getTime() - startDate.getTime();
-			container.data('dateDelta', dateDelta);
-		}
+        var startDateInput = container.find('input.start.date');
+        var endDateInput = container.find('input.end.date');
+        var dateDelta = 0;
 
-		var startTimeInput = container.find('input.start.time');
-		var endTimeInput = container.find('input.end.time');
+        if (startDateInput.length && endDateInput.length) {
+            var startDate = parseDate(startDateInput.val(), DATEPICKER_FORMAT);
+            var endDate =  parseDate(endDateInput.val(), DATEPICKER_FORMAT);
 
-		if (startTimeInput.length && endTimeInput.length) {
-			var startInt = startTimeInput.timepicker('getSecondsFromMidnight');
-			var endInt = endTimeInput.timepicker('getSecondsFromMidnight');
+            dateDelta = endDate.getTime() - startDate.getTime();
+            container.data('dateDelta', dateDelta);
+        }
 
-			container.data('timeDelta', endInt - startInt);
+        var startTimeInput = container.find('input.start.time');
+        var endTimeInput = container.find('input.end.time');
 
-			if (dateDelta < 86400000) {
-				endTimeInput.timepicker('option', 'minTime', startInt);
-			}
-		}
-	}
+        if (startTimeInput.length && endTimeInput.length) {
+            var startInt = startTimeInput.timepicker('getSecondsFromMidnight');
+            var endInt = endTimeInput.timepicker('getSecondsFromMidnight');
 
-	function doDatepair()
-	{
-		var target = $(this);
-		if (target.val() == '') {
-			return;
-		}
+            container.data('timeDelta', endInt - startInt);
 
-		var container = target.closest('.datepair');
+            if (dateDelta < 86400000) {
+                endTimeInput.timepicker('option', 'minTime', startInt);
+            }
+        }
+    }
 
-		if (target.hasClass('date')) {
-			updateDatePair(target, container);
+    function doDatepair()
+    {
+        var target = $(this);
+        if (target.val() == '') {
+            return;
+        }
 
-		} else if (target.hasClass('time')) {
-			updateTimePair(target, container);
-		}
-	}
+        var container = target.closest('.datepair');
 
-	function updateDatePair(target, container)
-	{
-		var start = container.find('input.start.date');
-		var end = container.find('input.end.date');
-		if (!start.length || !end.length) {
-			return;
-		}
+        if (target.hasClass('date')) {
+            updateDatePair(target, container);
 
-		var startDate = parseDate(start.val(), DATEPICKER_FORMAT);
-		var endDate =  parseDate(end.val(), DATEPICKER_FORMAT);
+        } else if (target.hasClass('time')) {
+            updateTimePair(target, container);
+        }
+    }
 
-		var oldDelta = container.data('dateDelta');
+    function updateDatePair(target, container)
+    {
+        var start = container.find('input.start.date');
+        var end = container.find('input.end.date');
+        if (!start.length || !end.length) {
+            return;
+        }
 
-		if (!isNaN(oldDelta) && oldDelta !== null && target.hasClass('start')) {
-			var newEnd = new Date(startDate.getTime()+oldDelta);
-			end.val(newEnd.format(DATE_FORMAT));
-			end.datepicker('update');
-			return;
+        var startDate = parseDate(start.val(), DATEPICKER_FORMAT);
+        var endDate =  parseDate(end.val(), DATEPICKER_FORMAT);
 
-		} else {
-			var newDelta = endDate.getTime() - startDate.getTime();
+        var oldDelta = container.data('dateDelta');
 
-			if (newDelta < 0) {
-				newDelta = 0;
+        if (!isNaN(oldDelta) && oldDelta !== null && target.hasClass('start')) {
+            var newEnd = new Date(startDate.getTime()+oldDelta);
+            end.val(newEnd.format(DATE_FORMAT));
+            end.datepicker('update');
+            return;
 
-				if (target.hasClass('start')) {
-					end.val(start.val());
-					end.datepicker('update');
-				} else if (target.hasClass('end')) {
-					start.val(end.val());
-					start.datepicker('update');
-				}
-			}
+        } else {
+            var newDelta = endDate.getTime() - startDate.getTime();
 
-			if (newDelta < 86400000) {
-				var startTimeVal = container.find('input.start.time').val();
+            if (newDelta < 0) {
+                newDelta = 0;
 
-				if (startTimeVal) {
-					container.find('input.end.time').timepicker('option', {'minTime': startTimeVal});
-				}
-			} else {
-				container.find('input.end.time').timepicker('option', {'minTime': null});
-			}
+                if (target.hasClass('start')) {
+                    end.val(start.val());
+                    end.datepicker('update');
+                } else if (target.hasClass('end')) {
+                    start.val(end.val());
+                    start.datepicker('update');
+                }
+            }
 
-			container.data('dateDelta', newDelta);
-		}
-	}
+            if (newDelta < 86400000) {
+                var startTimeVal = container.find('input.start.time').val();
 
-	function updateTimePair(target, container)
-	{
-		var start = container.find('input.start.time');
-		var end = container.find('input.end.time');
+                if (startTimeVal) {
+                    container.find('input.end.time').timepicker('option', {'minTime': startTimeVal});
+                }
+            } else {
+                container.find('input.end.time').timepicker('option', {'minTime': null});
+            }
 
-		if (!start.length) {
-			return;
-		}
+            container.data('dateDelta', newDelta);
+        }
+    }
 
-		var startInt = start.timepicker('getSecondsFromMidnight');
-		var dateDelta = container.data('dateDelta');
+    function updateTimePair(target, container)
+    {
+        var start = container.find('input.start.time');
+        var end = container.find('input.end.time');
 
-		if (target.hasClass('start') && (!dateDelta || dateDelta < 86400000)) {
-			end.timepicker('option', 'minTime', startInt);
-		}
+        if (!start.length || !end.length) {
+            return;
+        }
 
-		if (!end.length) {
-			return;
-		}
+        var startInt = start.timepicker('getSecondsFromMidnight');
+        var dateDelta = container.data('dateDelta');
+        var oldDelta = container.data('timeDelta');
 
-		var endInt = end.timepicker('getSecondsFromMidnight');
-		var oldDelta = container.data('timeDelta');
+        if (target.hasClass('start') && (!dateDelta || dateDelta + oldDelta < 86400000)) {
+            end.timepicker('option', 'minTime', startInt);
+        } else {
+            end.timepicker('option', 'minTime', null);
+        }
 
-		var endDateAdvance = 0;
-		var newDelta;
+        var endInt = end.timepicker('getSecondsFromMidnight');
 
-		if (oldDelta && target.hasClass('start')) {
-			// lock the duration and advance the end time
+        var endDateAdvance = 0;
+        var newDelta;
 
-			var newEnd = (startInt+oldDelta)%86400;
+        if (oldDelta && target.hasClass('start')) {
+            // lock the duration and advance the end time
 
-			if (newEnd < 0) {
-				newEnd += 86400;
-			}
+            var newEnd = (startInt+oldDelta)%86400;
 
-			end.timepicker('setTime', newEnd);
-			newDelta = newEnd - startInt;
-		} else if (startInt !== null && endInt !== null) {
-			newDelta = endInt - startInt;
-		} else {
-			return;
-		}
+            if (newEnd < 0) {
+                newEnd += 86400;
+            }
 
-		container.data('timeDelta', newDelta);
+            end.timepicker('setTime', newEnd);
+            newDelta = newEnd - startInt;
+        } else if (startInt !== null && endInt !== null) {
+            newDelta = endInt - startInt;
+        } else {
+            return;
+        }
 
-		if (newDelta < 0 && (!oldDelta || oldDelta > 0)) {
-			// overnight time span. advance the end date 1 day
-			endDateAdvance = 86400000;
+        container.data('timeDelta', newDelta);
 
-		} else if (newDelta > 0 && oldDelta < 0) {
-			// switching from overnight to same-day time span. decrease the end date 1 day
-			endDateAdvance = -86400000;
-		}
+        if (newDelta < 0 && (!oldDelta || oldDelta > 0)) {
+            // overnight time span. advance the end date 1 day
+            endDateAdvance = 86400000;
 
-		var startInput = container.find('.start.date');
-		var endInput = container.find('.end.date');
+        } else if (newDelta > 0 && oldDelta < 0) {
+            // switching from overnight to same-day time span. decrease the end date 1 day
+            endDateAdvance = -86400000;
+        }
 
-		if (startInput.val() && !endInput.val()) {
-			endInput.val(startInput.val());
-			endInput.datepicker('update');
-			dateDelta = 0;
-			container.data('dateDelta', 0);
-		}
+        var startInput = container.find('.start.date');
+        var endInput = container.find('.end.date');
 
-		if (endDateAdvance != 0) {
-			if (dateDelta || dateDelta === 0) {
-				var endDate =  parseDate(endInput.val(), DATEPICKER_FORMAT);
-				var newEnd = new Date(endDate.getTime() + endDateAdvance);
-				endInput.val(newEnd.format(DATE_FORMAT));
-				endInput.datepicker('update');
-				container.data('dateDelta', dateDelta + endDateAdvance);
-			}
-		}
-	}
+        if (startInput.val() && !endInput.val()) {
+            endInput.val(startInput.val());
+            endInput.datepicker('update');
+            dateDelta = 0;
+            container.data('dateDelta', 0);
+        }
+
+        if (endDateAdvance != 0) {
+            if (dateDelta || dateDelta === 0) {
+                var endDate =  parseDate(endInput.val(), DATEPICKER_FORMAT);
+                var newEnd = new Date(endDate.getTime() + endDateAdvance);
+                endInput.val(newEnd.format(DATE_FORMAT));
+                endInput.datepicker('update');
+                container.data('dateDelta', dateDelta + endDateAdvance);
+            }
+        }
+    }
 });
 
 function parseDate(input, format) {
-	if (input == '')
-		return new Date('');
+    if (input == '')
+        return new Date('');
 
-	format = format || 'yyyy-mm-dd'; // default format
-	var parts = input.match(/(\d+)/g), i = 0, fmt = {};
-	// extract date-part indexes from the format
-	format.replace(/(yyyy|dd?|mm?)/g, function(part) { fmt[part] = i++; });
+    format = format || 'yyyy-mm-dd'; // default format
+    var parts = input.match(/(\d+)/g), i = 0, fmt = {};
+    // extract date-part indexes from the format
+    format.replace(/(yyyy|dd?|mm?)/g, function(part) { fmt[part] = i++; });
 
-	return new Date(parts[fmt['yyyy']], parts[fmt['mm'] == undefined ? fmt['m'] : fmt['mm']]-1, parts[fmt['dd'] == undefined ? fmt['d'] : fmt['dd']]);
+    return new Date(parts[fmt['yyyy']], parts[fmt['mm'] == undefined ? fmt['m'] : fmt['mm']]-1, parts[fmt['dd'] == undefined ? fmt['d'] : fmt['dd']]);
 }
 
 // Simulates PHP's date function
