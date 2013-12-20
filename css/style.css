@@ -6,6 +6,11 @@
 	Purpose of the stylesheet follows.
 */
 
+html, body {
+	margin: 0;
+
+}
+
 h1, h2, h3 {
 	margin: 0;
 	font-weight: 400;
@@ -24,18 +29,32 @@ h1, h2, h3 {
 
 ul.parking,
 ul.events {
-	height: 350px;
 	overflow: auto;
 	margin: 0;
 	padding: 0;
+}
+
+ul.parking {
+	height: 350px;
+}
+
+ul.events {
+	height: 200px;
 }
 
 ul.parking li,
 ul.events li {
 	border-top: 1px solid #ddd;
 	list-style: none;
-	padding: 6px;
 	white-space: normal;
+}
+
+ul.parking li {
+	padding: 0;
+}
+
+ul.events li {
+	padding: 6px;
 }
 
 ul.parking li a,
@@ -46,23 +65,54 @@ ul.events li a {
 	line-height: 30px;
 }
 
-ul.parking li a:hover,
-ul.events li a:hover {
-	text-decoration: underline;
+ul.parking li a {
+	padding: 6px;
 }
 
-.parking-locations-block,
-.event-block {
-	background: #f8f8f8;
+ul.parking li a:hover,
+ul.events li:hover {
+	text-decoration: none;
+	background: #0f5ebc;
+	color:#fff;
+	cursor: pointer;
+}
+
+ul.events li.active,
+ul.parking li.active a {
+	text-decoration: none;
+	background: #0f5ebc;
+	color:#fff;
+}
+
+.rail {
 	display: inline-block;
 	height: 400px;
 	width: 200px;
 }
 
-.parking-locations-block h2,
-.event-block h2 {
-	line-height: 50px;
+.mod {
+	background: #f8f8f8;
+	margin-top: 4px;
+}
+
+.mod h2 {
+	line-height: 40px;
 	padding: 0 6px;
+	margin: 0;
+}
+
+.datepair {
+	padding: 0 10px 9px;
+}
+
+.datepair .time {
+	width: 50px;
+	padding: 5px;
+}
+
+.datepair .date {
+	width: 70px;
+	padding: 5px;
 }
 
 .parking-map-widget-container {
@@ -127,4 +177,26 @@ ul.events li a:hover {
 .control-text span {
 	font-weight: bold;
 	font-size: 12px;
+}
+
+.cluster {
+	background: #0f5ebc;
+	color: #fff;
+	border: 2px solid #fff;
+	padding:10px;
+	border-radius: 20px;
+	font-weight: bold;
+	font-size: 14px !important;
+	text-align: center;
+	line-height: 15px;
+}
+
+.active {
+	z-index:1000 !important;
+}
+
+.active .cluster {
+	background: #fff;
+	color: #0f5ebc;
+	border: 2px solid #0f5ebc;
 }

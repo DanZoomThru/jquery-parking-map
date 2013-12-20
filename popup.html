@@ -21,10 +21,10 @@ $(document).ready(function(){
 	$(function() {
 		var myDate = new Date();
 		var prettyDate =(myDate.getMonth()+1) + '/' + myDate.getDate() + '/' + myDate.getFullYear();
-		
+
 		$( "#date_from" ).datepicker().val(prettyDate).trigger('change');
 		$( "#date_to" ).datepicker().val(prettyDate).trigger('change');
-		
+
 		$( "#time_to" ).timepicker();
 		$( "#time_from" ).timepicker();
 	});
