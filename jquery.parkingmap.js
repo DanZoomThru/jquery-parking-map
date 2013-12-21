@@ -46,7 +46,8 @@
 			maxZoom            : 16,
 			location           : {
 				lat : 41.878598,
-				lng : -87.638836
+				lng : -87.638836,
+				markers            : []
 			},
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
 			overlays           : [],
@@ -61,8 +62,7 @@
 						height  : 50
 					}
 				}
-			},
-			markers            : []
+			}
 		};
 
 		var $el = $cnt;
@@ -383,7 +383,7 @@
 				};
 			}
 
-			if (config.cluster.length) {
+			if (config.cluster) {
 				var cluster = {
 					radius  : config.cluster.radius,
 					maxZoom : config.cluster.maxZoom,
@@ -400,13 +400,10 @@
 						}
 					}
 				};
-
-
+				$.each(config.cluster.icons, function (index, value) {
+					cluster[index] = value;
+				});
 			}
-			$.each(config.cluster.icons, function (index, value) {
-				cluster[index] = value;
-			});
-
 			$el.gmap3({
 				marker : {
 					values  : values,
@@ -432,7 +429,7 @@
 			});
 
 			var markers = [];
-			$.each(config.markers, function (index, value) {
+			$.each(config.location.markers, function (index, value) {
 				markers.push(value);
 			});
 
