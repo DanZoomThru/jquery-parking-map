@@ -6,64 +6,117 @@
 	Purpose of the stylesheet follows.
 */
 
-root { 
-	display: block;
+html, body {
+	margin: 0;
+
 }
 
-ul.events li{
-	width: 200px !important;
+h1, h2, h3 {
+	margin: 0;
+	font-weight: 400;
+	color: #333;
+	font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	line-height: 1.2;
 }
 
-ul.parking li {
-	border: 1px solid rgb(202, 201, 202);
-	list-style: none;
-	width: 170px;
-	padding: 6px;
-	position: relative;
-	right: 40px;
-	bottom: 12px;
-	font-weight: bold;
-	height: 30px;
-	text-align: center;
-	line-height: 29px;
-	cursor: pointer;
+#parkwhiz-widget-container {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	line-height: 18px;
+	color: #333;
+	white-space: nowrap;
 }
 
-.parking-locations-title {
-	border-radius: 6px; 
-	border: 1px solid rgb(202, 201, 202);  
-	background-color: rgb(209, 209, 209);
-	color: white;
-	font-weight: bold;
-	padding: 10px;
-	right: 10px;
-	position: relative;
-	padding-left: 32px;
-	padding-right: 29px;
-}
-
-.parking-locations-block {
-	position: relative;
-	top: 0px;
-	left: 0px;
-	float: right;
-	height: 382px; 
-	max-height: 390px; 
+ul.parking,
+ul.events {
 	overflow: auto;
-	padding-top: 13px;
-	padding-left: 10px;
-	width: 201px;
+	margin: 0;
+	padding: 0;
 }
 
 ul.parking {
-	position: relative;
-	top: 21px;
-	margin: 0px;
-	right: 10px;
+	height: 350px;
+}
+
+ul.events {
+	height: 200px;
+}
+
+ul.parking li,
+ul.events li {
+	border-top: 1px solid #ddd;
+	list-style: none;
+	white-space: normal;
+}
+
+ul.parking li {
+	padding: 0;
+}
+
+ul.events li {
+	padding: 6px;
+}
+
+ul.parking li a,
+ul.events li a {
+	text-decoration: none;
+	color: #0f5ebc;
+	display: block;
+	line-height: 30px;
+}
+
+ul.parking li a {
+	padding: 6px;
+}
+
+ul.parking li a:hover,
+ul.events li:hover {
+	text-decoration: none;
+	background: #0f5ebc;
+	color:#fff;
+	cursor: pointer;
+}
+
+ul.events li.active,
+ul.parking li.active a {
+	text-decoration: none;
+	background: #0f5ebc;
+	color:#fff;
+}
+
+.rail {
+	display: inline-block;
+	height: 400px;
+	width: 200px;
+}
+
+.mod {
+	background: #f8f8f8;
+	margin-top: 4px;
+}
+
+.mod h2 {
+	line-height: 40px;
+	padding: 0 6px;
+	margin: 0;
+}
+
+.datepair {
+	padding: 0 10px 9px;
+}
+
+.datepair .time {
+	width: 50px;
+	padding: 5px;
+}
+
+.datepair .date {
+	width: 70px;
+	padding: 5px;
 }
 
 .parking-map-widget-container {
-	float: right;
+	display: inline-block;
 }
 
 .additionalPlaces {
@@ -73,34 +126,38 @@ ul.parking {
 }
 
 .map-button {
-	border: 1px solid black;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 	border-radius: 5px;
-	float:right;
-	padding: 4px 8px;
-	background-color: rgb(2, 117, 206);
+	-webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+	border: none;
+	background: #0f5ebc;
+	color: white;
+	text-transform: uppercase;
+	font-size: 14px !important;
+	font-family: "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: 700 !important;
+	display: inline-block;
+	padding: 10px;
+	line-height: 1;
 	position: relative;
-	bottom: 20px;
-}
-
-.event-block {
-	float: right; 
-	margin-left: 20px; 
-	margin-top: -10px; 
-	height: 390px; 
-	max-height: 390px; 
-	overflow: auto; 
-	padding-left: 10px;
+	margin: 0 10px;
 }
 
 .event-title {
-	padding-left: 76px; 
+	padding-left: 76px;
 	padding-right: 86px;
 }
 
 .psf {
-	background-color: rgba(255, 255, 255, .6);
-	border: 2px solid;
-	padding: 20px;
+	border: 1px solid #ddd;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background-color: rgba(255, 255, 255, .9);
+	padding: 10px;
 	cursor: pointer;
 	width: 200px;
 	text-align: left;
@@ -114,9 +171,32 @@ ul.parking {
 	padding-left: 4px;
 	padding-right: 4px;
 	font-size: 12px;
+	display: inline-block;
 }
 
 .control-text span {
 	font-weight: bold;
 	font-size: 12px;
+}
+
+.cluster {
+	background: #0f5ebc;
+	color: #fff;
+	border: 2px solid #fff;
+	padding:10px;
+	border-radius: 20px;
+	font-weight: bold;
+	font-size: 14px !important;
+	text-align: center;
+	line-height: 15px;
+}
+
+.active {
+	z-index:1000 !important;
+}
+
+.active .cluster {
+	background: #fff;
+	color: #0f5ebc;
+	border: 2px solid #0f5ebc;
 }

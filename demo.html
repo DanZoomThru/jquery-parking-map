@@ -1,29 +1,30 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-	<head>
-		<title></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
-	  
-		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-		
-		<link rel="stylesheet" type="text/css" href="css/style.css">
-		<link rel="stylesheet" type="text/css" href="css/popup.css">
-		<link rel="stylesheet" type="text/css" href="timepicker/jquery.timepicker.css">
-		<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css">
-		
-		<script type="text/javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
-		
-		<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
-		<script type="text/javascript" src="contrib/gmap3.min.js"></script>
-		<script type="text/javascript" src="jquery.parkingmap.js"></script>
-		<script type="text/javascript" src="utils.js"></script>
-		<script type="text/javascript" src="timepicker/jquery.timepicker.js"></script>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=us-ascii"/>
 
-	</head>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/popup.css">
+	<link rel="stylesheet" type="text/css" href="timepicker/jquery.timepicker.css">
+	<link rel="stylesheet" type="text/css" href="timepicker/lib/base.css">
+
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+	<script type="text/javascript" src="contrib/gmap3.min.js"></script>
+	<script type="text/javascript" src="jquery.parkingmap.js"></script>
+	<script type="text/javascript" src="utils.js"></script>
+	<script type="text/javascript" src="timepicker/jquery.timepicker.js"></script>
+	<script type="text/javascript" src="timepicker/lib/base.js"></script>
+	<script type="text/javascript" src="timepicker/lib/datepair.js"></script>
+
+
+</head>
 <body>
-    
+
 <script type="text/javascript">
-	$(document).ready(function() {
+	$(document).ready(function () {
 		/*
 		 * locations type:
 		 * 1. address - default
@@ -31,54 +32,96 @@
 		 * 3. venue
 		 * 4. event
 		 */
-	
-		var map = new $.parkingMap($(".parking-map-widget-container"), {
+
+		var map = new $.parkingMap($("#parkwhiz-widget-container"), {
 			parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
-			location : {
+			location: {
 				//destination: "1500 Sugar Bowl Drive, New Orleans, Louisiana, United States"
 				//destination: "mercedes-benz-superdome-parking"
 				/* Alternatively you could provide 'lat' and 'lng' values */
-				// lat: 41.878598, lng: -87.638836
-				
-				venue: 'mercedes-benz-superdome-parking'
+				lat: 40.720665, lng: -74.067936,
+
+				venue: [
+					'essex-street-hackensack-parking',
+					'walnut-st-station-parking',
+					'secaucus-junction-parking',
+					'newark-penn-station-parking',
+					'newark-airport-parking',
+					'journal-square-station-parking',
+					'grove-street-station-parking',
+					'essex-street-parking',
+					'exchange-place-station-parking',
+					'harborside-financial-center-parking',
+					'newport-station-parking',
+					'hoboken-station-parking',
+					'2nd-street-station-parking',
+					'9th-st-congress-st-station-parking',
+					'lincoln-harbor-hblr-station-parking',
+					'penn-station-parking',
+					'search?destination=6th+Ave+%26+Minetta+Ln',
+					'search?destination=Battery+Place%2C+New+York%2C+NY',
+					'time-warner-center-parking',
+					'madison-square-park-parking',
+					'grand-central-terminal-parking',
+					'waldorf-astoria-new-york-parking',
+					'newark-airport-parking'
+				],
+
+				markers : [
+					{
+						address : "Secaucus Junction, New Jersey",
+						data : "Secaucus Junction"
+					},
+					{
+						address : "Newark Penn Station, New Jersey",
+						data : "Newark Penn Station",
+						options :
+						{
+							icon : "http://maps.google.com/mapfiles/marker_green.png"
+						}
+					},
+					{
+						address : "New York Penn Station, New York",
+						data : "New York Penn Station, New York",
+						options :
+						{
+							icon : "http://maps.google.com/mapfiles/marker_yellow.png"
+						}
+					}
+				]
 			},
-			defaultTime : {
+			defaultTime: {
 				//start: 1485294400,
 				//end: 1485296200,
-				hours: 3,
+				hours: 3
 			},
-			zoom: 14,
+			zoom: 12,
 			//additionalMarkers: "http://maps.google.com/mapfiles/marker_green.png",
-			width: '60%',
-			event: '/san-francisco-49ers-at-new-orleans-saints-122213/',
+			width: '100%',
+//			event: 'philadelphia-eagles-at-dallas-cowboys-122312',
 			showChosenEvent: true,
-			showEventList: false,
+			showEventList: true,
 			height: '400px',
 			loadFirstEvent: false,
-			showLocationMarker: true,
-			showPrice: false,
-			showTimePicker: true
+			showLocationMarker: false,
+			showPrice: true,
+			modules: ['map']
 		});
 		map.createMap();
 
+/*		$('#parkwhiz-widget-container').find('.parking-map-widget-container').gmap3({
+			infowindow:{
+				address:"Newark Liberty International Airport",
+				options:{
+					content: "Find Parking near Newark Liberty International Airport",
+					disableAutoPan: true
+				}
+			}
+		});*/
 	});
-  </script>
-  
-  <div id="parkwhiz-widget-conteiner">
-  
-	<div class="event-block">
-		<br />
-		<span class='parking-locations-title event-title'>Events</span>
-		<ul class='parking events'></ul>
-	</div>
-      
-	<div class="parking-map-widget-container"></div>
-      
-	<div class='parking-locations-block'>
-		<span class='parking-locations-title'>Parking Locations</span>
-		<ul class='location-place parking'></ul>
-	</div>
-      
+</script>
+
+<div id="parkwhiz-widget-container">
 </div>
 
 </body>

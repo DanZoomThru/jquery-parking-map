@@ -46,7 +46,7 @@ Disable editing the input text and force the user to select a value from the tim
 
 - **disableTouchKeyboard**
 Disable the onscreen keyboard for touch devices.
-*default: true*
+*default: false*
 
 - **durationTime**
 The time against which ```showDuration``` will compute relative times. If this is a function, its result will be used.
@@ -96,6 +96,10 @@ The amount of time, in minutes, between each item in the dropdown.
 - **timeFormat**
 How times should be displayed in the list and input element. Uses [PHP's date() formatting syntax](http://php.net/manual/en/function.date.php).
 *default: 'g:ia'*
+
+- **typeaheadHighlight**
+Highlight the nearest corresponding time option as a value is typed into the form input.
+*default: true*
 
 Methods
 -------
@@ -196,7 +200,9 @@ Sample markup with class names:
 		...
 		<li>4:30pm</li>
 		<li class="ui-timepicker-selected">5:00pm</li>
-		<li>5:30pm</li>
+		<li class="ui-timepicker-disabled">5:30pm</li>
+		<li>6:00pm <span class="ui-timepicker-duration">(1 hour)</span></li>
+		<li>6:30pm</li>
 		...
 		<li>11:30pm</li>
 	</ul>
