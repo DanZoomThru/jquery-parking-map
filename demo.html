@@ -105,7 +105,19 @@
 			loadFirstEvent: false,
 			showLocationMarker: false,
 			showPrice: true,
-			modules: ['map']
+			modules: ['map'],
+			cluster            : {
+				radius    : 75,
+				maxZoom   : 12,
+				clickZoom : 16,
+				icons     : {
+					1 : {
+						content : '<div class="cluster"><strong>CLUSTER_COUNT</strong><br /><span style="font-size:10px;">SPOTS</span></div>',
+						width   : 50,
+						height  : 50
+					}
+				}
+			}
 		});
 		map.createMap();
 

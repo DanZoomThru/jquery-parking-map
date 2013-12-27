@@ -1,0 +1,316 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=us-ascii"/>
+
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/popup.css">
+	<link rel="stylesheet" type="text/css" href="timepicker/jquery.timepicker.css">
+	<link rel="stylesheet" type="text/css" href="timepicker/lib/base.css">
+
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+	<script type="text/javascript" src="contrib/gmap3.min.js"></script>
+	<script type="text/javascript" src="jquery.parkingmap.js"></script>
+	<script type="text/javascript" src="utils.js"></script>
+	<script type="text/javascript" src="timepicker/jquery.timepicker.js"></script>
+	<script type="text/javascript" src="timepicker/lib/base.js"></script>
+	<script type="text/javascript" src="timepicker/lib/datepair.js"></script>
+
+
+</head>
+<body>
+
+<script type="text/javascript">
+$(document).ready(function () {
+	/*
+	 * locations type:
+	 * 1. address - default
+	 * 2. latlng
+	 * 3. venue
+	 * 4. event
+	 */
+
+	var map = new $.parkingMap($("#parkwhiz-widget-container"), {
+		parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+		location: {
+			//destination: "1500 Sugar Bowl Drive, New Orleans, Louisiana, United States"
+			//destination: "mercedes-benz-superdome-parking"
+			/* Alternatively you could provide 'lat' and 'lng' values */
+			lat: 40.765665,
+			lng: -74.067936,
+			venue: [
+				'essex-street-hackensack-parking',
+				'walnut-st-station-parking',
+				'secaucus-junction-parking',
+				'newark-penn-station-parking',
+				'newark-airport-parking',
+				'journal-square-station-parking',
+				'grove-street-station-parking',
+				'essex-street-parking',
+				'exchange-place-station-parking',
+				'harborside-financial-center-parking',
+				'newport-station-parking',
+				'hoboken-station-parking',
+				'2nd-street-station-parking',
+				'9th-st-congress-st-station-parking',
+				'lincoln-harbor-hblr-station-parking',
+				'penn-station-parking',
+				'search?destination=6th+Ave+%26+Minetta+Ln',
+				'search?destination=Battery+Place%2C+New+York%2C+NY',
+				'time-warner-center-parking',
+				'madison-square-park-parking',
+				'grand-central-terminal-parking',
+				'waldorf-astoria-new-york-parking',
+				'newark-airport-parking'
+			],
+
+			markers : [
+				{
+					address : "Secaucus Junction, New Jersey",
+					data : "Secaucus Junction",
+					options :
+					{
+						icon : "images/Station_icon.png",
+						minZoom : 13
+					},
+					events:{
+						mouseover: function(marker, event, context){
+							var map = $(this).gmap3("get"),
+									infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.open(map, marker);
+								infowindow.setContent(context.data);
+							} else {
+								$(this).gmap3({
+									infowindow:{
+										anchor:marker,
+										options:{content: context.data}
+									}
+								});
+							}
+						},
+						mouseout: function(){
+							var infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.close();
+							}
+						}
+					}
+				},
+				{
+					address : "Newark Penn Station, New Jersey",
+					data : "Newark Penn Station, NJ",
+					options :
+					{
+						icon : "images/Station_icon.png",
+						minZoom : 13
+					},
+					events:{
+						mouseover: function(marker, event, context){
+							var map = $(this).gmap3("get"),
+									infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.open(map, marker);
+								infowindow.setContent(context.data);
+							} else {
+								$(this).gmap3({
+									infowindow:{
+										anchor:marker,
+										options:{content: context.data}
+									}
+								});
+							}
+						},
+						mouseout: function(){
+							var infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.close();
+							}
+						}
+					}
+				},
+				{
+					address : "New York Penn Station, New York",
+					data : "New York Penn Station, NY",
+					options :
+					{
+						icon : "images/Station_icon.png",
+						minZoom : 13
+					},
+					events:{
+						mouseover: function(marker, event, context){
+							var map = $(this).gmap3("get"),
+									infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.open(map, marker);
+								infowindow.setContent(context.data);
+							} else {
+								$(this).gmap3({
+									infowindow:{
+										anchor:marker,
+										options:{content: context.data}
+									}
+								});
+							}
+						},
+						mouseout: function(){
+							var infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.close();
+							}
+						}
+					}
+				},
+				{
+					address : "World Trade Center, New York",
+					data : "World Trade Center",
+					options :
+					{
+						icon : "images/WorldTradeCenter_icon.png",
+						minZoom : 13
+					},
+					events:{
+						mouseover: function(marker, event, context){
+							var map = $(this).gmap3("get"),
+									infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.open(map, marker);
+								infowindow.setContent(context.data);
+							} else {
+								$(this).gmap3({
+									infowindow:{
+										anchor:marker,
+										options:{content: context.data}
+									}
+								});
+							}
+						},
+						mouseout: function(){
+							var infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.close();
+							}
+						}
+					}
+				},
+				{
+					address : "Hoboken, New Jersey",
+					data : "Hoboken, NJ",
+					options :
+					{
+						icon : "images/Hoboken_icon.png",
+						minZoom : 13
+					},
+					events:{
+						mouseover: function(marker, event, context){
+							var map = $(this).gmap3("get"),
+									infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.open(map, marker);
+								infowindow.setContent(context.data);
+							} else {
+								$(this).gmap3({
+									infowindow:{
+										anchor:marker,
+										options:{content: context.data}
+									}
+								});
+							}
+						},
+						mouseout: function(){
+							var infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.close();
+							}
+						}
+					}
+				},
+				{
+					address : "MetLife Stadium, New Jersey",
+					data : "MetLife Stadium, NJ",
+					options :
+					{
+						icon : "images/Hoboken_icon.png",
+						minZoom : 13
+					},
+					events:{
+						mouseover: function(marker, event, context){
+							var map = $(this).gmap3("get"),
+									infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.open(map, marker);
+								infowindow.setContent(context.data);
+							} else {
+								$(this).gmap3({
+									infowindow:{
+										anchor:marker,
+										options:{content: context.data}
+									}
+								});
+							}
+						},
+						mouseout: function(){
+							var infowindow = $(this).gmap3({get:{name:"infowindow"}});
+							if (infowindow){
+								infowindow.close();
+							}
+						}
+					}
+				}
+			]
+		},
+		defaultTime: {
+			//start: 1485294400,
+			//end: 1485296200,
+			hours: 3
+		},
+		zoom: 12,
+		//additionalMarkers: "http://maps.google.com/mapfiles/marker_green.png",
+		width: '100%',
+//			event: 'philadelphia-eagles-at-dallas-cowboys-122312',
+		showChosenEvent: true,
+		showEventList: true,
+		height: '525px',
+		loadFirstEvent: false,
+		showLocationMarker: false,
+		showPrice: true,
+		modules: ['map'],
+		listingMaxZoom: 14
+	});
+	map.createMap();
+
+	/*		$('#parkwhiz-widget-container').find('.parking-map-widget-container').gmap3({
+	 infowindow:{
+	 address:"Newark Liberty International Airport",
+	 options:{
+	 content: "Find Parking near Newark Liberty International Airport",
+	 disableAutoPan: true
+	 }
+	 }
+	 });*/
+	$('#parkwhiz-widget-container').find('.parking-map-widget-container').gmap3({
+		groundoverlay:{
+			options:{
+				url: "http://zach.dev.parkwhiz.com/jquery-parking-map/images/test-overlay.png",
+				bounds: {
+					ne:{lat:40.842, lng:-73.916},
+					sw:{lat:40.698, lng:-74.212}
+				},
+				opts:{
+					opacity: 0.8
+				}
+			}
+		}
+	});
+});
+</script>
+
+<div id="parkwhiz-widget-container">
+</div>
+
+</body>
+</html>

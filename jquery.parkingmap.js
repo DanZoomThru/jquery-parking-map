@@ -50,19 +50,7 @@
 				markers            : []
 			},
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
-			overlays           : [],
-			cluster            : {
-				radius    : 75,
-				maxZoom   : 12,
-				clickZoom : 16,
-				icons     : {
-					1 : {
-						content : '<div class="cluster"><strong>CLUSTER_COUNT</strong><br /><span style="font-size:10px;">SPOTS</span></div>',
-						width   : 50,
-						height  : 50
-					}
-				}
-			}
+			overlays           : []
 		};
 
 		var $el = $cnt;
@@ -295,6 +283,28 @@
 
 					if ($.isArray(config.location.venue) && venues.length === config.location.venue.length) {
 						_putListingsOnMap(venue_listings);
+
+
+						var map = plugin.$el.gmap3('get');
+
+						google.maps.event.addListener(map, 'zoom_changed', function() {
+							var zoomLevel = map.getZoom();
+							plugin.$el.gmap3({
+								exec: {
+									name:"marker",
+									all:"true",
+									func: function(data){
+										// data.object is the google.maps.Marker object
+										if(data.object.minZoom) {
+											data.object.setVisible(zoomLevel < data.object.minZoom)
+										}
+										else if(data.tag == 'listing') {
+											data.object.setVisible(zoomLevel > config.listingMaxZoom)
+										}
+									}
+								}
+							});
+						});
 					}
 				},
 				error    : function (xhr, err1, err2) {
@@ -364,24 +374,53 @@
 		};
 
 		var _putListingsOnMap = function (listings) {
+
 			var $el = plugin.$el;
 			var map = $el.gmap3('get');
 
 			var values = [];
+
 			for (var i = 0; i < listings.length; i++) {
-				var icon = _getIcons(listings[i].price);
-				if (config.additionalMarkers) {
-					icon.normal = config.additionalMarkers;
-				}
-				values[i] = {
-					latLng  : [ listings[i].lat, listings[i].lng ],
-					data    : { listing : listings[i], icon : icon },
-					options : {
-						icon   : icon.normal,
-						shadow : plugin._iconMeta.shadow
+				if(listings[i].price) {
+					var icon = _getIcons(listings[i].price);
+					if (config.additionalMarkers) {
+						icon.normal = config.additionalMarkers;
 					}
-				};
+					values.push({
+						latLng  : [ listings[i].lat, listings[i].lng ],
+						data    : { listing : listings[i], icon : icon },
+						options : {
+							icon   : icon.normal,
+							shadow : plugin._iconMeta.shadow,
+							visible : config.zoom > config.listingMaxZoom
+						},
+						tag     : 'listing'
+					});
+				}
 			}
+
+			var mapOptions = {
+				marker : {
+					values  : values,
+					events  : {
+						mouseover : function (marker, event, context) {
+							if (context.data.icon) {
+								marker.setZIndex(999);
+								marker.setIcon(context.data.icon.active);
+							}
+						},
+						mouseout  : function (marker, event, context) {
+							if (context.data.icon) {
+								marker.setZIndex(998);
+								marker.setIcon(context.data.icon.normal);
+							}
+						},
+						click     : function (marker, event, context) {
+							window.open(context.data.listing.parkwhiz_url);
+						}
+					}
+				}
+			};
 
 			if (config.cluster) {
 				var cluster = {
@@ -403,33 +442,14 @@
 				$.each(config.cluster.icons, function (index, value) {
 					cluster[index] = value;
 				});
+				mapOptions.cluster = cluster;
 			}
-			$el.gmap3({
-				marker : {
-					values  : values,
-					events  : {
-						mouseover : function (marker, event, context) {
-							if (context.data.icon) {
-								marker.setZIndex(999);
-								marker.setIcon(context.data.icon.active);
-							}
-						},
-						mouseout  : function (marker, event, context) {
-							if (context.data.icon) {
-								marker.setZIndex(998);
-								marker.setIcon(context.data.icon.normal);
-							}
-						},
-						click     : function (marker, event, context) {
-							window.open(context.data.listing.parkwhiz_url);
-						}
-					},
-					cluster : cluster
-				}
-			});
+
+			$el.gmap3(mapOptions);
 
 			var markers = [];
 			$.each(config.location.markers, function (index, value) {
+				value.options.visible = config.zoom <= value.options.minZoom;
 				markers.push(value);
 			});
 
@@ -662,9 +682,7 @@
 
 		plugin._iconCache = {};
 		var _getIcons = function (dollars) {
-			plugin._iconCache = {};
 			if (!plugin._iconCache[dollars]) {
-
 				var sprite, scaledSize;
 
 				if (dollars <= 100) {
@@ -687,7 +705,7 @@
 					scaledSize = new google.maps.Size(380, 680);
 				}
 
-				if (config.showPrice === false) {
+				if (!config.showPrice) {
 					plugin._iconCache[dollars] = {
 						'normal' : {
 							url        : sprite,
