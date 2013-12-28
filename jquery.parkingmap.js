@@ -45,9 +45,9 @@
 			minZoom            : 12,
 			maxZoom            : 16,
 			location           : {
-				lat : 41.878598,
-				lng : -87.638836,
-				markers            : []
+				lat     : 41.878598,
+				lng     : -87.638836,
+				markers : []
 			},
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
 			overlays           : []
@@ -274,6 +274,22 @@
 							groundoverlay : overlay
 						});
 					});
+
+					plugin.$el.gmap3({
+						groundoverlay : {
+							options : {
+								url    : "/images/map-overlay.png",
+								bounds : {
+									ne : {lat : 40.830369869674016, lng : -73.98822810309599},
+									sw : {lat : 40.71518984047778, lng : -74.16400935309599}
+								},
+								opts   : {
+									opacity : 1.0,
+									maxZoom : 12
+								}
+							}
+						}
+					});
 					if (!config.event) {
 //						plugin.listingsForTimePlace();
 					}
@@ -287,19 +303,51 @@
 
 						var map = plugin.$el.gmap3('get');
 
-						google.maps.event.addListener(map, 'zoom_changed', function() {
+						var center = map.center;
+
+						var zoom_control = document.createElement('div');
+						zoom_control.className = "zoom_control hide";
+						zoom_control.innerHTML = 'Zoom Out';
+
+						google.maps.event.addDomListener(zoom_control, 'click', function () {
+							map.setCenter(center);
+							map.setZoom(config.minZoom);
+						});
+
+						map.controls[google.maps.ControlPosition.TOP_LEFT].push(zoom_control);
+
+						google.maps.event.addListener(map, 'zoom_changed', function () {
 							var zoomLevel = map.getZoom();
+
+							if (zoomLevel > config.minZoom) {
+								$('.zoom_control').removeClass('hide');
+							} else {
+								$('.zoom_control').addClass('hide');
+							}
+
 							plugin.$el.gmap3({
-								exec: {
-									name:"marker",
-									all:"true",
-									func: function(data){
+								exec : {
+									name : "marker",
+									all  : "true",
+									func : function (data) {
 										// data.object is the google.maps.Marker object
-										if(data.object.minZoom) {
-											data.object.setVisible(zoomLevel < data.object.minZoom)
+										if (data.object.minZoom) {
+//											data.object.setVisible(zoomLevel <= data.object.minZoom)
 										}
-										else if(data.tag == 'listing') {
-											data.object.setVisible(zoomLevel > config.listingMaxZoom)
+										else if (data.tag == 'listing') {
+											data.object.setVisible(zoomLevel >= config.listingMaxZoom)
+										}
+									}
+								}
+							});
+							plugin.$el.gmap3({
+								exec : {
+									name : "groundoverlay",
+									all  : "true",
+									func : function (data) {
+										if (data.object.maxZoom) {
+											var opacity = (zoomLevel <= data.object.maxZoom) ? 1 : 0;
+											data.object.setOpacity(opacity)
 										}
 									}
 								}
@@ -319,16 +367,61 @@
 
 			var mapOptions = {
 				options : {
-					zoom                  : config.zoom,
-					minZoom               : config.minZoom,
-					maxZoom               : config.maxZoom,
-					streetViewControl     : false,
-					panControl            : false,
-					mapTypeControl        : false,
-					mapTypeId             : google.maps.MapTypeId.ROADMAP,
-					mapTypeControlOptions : {
+					zoom                   : config.zoom,
+					minZoom                : config.minZoom,
+					maxZoom                : config.maxZoom,
+					streetViewControl      : false,
+					panControl             : false,
+					zoomControl            : false,
+					mapTypeControl         : false,
+					disableDoubleClickZoom : true,
+					scrollwheel            : false,
+					mapTypeId              : google.maps.MapTypeId.ROADMAP,
+					mapTypeControlOptions  : {
 						mapTypeIds : [google.maps.MapTypeId.ROADMAP]
-					}
+					},
+					styles                 : [
+						{
+							featureType : "road",
+							stylers     : [
+								{
+									visibility : "simplified"
+								}
+							]
+						},
+						{
+							featureType : "water",
+							stylers     : [
+								{
+									visibility : "simplified"
+								}
+							]
+						},
+						{
+							featureType : "poi",
+							stylers     : [
+								{
+									visibility : "off"
+								}
+							]
+						},
+						{
+							stylers : [
+								{
+									saturation : -75
+								}
+							]
+						},
+						{
+							featureType : "road",
+							stylers     : [
+								{
+									lightness  : 37,
+									saturation : -100
+								}
+							]
+						}
+					]
 				}
 			};
 
@@ -365,7 +458,7 @@
 			}
 
 
-			this.$el.gmap3({
+			var map = this.$el.gmap3({
 				map    : mapOptions,
 				marker : markerOptions
 			});
@@ -381,7 +474,7 @@
 			var values = [];
 
 			for (var i = 0; i < listings.length; i++) {
-				if(listings[i].price) {
+				if (listings[i].price) {
 					var icon = _getIcons(listings[i].price);
 					if (config.additionalMarkers) {
 						icon.normal = config.additionalMarkers;
@@ -390,9 +483,10 @@
 						latLng  : [ listings[i].lat, listings[i].lng ],
 						data    : { listing : listings[i], icon : icon },
 						options : {
-							icon   : icon.normal,
-							shadow : plugin._iconMeta.shadow,
-							visible : config.zoom > config.listingMaxZoom
+							icon    : icon.normal,
+							shadow  : plugin._iconMeta.shadow,
+							visible : config.zoom > config.listingMaxZoom,
+							zIndex  : 997
 						},
 						tag     : 'listing'
 					});
@@ -401,8 +495,8 @@
 
 			var mapOptions = {
 				marker : {
-					values  : values,
-					events  : {
+					values : values,
+					events : {
 						mouseover : function (marker, event, context) {
 							if (context.data.icon) {
 								marker.setZIndex(999);
@@ -447,14 +541,40 @@
 
 			$el.gmap3(mapOptions);
 
-			var markers = [];
+			var markers = [],
+				overlays = [];
 			$.each(config.location.markers, function (index, value) {
 				value.options.visible = config.zoom <= value.options.minZoom;
 				markers.push(value);
+
+				overlay = {
+					address : value.address,
+					options : {
+						content : '<div class="marker_label">' + value.data + '</div>',
+						offset  : {
+							y : 5,
+							x : 0
+						},
+						pane : 'overlayShadow'
+					}
+				};
+
+				if (value.events && value.events.click) {
+					overlay.events =
+					{
+						click : function (marker) {
+							var map = $(this).gmap3("get");
+							map.setCenter(marker.getPosition());
+							map.setZoom(14);
+						}
+					};
+				}
+
+				overlays.push(overlay);
 			});
 
 			$el.gmap3({
-				marker : {
+				marker  : {
 					values : markers,
 					events : {
 						mouseover : function (marker, event, context) {
@@ -470,9 +590,14 @@
 							}
 						},
 						click     : function (marker, event, context) {
-							window.open(context.data.listing.parkwhiz_url);
+							if (context.data.listing) {
+								window.open(context.data.listing.parkwhiz_url);
+							}
 						}
 					}
+				},
+				overlay : {
+					values : overlays
 				}
 			});
 		};
