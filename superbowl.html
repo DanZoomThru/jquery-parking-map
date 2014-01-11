@@ -11,10 +11,10 @@
 	<link rel="stylesheet" type="text/css" href="timepicker/jquery.timepicker.css">
 	<link rel="stylesheet" type="text/css" href="timepicker/lib/base.css">
 
-	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+	<script src="//maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
 	<script type="text/javascript" src="contrib/gmap3.min.js"></script>
-	<script type="text/javascript" src="jquery.parkingmap.js"></script>
 	<script type="text/javascript" src="utils.js"></script>
+	<script type="text/javascript" src="jquery.parkingmap.js"></script>
 	<script type="text/javascript" src="timepicker/jquery.timepicker.js"></script>
 	<script type="text/javascript" src="timepicker/lib/base.js"></script>
 	<script type="text/javascript" src="timepicker/lib/datepair.js"></script>
@@ -24,155 +24,187 @@
 <body>
 
 <script type="text/javascript">
-$(document).ready(function () {
-	/*
-	 * locations type:
-	 * 1. address - default
-	 * 2. latlng
-	 * 3. venue
-	 * 4. event
-	 */
+	$(document).ready(function () {
+		/*
+		 * locations type:
+		 * 1. address - default
+		 * 2. latlng
+		 * 3. venue
+		 * 4. event
+		 */
 
-	var map = new $.parkingMap($("#parkwhiz-widget-container"), {
-		parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
-		location           : {
-			//destination: "1500 Sugar Bowl Drive, New Orleans, Louisiana, United States"
-			//destination: "mercedes-benz-superdome-parking"
-			/* Alternatively you could provide 'lat' and 'lng' values */
-			lat   : 40.759,
-			lng   : -74.068,
-			venue : [
-				'essex-street-hackensack-parking',
-				'walnut-st-station-parking',
-				'secaucus-junction-parking',
-				'newark-penn-station-parking',
-				'newark-airport-parking',
-				'journal-square-station-parking',
-				'grove-street-station-parking',
-				'essex-street-parking',
-				'exchange-place-station-parking',
-				'harborside-financial-center-parking',
-				'newport-station-parking',
-				'hoboken-station-parking',
-				'2nd-street-station-parking',
-				'9th-st-congress-st-station-parking',
-				'lincoln-harbor-hblr-station-parking',
-				'penn-station-parking',
-				'search?destination=6th+Ave+%26+Minetta+Ln',
-				'search?destination=Battery+Place%2C+New+York%2C+NY',
-				'time-warner-center-parking',
-				'madison-square-park-parking',
-				'grand-central-terminal-parking',
-				'waldorf-astoria-new-york-parking',
-				'newark-airport-parking'
-			],
+		var map = new $.parkingMap($("#parkwhiz-widget-container"), {
+			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
+			location           : {
+				//destination: "1500 Sugar Bowl Drive, New Orleans, Louisiana, United States"
+				//destination: "mercedes-benz-superdome-parking"
+				/* Alternatively you could provide 'lat' and 'lng' values */
+				lat   : 40.759,
+				lng   : -74.068,
+				start : 1391365800,
+				end   : 1391401800,
+				venue : [
+					'essex-street-hackensack-parking',
+					'walnut-st-station-parking',
+					'metlife-stadium-parking/super-bowl-xlviii-166471',
+					'secaucus-junction-parking',
+					'newark-penn-station-parking',
+					'newark-airport-parking',
+					'journal-square-station-parking',
+					'grove-street-station-parking',
+					'essex-street-parking',
+					'exchange-place-station-parking',
+					'harborside-financial-center-parking',
+					'newport-station-parking',
+					'hoboken-station-parking',
+					'2nd-street-station-parking',
+					'9th-st-congress-st-station-parking',
+					'lincoln-harbor-hblr-station-parking',
+					'penn-station-parking',
+					'search?destination=6th+Ave+%26+Minetta+Ln',
+					'search?destination=Battery+Place%2C+New+York%2C+NY',
+					'time-warner-center-parking',
+					'madison-square-park-parking',
+					'grand-central-terminal-parking',
+					'waldorf-astoria-new-york-parking',
+					'newark-airport-parking'
+				],
 
-			markers : [
-				{
-					address : "Secaucus Junction, New Jersey",
-					data    : "Secaucus Junction",
-					options : {
-						icon    : "images/Station_icon.png",
-						minZoom : 13
+				markers : [
+					{
+						address : "Secaucus Junction, New Jersey",
+						data    : "Secaucus Junction<br/><span>Click here to find parking</span>",
+						options : {
+							icon    : "images/Station_icon.png",
+							minZoom : 13
+						},
+						events  : {
+							click : function (marker) {
+								var map = $(this).gmap3("get");
+								map.setCenter(marker.position);
+								map.setZoom(14);
+							}
+						}
 					},
-					events  : {
-						click     : function (marker) {
-							var map = $(this).gmap3("get");
-							map.setCenter(marker.position);
-							map.setZoom(14);
+					{
+						address : "Signature Flight Support, Newark, New Jersey",
+						data    : "Newark Liberty International Airport<br/><span>Click here to find parking</span>",
+						options : {
+							icon    : "images/Airport_icon.png",
+							minZoom : 13
+						},
+						events  : {
+							click : function (marker) {
+								var map = $(this).gmap3("get");
+								map.setCenter(marker.position);
+								map.setZoom(14);
+							}
+						}
+					},
+					{
+						address : "Newark Penn Station, New Jersey",
+						data    : "Newark Penn Station, NJ<br/><span>Click here to find parking</span>",
+						options : {
+							icon    : "images/Station_icon.png",
+							minZoom : 13
+						},
+						events  : {
+							click : function (marker) {
+								var map = $(this).gmap3("get");
+								map.setCenter(marker.position);
+								map.setZoom(14);
+							}
+						}
+					},
+					{
+						address : "New York Penn Station, New York",
+						data    : "New York Penn Station, NY<br/><span>Click here to find parking</span>",
+						options : {
+							icon    : "images/Station_icon.png",
+							minZoom : 13
+						},
+						events  : {
+							click : function (marker) {
+								var map = $(this).gmap3("get");
+								map.setCenter(marker.position);
+								map.setZoom(14);
+							}
+						}
+					},
+					{
+						address : "World Trade Center, New York",
+						data    : "World Trade Center<br/><span>Click here to find parking</span>",
+						options : {
+							icon    : "images/WorldTradeCenter_icon.png",
+							minZoom : 13
+						},
+						events  : {
+							click : function (marker) {
+								var map = $(this).gmap3("get");
+								map.setCenter(marker.position);
+								map.setZoom(14);
+							}
+						}
+					},
+					{
+						address : "Hoboken, New Jersey",
+						data    : "Hoboken, NJ<br/><span>Click here to find parking</span>",
+						options : {
+							icon    : "images/Hoboken_icon.png",
+							minZoom : 13
+						},
+						events  : {
+							click : function (marker) {
+								var map = $(this).gmap3("get");
+								map.setCenter(marker.position);
+								map.setZoom(14);
+							}
+						}
+					},
+					{
+						address : "MetLife Stadium, New Jersey",
+						data    : "MetLife Stadium, NJ",
+						options : {
+							icon    : "images/MetLifeStadium_icon.png",
+							minZoom : 13
 						}
 					}
-				},
-				{
-					address : "Newark Penn Station, New Jersey",
-					data    : "Newark Penn Station, NJ",
-					options : {
-						icon    : "images/Station_icon.png",
-						minZoom : 13
+				]
+			},
+			groundoverlay      : {
+				options : {
+					url    : "images/map-overlay.png",
+					bounds : {
+						ne : {lat : 40.83257791770014, lng : -73.9942094291992},
+						sw : {lat : 40.71167670481814, lng : -74.17582716601561}
 					},
-					events  : {
-						click     : function (marker) {
-							var map = $(this).gmap3("get");
-							map.setCenter(marker.position);
-							map.setZoom(14);
-						}
-					}
-				},
-				{
-					address : "New York Penn Station, New York",
-					data    : "New York Penn Station, NY",
-					options : {
-						icon    : "images/Station_icon.png",
-						minZoom : 13
-					},
-					events  : {
-						click     : function (marker) {
-							var map = $(this).gmap3("get");
-							map.setCenter(marker.position);
-							map.setZoom(14);
-						}
-					}
-				},
-				{
-					address : "World Trade Center, New York",
-					data    : "World Trade Center",
-					options : {
-						icon    : "images/WorldTradeCenter_icon.png",
-						minZoom : 13
-					},
-					events  : {
-						click     : function (marker) {
-							var map = $(this).gmap3("get");
-							map.setCenter(marker.position);
-							map.setZoom(14);
-						}
-					}
-				},
-				{
-					address : "Hoboken, New Jersey",
-					data    : "Hoboken, NJ",
-					options : {
-						icon    : "images/Hoboken_icon.png",
-						minZoom : 13
-					},
-					events  : {
-						click     : function (marker) {
-							var map = $(this).gmap3("get");
-							map.setCenter(marker.position);
-							map.setZoom(14);
-						}
-					}
-				},
-				{
-					address : "MetLife Stadium, New Jersey",
-					data    : "MetLife Stadium, NJ",
-					options : {
-						icon    : "images/MetLifeStadium_icon.png",
-						minZoom : 13
+					opts   : {
+						opacity   : 1.0,
+						maxZoom   : 12,
+						clickable : false
 					}
 				}
-			]
-		},
-		defaultTime        : {
-			//start: 1485294400,
-			//end: 1485296200,
-			hours : 3
-		},
-		zoom               : 12,
-		//additionalMarkers: "http://maps.google.com/mapfiles/marker_green.png",
-		width              : '100%',
+			},
+			defaultTime        : {
+				//start: 1485294400,
+				//end: 1485296200,
+				hours : 3
+			},
+			zoom               : 12,
+			//additionalMarkers: "http://maps.google.com/mapfiles/marker_green.png",
+			width              : '100%',
 //			event: 'philadelphia-eagles-at-dallas-cowboys-122312',
-		showChosenEvent    : true,
-		showEventList      : true,
-		height             : '525px',
-		loadFirstEvent     : false,
-		showLocationMarker : false,
-		showPrice          : true,
-		modules            : ['map'],
-		listingMaxZoom     : 14
+			showChosenEvent    : true,
+			showEventList      : true,
+			height             : '525px',
+			loadFirstEvent     : false,
+			showLocationMarker : false,
+			showPrice          : true,
+			modules            : ['map'],
+			listingMaxZoom     : 14
+		});
+		map.createMap();
 	});
-	map.createMap();
-});
 </script>
 
 <div id="parkwhiz-widget-container">

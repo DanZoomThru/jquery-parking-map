@@ -58,6 +58,7 @@
 		var config = $.extend({}, defaultConfig, options);
 
 		var venues = [];
+		var overlays = [];
 
 		var venue_listings = [];
 
@@ -245,10 +246,15 @@
 		plugin.venueSearch = function (venue_url, mapOptions) {
 			var searchOptions = {};
 			searchOptions.key = this.settings.parkwhizKey;
-			$.ajax('http://api.parkwhiz.com/' + venue_url + '/', {
+			if (this.settings.location.start && this.settings.location.end) {
+				searchOptions.start = this.settings.location.start;
+				searchOptions.end = this.settings.location.end;
+			}
+			$.ajax('//api.parkwhiz.com/' + venue_url + '/', {
 				dataType : 'jsonp',
 				data     : searchOptions,
 				success  : function (searchResults) {
+					console.log(searchResults);
 					venues.push(venue_url);
 					if (!(config.location.lat && config.location.lng)) {
 						config.location.lat = searchResults.lat;
@@ -275,21 +281,11 @@
 						});
 					});
 
-					plugin.$el.gmap3({
-						groundoverlay : {
-							options : {
-								url    : "/images/map-overlay.png",
-								bounds : {
-									ne : {lat : 40.830369869674016, lng : -73.98822810309599},
-									sw : {lat : 40.71518984047778, lng : -74.16400935309599}
-								},
-								opts   : {
-									opacity : 1.0,
-									maxZoom : 12
-								}
-							}
-						}
-					});
+					if (config.groundoverlay) {
+						plugin.$el.gmap3({
+							groundoverlay : config.groundoverlay
+						});
+					}
 					if (!config.event) {
 //						plugin.listingsForTimePlace();
 					}
@@ -340,6 +336,25 @@
 									}
 								}
 							});
+
+							plugin.$el.gmap3({
+								exec : {
+									name : "overlay",
+									all  : "true",
+									func : function (data) {
+
+										var $overlay = $(data.object.getDOMElement().innerHTML);
+										if ($overlay.hasClass('clickable_label')) {
+											if (zoomLevel == 14) {
+												data.object.hide();
+											} else {
+												data.object.show();
+											}
+										}
+									}
+								}
+							});
+
 							plugin.$el.gmap3({
 								exec : {
 									name : "groundoverlay",
@@ -467,6 +482,16 @@
 		};
 
 		var _putListingsOnMap = function (listings) {
+/*			var min = _.min(listings, function(listing) { return listing.price; });
+			var max = _.max(listings, function(listing) { return listing.price; });
+			var asset_ids = _.pluck(listings, 'location_id');
+			console.log("min price: " + min.price);
+			console.log(min);
+			console.log("max price: " + max.price);
+			console.log(max);
+			console.log("asset ids: " + asset_ids.join(','));
+			console.log(asset_ids);*/
+
 
 			var $el = plugin.$el;
 			var map = $el.gmap3('get');
@@ -510,7 +535,7 @@
 							}
 						},
 						click     : function (marker, event, context) {
-							window.open(context.data.listing.parkwhiz_url);
+							window.open(context.data.listing.parkwhiz_url + '&event=166471');
 						}
 					}
 				}
@@ -541,8 +566,8 @@
 
 			$el.gmap3(mapOptions);
 
-			var markers = [],
-				overlays = [];
+			var markers = [];
+			overlays = [];
 			$.each(config.location.markers, function (index, value) {
 				value.options.visible = config.zoom <= value.options.minZoom;
 				markers.push(value);
@@ -550,12 +575,26 @@
 				overlay = {
 					address : value.address,
 					options : {
-						content : '<div class="marker_label">' + value.data + '</div>',
+						content : '<div class="marker_label static_label">' + value.data + '</div>',
 						offset  : {
 							y : 5,
 							x : 0
 						},
-						pane : 'overlayShadow'
+						pane    : "overlayLayer"
+					}
+				};
+
+				overlays.push(overlay);
+
+				overlay = {
+					address : value.address,
+					options : {
+						content : '<div class="marker_label clickable_label">' + value.data + '</div>',
+						offset  : {
+							y : 5,
+							x : 0
+						},
+						pane    : "floatPane"
 					}
 				};
 
@@ -591,7 +630,7 @@
 						},
 						click     : function (marker, event, context) {
 							if (context.data.listing) {
-								window.open(context.data.listing.parkwhiz_url);
+								window.open(context.data.listing.parkwhiz_url + '&event=166471');
 							}
 						}
 					}
@@ -637,7 +676,7 @@
 				searchOptions.lng = config.location.lng;
 			}
 
-			$.ajax('http://api.parkwhiz.com/search/', {
+			$.ajax('//api.parkwhiz.com/search/', {
 				dataType : 'jsonp',
 				data     : searchOptions,
 				success  : function (searchResults) {
@@ -651,7 +690,7 @@
 		};
 
 		var _venueListings = function (venue, searchOptions) {
-			$.ajax('http://api.parkwhiz.com/' + venue + '/', {
+			$.ajax('//api.parkwhiz.com/' + venue + '/', {
 				dataType : 'jsonp',
 				data     : searchOptions,
 				success  : function (searchResults) {
@@ -662,7 +701,7 @@
 					if (searchResults.num_events) {
 						_setEvents(searchResults.events, 'events');
 					}
-					$.ajax('http://api.parkwhiz.com/search/', {
+					$.ajax('//api.parkwhiz.com/search/', {
 						dataType : 'jsonp',
 						data     : searchOptions,
 						success  : function (searchResults) {
@@ -702,7 +741,7 @@
 
 			searchOptions.key = this.settings.parkwhizKey;
 
-			$.ajax('http://api.parkwhiz.com/' + opts.url + '/', {
+			$.ajax('//api.parkwhiz.com/' + opts.url + '/', {
 				dataType : 'jsonp',
 				data     : searchOptions,
 				success  : function (searchResults) {

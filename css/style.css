@@ -237,6 +237,9 @@ ul.parking li.active a {
 	left: -50%;
 
 	z-index: 10;
+	text-align: center;
+
+	cursor: pointer;
 
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -244,4 +247,13 @@ ul.parking li.active a {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+.marker_label span {
+	color: #00f;
+	text-decoration: underline;
+}
+
+.static_label span {
+	display: none;
 }
