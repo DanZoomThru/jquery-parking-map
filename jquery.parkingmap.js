@@ -24,14 +24,13 @@
 (function ($) {
 	$.parkingMap = function ($cnt, options) {
 
-		var firstEvent = {};
 		var defaultConfig = {
 			additionalMarkers  : false,
 			showEventList      : true,
 			showLocationMarker : true,
 			loadFirstEvent     : false,
 			showPrice          : true,
-			event              : null,
+			event              : [],
 			width              : '600px',
 			height             : '400px',
 			showChosenEvent    : false,
@@ -41,26 +40,46 @@
 				end   : Math.round((new Date()).getTime() / 1000) + 10800, // + 3 hrs
 				hours : 3
 			},
-			zoom               : 14,
-			minZoom            : 12,
-			maxZoom            : 16,
+			center             : {
+				destination : '208 S. Jefferson St., Chicago, IL'
+			},
 			location           : {
-				lat     : 41.878598,
-				lng     : -87.638836,
-				markers : []
+				markers     : [],
+				destination : [],
+				venue       : []
 			},
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
-			overlays           : []
+			overlays           : [],
+			styles             : [],
+			mapOptions         : {
+				zoom : 14
+			}
 		};
 
 		var $el = $cnt;
 
 		var config = $.extend({}, defaultConfig, options);
+		config.defaultTime = $.extend({}, defaultConfig.defaultTime, options.defaultTime);
+		config.location = $.extend({}, defaultConfig.location, options.location);
+		config.mapOptions = $.extend({}, defaultConfig.mapOptions, options.mapOptions);
+		var fix = new Date();
+		var fixTimeZone = (fix.getTimezoneOffset() - 300) * -60;
 
-		var venues = [];
-		var overlays = [];
+		if(config.defaultTime.start) {
+			config.defaultTime.start += fixTimeZone;
+		}
 
-		var venue_listings = [];
+		if(config.defaultTime.end) {
+			config.defaultTime.end += fixTimeZone;
+		}
+
+//		var venues = [];
+//		var overlays = [];
+
+//		var venue_listings = [];
+
+		var listings = [],
+			locations = [];
 
 		var module_template = {
 			'map'               : $('<div class="parking-map-widget-container"></div>'),
@@ -175,6 +194,8 @@
 				end.setMinutes(0);
 			}
 
+			plugin.searchOptions();
+
 			$('.start.time').val(start.format('g:ia'));
 			$('.end.time').val(end.format('g:ia'));
 			$('.start.date').val(start.format('n/j/Y'));
@@ -237,13 +258,13 @@
 				var searchOptions = {};
 				searchOptions.start = myStart + fixTimeZone; //  + 18000 - plus 5 hours
 				searchOptions.end = myEnd + fixTimeZone; // + 18000 - plus 5 hours
-//				plugin.listingsForTimePlace(searchOptions);
+				this.searchOptions();
 
 				return $(this);
 			});
 		};
 
-		plugin.venueSearch = function (venue_url, mapOptions) {
+		/*plugin.venueSearch = function (venue_url, mapOptions) {
 			var searchOptions = {};
 			searchOptions.key = this.settings.parkwhizKey;
 			if (this.settings.location.start && this.settings.location.end) {
@@ -254,7 +275,6 @@
 				dataType : 'jsonp',
 				data     : searchOptions,
 				success  : function (searchResults) {
-					console.log(searchResults);
 					venues.push(venue_url);
 					if (!(config.location.lat && config.location.lng)) {
 						config.location.lat = searchResults.lat;
@@ -374,6 +394,78 @@
 					alert(err1 + " " + err2);
 				}
 			});
+		};*/
+
+		plugin._getListings = function (callback) {
+			var venues = config.location.venue,
+				events = config.event,
+				destinations = config.location.destination,
+				listingOptions = searchOptions;
+
+			if (!$.isArray(venues)) {
+				venues = [venues];
+			}
+
+			if (!$.isArray(events)) {
+				events = [events];
+			}
+
+			if (!$.isArray(destinations)) {
+				destinations = [destinations];
+			}
+
+
+
+			var search = [];
+
+			$.each(venues.concat(events), function(index, value) {
+				search.push({
+					uri : value,
+					options : listingOptions
+				})
+			});
+			var destinationOptions;
+			$.each(destinations, function (index, value) {
+				destinationOptions = listingOptions;
+				if ($.isPlainObject(value)) {
+					if (value.lat && value.lng) {
+						destinationOptions.lat = value.lat;
+						destinationOptions.lng = value.lng;
+					} else if (value.destination) {
+						destinationOptions.destination = value.destination;
+					}
+				} else {
+					destinationOptions.destination = value;
+				}
+				search.push({
+					uri: 'search',
+					options: destinationOptions
+				})
+			});
+
+			if (search.length === 0) {
+				$.each(config.center, function (index, value) {
+					listingOptions[index] = value;
+				});
+				search.push({
+					uri: 'search',
+					options: listingOptions
+				});
+			}
+
+			$.each(search, function (index, value) {
+				$.ajax('//api.parkwhiz.com/' + value.uri, {
+					dataType : 'jsonp',
+					data     : value.options,
+					success  : function (searchResults) {
+						locations.push(searchResults);
+						listings = listings.concat(searchResults.parking_listings);
+						if (locations.length === search.length) {
+							callback();
+						}
+					}
+				});
+			});
 		};
 
 		plugin.createMap = function () {
@@ -381,88 +473,16 @@
 			this.$el.height(config.height);
 
 			var mapOptions = {
-				options : {
-					zoom                   : config.zoom,
-					minZoom                : config.minZoom,
-					maxZoom                : config.maxZoom,
-					streetViewControl      : false,
-					panControl             : false,
-					zoomControl            : false,
-					mapTypeControl         : false,
-					disableDoubleClickZoom : true,
-					scrollwheel            : false,
-					mapTypeId              : google.maps.MapTypeId.ROADMAP,
-					mapTypeControlOptions  : {
-						mapTypeIds : [google.maps.MapTypeId.ROADMAP]
-					},
-					styles                 : [
-						{
-							featureType : "road",
-							stylers     : [
-								{
-									visibility : "simplified"
-								}
-							]
-						},
-						{
-							featureType : "water",
-							stylers     : [
-								{
-									visibility : "simplified"
-								}
-							]
-						},
-						{
-							featureType : "poi",
-							stylers     : [
-								{
-									visibility : "off"
-								}
-							]
-						},
-						{
-							stylers : [
-								{
-									saturation : -75
-								}
-							]
-						},
-						{
-							featureType : "road",
-							stylers     : [
-								{
-									lightness  : 37,
-									saturation : -100
-								}
-							]
-						}
-					]
-				}
+				options : config.mapOptions
 			};
 
-			if ($.isArray(config.location.venue)) {
-				$.each(config.location.venue, function (index, venue) {
-					plugin.venueSearch(venue, mapOptions);
-				});
-				return;
-			} else if (config.location.venue) {
-				_putListingsOnMap(plugin.venueSearch(config.location.venue, mapOptions));
-				if (config.event) {
-					var opts = {};
-					opts.url = config.location.venue + '/' + config.event;
-					plugin.getByEvents(opts);
-					return;
-				}
-				return;
-			}
-
 			var markerOptions = {};
-			if (config.location.destination) {
-				mapOptions.address = config.location.destination;
+			if (config.center.destination) {
+				mapOptions.address = config.center.destination;
 				if (config.showLocationMarker) {
 					markerOptions.address = mapOptions.address;
 				}
-			} else if (config.location.lat) {
+			} else if (config.center.lat && config.center.lng) {
 				mapOptions.latLng = [
 					config.location.lat,
 					config.location.lng
@@ -473,28 +493,36 @@
 			}
 
 
-			var map = this.$el.gmap3({
+			this.$el.gmap3({
 				map    : mapOptions,
 				marker : markerOptions
 			});
 
-			plugin.listingsForTimePlace();
+			this._getListings(_putListingsOnMap);
+
+			/*
+			 if ($.isArray(config.location.venue)) {
+			 $.each(config.location.venue, function (index, venue) {
+			 plugin.venueSearch(venue, mapOptions);
+			 });
+			 return;
+			 } else if (config.location.venue) {
+			 _putListingsOnMap(plugin.venueSearch(config.location.venue, mapOptions));
+			 if (config.event) {
+			 var opts = {};
+			 opts.url = config.location.venue + '/' + config.event;
+			 plugin.getByEvents(opts);
+			 return;
+			 }
+			 return;
+			 }
+
+			 plugin.listingsForTimePlace();
+			 */
 		};
 
-		var _putListingsOnMap = function (listings) {
-/*			var min = _.min(listings, function(listing) { return listing.price; });
-			var max = _.max(listings, function(listing) { return listing.price; });
-			var asset_ids = _.pluck(listings, 'location_id');
-			console.log("min price: " + min.price);
-			console.log(min);
-			console.log("max price: " + max.price);
-			console.log(max);
-			console.log("asset ids: " + asset_ids.join(','));
-			console.log(asset_ids);*/
-
-
+		var _putListingsOnMap = function () {
 			var $el = plugin.$el;
-			var map = $el.gmap3('get');
 
 			var values = [];
 
@@ -510,7 +538,7 @@
 						options : {
 							icon    : icon.normal,
 							shadow  : plugin._iconMeta.shadow,
-							visible : config.zoom > config.listingMaxZoom,
+							visible : true,
 							zIndex  : 997
 						},
 						tag     : 'listing'
@@ -535,110 +563,114 @@
 							}
 						},
 						click     : function (marker, event, context) {
-							window.open(context.data.listing.parkwhiz_url + '&event=166471');
+							window.open(context.data.listing.parkwhiz_url);
 						}
 					}
 				}
 			};
 
-			if (config.cluster) {
-				var cluster = {
-					radius  : config.cluster.radius,
-					maxZoom : config.cluster.maxZoom,
-					events  : {
-						mouseover : function (cluster) {
-							$(cluster.main.getDOMElement()).addClass('active');
-						},
-						mouseout  : function (cluster) {
-							$(cluster.main.getDOMElement()).removeClass('active');
-						},
-						click     : function (cluster, event) {
-							map.setCenter(cluster.main.getPosition());
-							map.setZoom(config.cluster.clickZoom);
-						}
-					}
-				};
-				$.each(config.cluster.icons, function (index, value) {
-					cluster[index] = value;
-				});
-				mapOptions.cluster = cluster;
-			}
-
+			/*			if (config.cluster) {
+			 var cluster = {
+			 radius  : config.cluster.radius,
+			 maxZoom : config.cluster.maxZoom,
+			 events  : {
+			 mouseover : function (cluster) {
+			 $(cluster.main.getDOMElement()).addClass('active');
+			 },
+			 mouseout  : function (cluster) {
+			 $(cluster.main.getDOMElement()).removeClass('active');
+			 },
+			 click     : function (cluster) {
+			 map.setCenter(cluster.main.getPosition());
+			 map.setZoom(config.cluster.clickZoom);
+			 }
+			 }
+			 };
+			 $.each(config.cluster.icons, function (index, value) {
+			 cluster[index] = value;
+			 });
+			 mapOptions.cluster = cluster;
+			 }*/
 			$el.gmap3(mapOptions);
 
-			var markers = [];
-			overlays = [];
-			$.each(config.location.markers, function (index, value) {
-				value.options.visible = config.zoom <= value.options.minZoom;
-				markers.push(value);
+			/*			var markers = [];
+			 overlays = [];
+			 $.each(config.location.markers, function (index, value) {
+			 if(value.options) {
+			 if(value.options.minZoom) {
+			 value.options.visible = (config.zoom <= value.options.minZoom);
+			 }
+			 }
 
-				overlay = {
-					address : value.address,
-					options : {
-						content : '<div class="marker_label static_label">' + value.data + '</div>',
-						offset  : {
-							y : 5,
-							x : 0
-						},
-						pane    : "overlayLayer"
-					}
-				};
+			 markers.push(value);
 
-				overlays.push(overlay);
+			 overlay = {
+			 address : value.address,
+			 options : {
+			 content : '<div class="marker_label static_label">' + value.data + '</div>',
+			 offset  : {
+			 y : 5,
+			 x : 0
+			 },
+			 pane    : "overlayLayer"
+			 }
+			 };
 
-				overlay = {
-					address : value.address,
-					options : {
-						content : '<div class="marker_label clickable_label">' + value.data + '</div>',
-						offset  : {
-							y : 5,
-							x : 0
-						},
-						pane    : "floatPane"
-					}
-				};
+			 overlays.push(overlay);
 
-				if (value.events && value.events.click) {
-					overlay.events =
-					{
-						click : function (marker) {
-							var map = $(this).gmap3("get");
-							map.setCenter(marker.getPosition());
-							map.setZoom(14);
-						}
-					};
-				}
+			 overlay = {
+			 address : value.address,
+			 options : {
+			 content : '<div class="marker_label clickable_label">' + value.data + '</div>',
+			 offset  : {
+			 y : 5,
+			 x : 0
+			 },
+			 pane    : "floatPane"
+			 }
+			 };
 
-				overlays.push(overlay);
-			});
+			 if (value.events && value.events.click) {
+			 overlay.events =
+			 {
+			 click : function (marker) {
+			 var map = $(this).gmap3("get");
+			 map.setCenter(marker.getPosition());
+			 map.setZoom(14);
+			 }
+			 };
+			 }
 
-			$el.gmap3({
-				marker  : {
-					values : markers,
-					events : {
-						mouseover : function (marker, event, context) {
-							if (context.data.icon) {
-								marker.setZIndex(999);
-								marker.setIcon(context.data.icon.active);
-							}
-						},
-						mouseout  : function (marker, event, context) {
-							if (context.data.icon) {
-								marker.setZIndex(998);
-								marker.setIcon(context.data.icon.normal);
-							}
-						},
-						click     : function (marker, event, context) {
-							if (context.data.listing) {
-								window.open(context.data.listing.parkwhiz_url + '&event=166471');
-							}
-						}
-					}
-				},
-				overlay : {
-					values : overlays
-				}
-			});
+			 overlays.push(overlay);
+			 });
+
+			 $el.gmap3({
+			 marker  : {
+			 values : markers,
+			 events : {
+			 mouseover : function (marker, event, context) {
+			 if (context.data.icon) {
+			 marker.setZIndex(999);
+			 marker.setIcon(context.data.icon.active);
+			 }
+			 },
+			 mouseout  : function (marker, event, context) {
+			 if (context.data.icon) {
+			 marker.setZIndex(998);
+			 marker.setIcon(context.data.icon.normal);
+			 }
+			 },
+			 click     : function (marker, event, context) {
+			 if (context.data.listing) {
+			 window.open(context.data.listing.parkwhiz_url + '&event=166471');
+			 }
+			 }
+			 }
+			 },
+			 overlay : {
+			 values : overlays
+			 }
+			 });*/
 		};
 
 		/*
@@ -646,7 +678,23 @@
 		 * Options are any of those available to the 'search' endpoint of the ParkWhiz API:
 		 * https://www.parkwhiz.com/developers/search/
 		 */
-		plugin.listingsForTimePlace = function (searchOptions) {
+		/*		plugin.listingsForTimePlace = function (searchOptions) {
+		 this.searchOptions();
+
+		 $.ajax('//api.parkwhiz.com/search/', {
+		 dataType : 'jsonp',
+		 data     : searchOptions,
+		 success  : function (searchResults) {
+		 _setLocations(searchResults.parking_listings, 'location-place');
+		 _putListingsOnMap(searchResults.parking_listings);
+		 },
+		 error    : function (xhr, err1, err2) {
+		 alert(err1 + " " + err2);
+		 }
+		 });
+		 };*/
+
+		plugin.searchOptions = function () {
 			if (typeof searchOptions == "undefined") {
 				searchOptions = {};
 			}
@@ -654,11 +702,11 @@
 			searchOptions.key = this.settings.parkwhizKey;
 
 			if (( config.location.destination || config.location.lat ) && ( !searchOptions.start && config.defaultTime.start )) {
-				searchOptions.start = config.defaultTime.start;
+				searchOptions.start = 1800*Math.round(config.defaultTime.start/1800);
 			}
 
 			if (( config.location.destination || config.location.lat ) && ( !searchOptions.end && config.defaultTime.end )) {
-				searchOptions.end = config.defaultTime.end;
+				searchOptions.end = 1800*Math.round(config.defaultTime.end/1800);
 			}
 
 			if (!searchOptions.start && !config.location.venue) {
@@ -668,145 +716,126 @@
 			if (!searchOptions.end && !config.location.venue) {
 				searchOptions.end = searchOptions.start + config.defaultTime.hours * 60 * 60; // 3 hrs
 			}
-
-			if (config.location.destination) {
-				searchOptions.destination = config.location.destination;
-			} else if (config.location.lat) {
-				searchOptions.lat = config.location.lat;
-				searchOptions.lng = config.location.lng;
-			}
-
-			$.ajax('//api.parkwhiz.com/search/', {
-				dataType : 'jsonp',
-				data     : searchOptions,
-				success  : function (searchResults) {
-					_setLocations(searchResults.parking_listings, 'location-place');
-					_putListingsOnMap(searchResults.parking_listings);
-				},
-				error    : function (xhr, err1, err2) {
-					alert(err1 + " " + err2);
-				}
-			});
-		};
-
-		var _venueListings = function (venue, searchOptions) {
-			$.ajax('//api.parkwhiz.com/' + venue + '/', {
-				dataType : 'jsonp',
-				data     : searchOptions,
-				success  : function (searchResults) {
-
-					searchOptions.lat = searchResults.lat;
-					searchOptions.lng = searchResults.lng;
-					searchOptions.start = searchResults.start;
-					if (searchResults.num_events) {
-						_setEvents(searchResults.events, 'events');
-					}
-					$.ajax('//api.parkwhiz.com/search/', {
-						dataType : 'jsonp',
-						data     : searchOptions,
-						success  : function (searchResults) {
-							_setLocations(searchResults.parking_listings, 'location-place');
-							_putListingsOnMap(searchResults.parking_listings);
-						},
-						error    : function (xhr, err1, err2) {
-							alert(err1 + " " + err2);
-						}
-					});
-
-				},
-				error    : function (xhr, err1, err2) {
-					alert(err1 + " " + err2);
-				}
-			});
 		}
 
-		var _setLocations = function (locations, place) {
-			var html = '';
-			$.each(locations, function () {
-				html += '<li><a target="_blank" href="' + this.parkwhiz_url + '">' + this.address + '</a></li>';
-			});
-			$('.' + place).html(html);
-		};
+		/*		var _venueListings = function (venue, searchOptions) {
+		 $.ajax('//api.parkwhiz.com/' + venue + '/', {
+		 dataType : 'jsonp',
+		 data     : searchOptions,
+		 success  : function (searchResults) {
 
-		var _setVenue = function (locations, place) {
-			var html = '';
-			$.each(locations, function () {
-				html += '<li><a target="_blank" href="#">' + this.name + '</a></li>';
-			});
-			$('.' + place).html(html);
-		};
+		 searchOptions.lat = searchResults.lat;
+		 searchOptions.lng = searchResults.lng;
+		 searchOptions.start = searchResults.start;
+		 if (searchResults.num_events) {
+		 _setEvents(searchResults.events, 'events');
+		 }
+		 $.ajax('//api.parkwhiz.com/search/', {
+		 dataType : 'jsonp',
+		 data     : searchOptions,
+		 success  : function (searchResults) {
+		 _setLocations(searchResults.parking_listings, 'location-place');
+		 _putListingsOnMap(searchResults.parking_listings);
+		 },
+		 error    : function (xhr, err1, err2) {
+		 alert(err1 + " " + err2);
+		 }
+		 });
 
-		plugin.getByEvents = function (opts) {
-			var searchOptions = {};
+		 },
+		 error    : function (xhr, err1, err2) {
+		 alert(err1 + " " + err2);
+		 }
+		 });
+		 }
 
-			searchOptions.key = this.settings.parkwhizKey;
+		 var _setLocations = function (locations, place) {
+		 var html = '';
+		 $.each(locations, function () {
+		 html += '<li><a target="_blank" href="' + this.parkwhiz_url + '">' + this.address + '</a></li>';
+		 });
+		 $('.' + place).html(html);
+		 };
 
-			$.ajax('//api.parkwhiz.com/' + opts.url + '/', {
-				dataType : 'jsonp',
-				data     : searchOptions,
-				success  : function (searchResults) {
+		 var _setVenue = function (locations, place) {
+		 var html = '';
+		 $.each(locations, function () {
+		 html += '<li><a target="_blank" href="#">' + this.name + '</a></li>';
+		 });
+		 $('.' + place).html(html);
+		 };
 
-					config.showPrice = true;
-					plugin._iconMeta.size = new google.maps.Size(38, 33);
-					_setLocations(searchResults.parking_listings, 'location-place');
-					_putListingsOnMap(searchResults.parking_listings);
-					if (config.showChosenEvent === true && config.location.venue) {
-						$('.pfs').each(function () {
-							$(this).remove();
-						});
-						$('.map-button').hide();
-						$('.for-event').html(searchResults.event_name);
-					}
-				},
-				error    : function (xhr, err1, err2) {
-					alert(err1 + " " + err2);
-				}
-			});
+		 plugin.getByEvents = function (opts) {
+		 var searchOptions = {};
 
-		};
+		 searchOptions.key = this.settings.parkwhizKey;
 
-		var _setEvents = function (locations, place) {
-			var html = '';
-			var i = 0;
-			$.each(locations, function () {
-				i++;
-				if (i === 1) {
-					firstEvent.start = this.start;
-					firstEvent.end = this.end;
-					firstEvent.url = this.api_url;
-					firstEvent.showPrice = true;
-				}
-				html += '<li data-api-url="' + this.api_url + '" data-end="' + this.end + '" data-start="' + this.start + '" class="event-item">' + this.event_name + '</li>';
-			});
+		 $.ajax('//api.parkwhiz.com/' + opts.url + '/', {
+		 dataType : 'jsonp',
+		 data     : searchOptions,
+		 success  : function (searchResults) {
 
-			if (config.showEventList === true) {
-				$('.' + place).html(html);
-			}
+		 config.showPrice = true;
+		 plugin._iconMeta.size = new google.maps.Size(38, 33);
+		 _setLocations(searchResults.parking_listings, 'location-place');
+		 _putListingsOnMap(searchResults.parking_listings);
+		 if (config.showChosenEvent === true && config.location.venue) {
+		 $('.pfs').each(function () {
+		 $(this).remove();
+		 });
+		 $('.map-button').hide();
+		 $('.for-event').html(searchResults.event_name);
+		 }
+		 },
+		 error    : function (xhr, err1, err2) {
+		 alert(err1 + " " + err2);
+		 }
+		 });
 
-			if (config.loadFirstEvent === true) {
-				_clearMap();
-				$('.pfs').each(function () {
-					$(this).remove();
-				});
-				plugin.getByEvents(firstEvent);
-			}
+		 };
 
-			$('.event-item').click(function () {
-				var $this = $(this);
-				$('.event-item').removeClass('active');
-				$this.addClass('active');
+		 var _setEvents = function (locations, place) {
+		 var html = '';
+		 var i = 0;
+		 $.each(locations, function () {
+		 i++;
+		 if (i === 1) {
+		 firstEvent.start = this.start;
+		 firstEvent.end = this.end;
+		 firstEvent.url = this.api_url;
+		 firstEvent.showPrice = true;
+		 }
+		 html += '<li data-api-url="' + this.api_url + '" data-end="' + this.end + '" data-start="' + this.start + '" class="event-item">' + this.event_name + '</li>';
+		 });
 
-				_clearMap();
+		 if (config.showEventList === true) {
+		 $('.' + place).html(html);
+		 }
 
-				opts = {};
-				opts.start = $this.data('start');
-				opts.end = $this.data('end');
-				opts.showPrice = true;
-				opts.url = $this.data('api-url');
+		 if (config.loadFirstEvent === true) {
+		 _clearMap();
+		 $('.pfs').each(function () {
+		 $(this).remove();
+		 });
+		 plugin.getByEvents(firstEvent);
+		 }
 
-				plugin.getByEvents(opts);
-			});
-		};
+		 $('.event-item').click(function () {
+		 var $this = $(this);
+		 $('.event-item').removeClass('active');
+		 $this.addClass('active');
+
+		 _clearMap();
+
+		 opts = {};
+		 opts.start = $this.data('start');
+		 opts.end = $this.data('end');
+		 opts.showPrice = true;
+		 opts.url = $this.data('api-url');
+
+		 plugin.getByEvents(opts);
+		 });
+		 };*/
 
 		var _spriteCoordinates = function (icon, color) {
 			if (icon == 'p') {
