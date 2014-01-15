@@ -34,7 +34,7 @@
 			width              : '600px',
 			height             : '400px',
 			showChosenEvent    : false,
-			modules            : ['map', 'time_picker', 'parking_locations'],
+			modules            : ['map', 'time_picker'],
 			defaultTime        : {
 				start : Math.round((new Date()).getTime() / 1000),
 				end   : Math.round((new Date()).getTime() / 1000) + 10800, // + 3 hrs
@@ -44,7 +44,6 @@
 				destination : '208 S. Jefferson St., Chicago, IL'
 			},
 			location           : {
-				markers     : [],
 				destination : [],
 				venue       : []
 			},
