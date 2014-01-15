@@ -200,3 +200,7 @@ ul.parking li.active a {
 	color: #0f5ebc;
 	border: 2px solid #0f5ebc;
 }
+
+.hide {
+	display: none;
+}

@@ -24,54 +24,56 @@
 (function ($) {
 	$.parkingMap = function ($cnt, options) {
 
-		var firstEvent = {};
 		var defaultConfig = {
 			additionalMarkers  : false,
 			showEventList      : true,
 			showLocationMarker : true,
 			loadFirstEvent     : false,
 			showPrice          : true,
-			event              : null,
+			event              : [],
 			width              : '600px',
 			height             : '400px',
 			showChosenEvent    : false,
-			modules            : ['map', 'time_picker', 'parking_locations'],
+			modules            : ['map', 'time_picker'],
 			defaultTime        : {
 				start : Math.round((new Date()).getTime() / 1000),
 				end   : Math.round((new Date()).getTime() / 1000) + 10800, // + 3 hrs
 				hours : 3
 			},
-			zoom               : 14,
-			minZoom            : 12,
-			maxZoom            : 16,
+			center             : {
+				destination : '208 S. Jefferson St., Chicago, IL'
+			},
 			location           : {
-				lat : 41.878598,
-				lng : -87.638836,
-				markers            : []
+				destination : [],
+				venue       : []
 			},
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
 			overlays           : [],
-			cluster            : {
-				radius    : 75,
-				maxZoom   : 12,
-				clickZoom : 16,
-				icons     : {
-					1 : {
-						content : '<div class="cluster"><strong>CLUSTER_COUNT</strong><br /><span style="font-size:10px;">SPOTS</span></div>',
-						width   : 50,
-						height  : 50
-					}
-				}
+			styles             : [],
+			mapOptions         : {
+				zoom : 14
 			}
 		};
 
 		var $el = $cnt;
 
 		var config = $.extend({}, defaultConfig, options);
+		config.defaultTime = $.extend({}, defaultConfig.defaultTime, options.defaultTime);
+		config.location = $.extend({}, defaultConfig.location, options.location);
+		config.mapOptions = $.extend({}, defaultConfig.mapOptions, options.mapOptions);
+		var fix = new Date();
+		var fixTimeZone = (fix.getTimezoneOffset() - 300) * -60;
 
-		var venues = [];
+		if(config.defaultTime.start) {
+			config.defaultTime.start += fixTimeZone;
+		}
 
-		var venue_listings = [];
+		if(config.defaultTime.end) {
+			config.defaultTime.end += fixTimeZone;
+		}
+
+		var listings = [],
+			locations = [];
 
 		var module_template = {
 			'map'               : $('<div class="parking-map-widget-container"></div>'),
@@ -186,6 +188,8 @@
 				end.setMinutes(0);
 			}
 
+			plugin.searchOptions();
+
 			$('.start.time').val(start.format('g:ia'));
 			$('.end.time').val(end.format('g:ia'));
 			$('.start.date').val(start.format('n/j/Y'));
@@ -196,10 +200,6 @@
 			});
 
 			$('.start, .end').change(function () {
-				// set filters
-				// 1. send request to API
-				// 2. get response
-				// 3. re-build map
 				$('.event-item').removeClass('active');
 
 				var startDate = $('.start.date').val();
@@ -222,8 +222,6 @@
 				var d = startDate.split('/');
 				var myDate = new Date(d[2], parseInt(d[0]) - 1, d[1], parseInt(sHours), sMinutes);
 				var myStart = myDate.getTime() / 1000.0;
-
-				// end time
 
 				hours = Number(endTime.match(/^(\d+)/)[1]);
 				minutes = Number(endTime.match(/:(\d+)/)[1]);
@@ -248,58 +246,81 @@
 				var searchOptions = {};
 				searchOptions.start = myStart + fixTimeZone; //  + 18000 - plus 5 hours
 				searchOptions.end = myEnd + fixTimeZone; // + 18000 - plus 5 hours
-//				plugin.listingsForTimePlace(searchOptions);
+				this.searchOptions();
 
 				return $(this);
 			});
 		};
 
-		plugin.venueSearch = function (venue_url, mapOptions) {
-			var searchOptions = {};
-			searchOptions.key = this.settings.parkwhizKey;
-			$.ajax('http://api.parkwhiz.com/' + venue_url + '/', {
-				dataType : 'jsonp',
-				data     : searchOptions,
-				success  : function (searchResults) {
-					venues.push(venue_url);
-					if (!(config.location.lat && config.location.lng)) {
-						config.location.lat = searchResults.lat;
-						config.location.lng = searchResults.lng;
+		plugin._getListings = function (callback) {
+			var venues = config.location.venue,
+				events = config.event,
+				destinations = config.location.destination,
+				listingOptions = searchOptions;
+
+			if (!$.isArray(venues)) {
+				venues = [venues];
+			}
+
+			if (!$.isArray(events)) {
+				events = [events];
+			}
+
+			if (!$.isArray(destinations)) {
+				destinations = [destinations];
+			}
+
+
+
+			var search = [];
+
+			$.each(venues.concat(events), function(index, value) {
+				search.push({
+					uri : value,
+					options : listingOptions
+				})
+			});
+			var destinationOptions;
+			$.each(destinations, function (index, value) {
+				destinationOptions = listingOptions;
+				if ($.isPlainObject(value)) {
+					if (value.lat && value.lng) {
+						destinationOptions.lat = value.lat;
+						destinationOptions.lng = value.lng;
+					} else if (value.destination) {
+						destinationOptions.destination = value.destination;
 					}
-					var markerOptions = {};
-					if (config.location.lat) {
-						mapOptions.latLng = [
-							config.location.lat,
-							config.location.lng
-						];
-						if (config.showLocationMarker) {
-							markerOptions.latLng = mapOptions.latLng;
+				} else {
+					destinationOptions.destination = value;
+				}
+				search.push({
+					uri: 'search',
+					options: destinationOptions
+				})
+			});
+
+			if (search.length === 0) {
+				$.each(config.center, function (index, value) {
+					listingOptions[index] = value;
+				});
+				search.push({
+					uri: 'search',
+					options: listingOptions
+				});
+			}
+
+			$.each(search, function (index, value) {
+				$.ajax('//api.parkwhiz.com/' + value.uri, {
+					dataType : 'jsonp',
+					data     : value.options,
+					success  : function (searchResults) {
+						locations.push(searchResults);
+						listings = listings.concat(searchResults.parking_listings);
+						if (locations.length === search.length) {
+							callback();
 						}
 					}
-
-					plugin.$el.gmap3({
-						map    : mapOptions,
-						marker : markerOptions
-					});
-					$.each(config.overlays, function (index, overlay) {
-						plugin.$el.gmap3({
-							groundoverlay : overlay
-						});
-					});
-					if (!config.event) {
-//						plugin.listingsForTimePlace();
-					}
-					if (searchResults.parking_listings) {
-						venue_listings = venue_listings.concat(searchResults.parking_listings);
-					}
-
-					if ($.isArray(config.location.venue) && venues.length === config.location.venue.length) {
-						_putListingsOnMap(venue_listings);
-					}
-				},
-				error    : function (xhr, err1, err2) {
-					alert(err1 + " " + err2);
-				}
+				});
 			});
 		};
 
@@ -308,43 +329,16 @@
 			this.$el.height(config.height);
 
 			var mapOptions = {
-				options : {
-					zoom                  : config.zoom,
-					minZoom               : config.minZoom,
-					maxZoom               : config.maxZoom,
-					streetViewControl     : false,
-					panControl            : false,
-					mapTypeControl        : false,
-					mapTypeId             : google.maps.MapTypeId.ROADMAP,
-					mapTypeControlOptions : {
-						mapTypeIds : [google.maps.MapTypeId.ROADMAP]
-					}
-				}
+				options : config.mapOptions
 			};
 
-			if ($.isArray(config.location.venue)) {
-				$.each(config.location.venue, function (index, venue) {
-					plugin.venueSearch(venue, mapOptions);
-				});
-				return;
-			} else if (config.location.venue) {
-				_putListingsOnMap(plugin.venueSearch(config.location.venue, mapOptions));
-				if (config.event) {
-					var opts = {};
-					opts.url = config.location.venue + '/' + config.event;
-					plugin.getByEvents(opts);
-					return;
-				}
-				return;
-			}
-
 			var markerOptions = {};
-			if (config.location.destination) {
-				mapOptions.address = config.location.destination;
+			if (config.center.destination) {
+				mapOptions.address = config.center.destination;
 				if (config.showLocationMarker) {
 					markerOptions.address = mapOptions.address;
 				}
-			} else if (config.location.lat) {
+			} else if (config.center.lat && config.center.lng) {
 				mapOptions.latLng = [
 					config.location.lat,
 					config.location.lng
@@ -360,82 +354,37 @@
 				marker : markerOptions
 			});
 
-			plugin.listingsForTimePlace();
+			this._getListings(_putListingsOnMap);
 		};
 
-		var _putListingsOnMap = function (listings) {
+		var _putListingsOnMap = function () {
 			var $el = plugin.$el;
-			var map = $el.gmap3('get');
 
 			var values = [];
+
 			for (var i = 0; i < listings.length; i++) {
-				var icon = _getIcons(listings[i].price);
-				if (config.additionalMarkers) {
-					icon.normal = config.additionalMarkers;
-				}
-				values[i] = {
-					latLng  : [ listings[i].lat, listings[i].lng ],
-					data    : { listing : listings[i], icon : icon },
-					options : {
-						icon   : icon.normal,
-						shadow : plugin._iconMeta.shadow
+				if (listings[i].price) {
+					var icon = _getIcons(listings[i].price);
+					if (config.additionalMarkers) {
+						icon.normal = config.additionalMarkers;
 					}
-				};
+					values.push({
+						latLng  : [ listings[i].lat, listings[i].lng ],
+						data    : { listing : listings[i], icon : icon },
+						options : {
+							icon    : icon.normal,
+							shadow  : plugin._iconMeta.shadow,
+							visible : true,
+							zIndex  : 997
+						},
+						tag     : 'listing'
+					});
+				}
 			}
 
-			if (config.cluster) {
-				var cluster = {
-					radius  : config.cluster.radius,
-					maxZoom : config.cluster.maxZoom,
-					events  : {
-						mouseover : function (cluster) {
-							$(cluster.main.getDOMElement()).addClass('active');
-						},
-						mouseout  : function (cluster) {
-							$(cluster.main.getDOMElement()).removeClass('active');
-						},
-						click     : function (cluster, event) {
-							map.setCenter(cluster.main.getPosition());
-							map.setZoom(config.cluster.clickZoom);
-						}
-					}
-				};
-				$.each(config.cluster.icons, function (index, value) {
-					cluster[index] = value;
-				});
-			}
-			$el.gmap3({
+			var mapOptions = {
 				marker : {
-					values  : values,
-					events  : {
-						mouseover : function (marker, event, context) {
-							if (context.data.icon) {
-								marker.setZIndex(999);
-								marker.setIcon(context.data.icon.active);
-							}
-						},
-						mouseout  : function (marker, event, context) {
-							if (context.data.icon) {
-								marker.setZIndex(998);
-								marker.setIcon(context.data.icon.normal);
-							}
-						},
-						click     : function (marker, event, context) {
-							window.open(context.data.listing.parkwhiz_url);
-						}
-					},
-					cluster : cluster
-				}
-			});
-
-			var markers = [];
-			$.each(config.location.markers, function (index, value) {
-				markers.push(value);
-			});
-
-			$el.gmap3({
-				marker : {
-					values : markers,
+					values : values,
 					events : {
 						mouseover : function (marker, event, context) {
 							if (context.data.icon) {
@@ -454,15 +403,13 @@
 						}
 					}
 				}
-			});
+			};
+
+			$el.gmap3(mapOptions);
+
 		};
 
-		/*
-		 *
-		 * Options are any of those available to the 'search' endpoint of the ParkWhiz API:
-		 * https://www.parkwhiz.com/developers/search/
-		 */
-		plugin.listingsForTimePlace = function (searchOptions) {
+		plugin.searchOptions = function () {
 			if (typeof searchOptions == "undefined") {
 				searchOptions = {};
 			}
@@ -470,11 +417,11 @@
 			searchOptions.key = this.settings.parkwhizKey;
 
 			if (( config.location.destination || config.location.lat ) && ( !searchOptions.start && config.defaultTime.start )) {
-				searchOptions.start = config.defaultTime.start;
+				searchOptions.start = 1800*Math.round(config.defaultTime.start/1800);
 			}
 
 			if (( config.location.destination || config.location.lat ) && ( !searchOptions.end && config.defaultTime.end )) {
-				searchOptions.end = config.defaultTime.end;
+				searchOptions.end = 1800*Math.round(config.defaultTime.end/1800);
 			}
 
 			if (!searchOptions.start && !config.location.venue) {
@@ -484,144 +431,6 @@
 			if (!searchOptions.end && !config.location.venue) {
 				searchOptions.end = searchOptions.start + config.defaultTime.hours * 60 * 60; // 3 hrs
 			}
-
-			if (config.location.destination) {
-				searchOptions.destination = config.location.destination;
-			} else if (config.location.lat) {
-				searchOptions.lat = config.location.lat;
-				searchOptions.lng = config.location.lng;
-			}
-
-			$.ajax('http://api.parkwhiz.com/search/', {
-				dataType : 'jsonp',
-				data     : searchOptions,
-				success  : function (searchResults) {
-					_setLocations(searchResults.parking_listings, 'location-place');
-					_putListingsOnMap(searchResults.parking_listings);
-				},
-				error    : function (xhr, err1, err2) {
-					alert(err1 + " " + err2);
-				}
-			});
-		};
-
-		var _venueListings = function (venue, searchOptions) {
-			$.ajax('http://api.parkwhiz.com/' + venue + '/', {
-				dataType : 'jsonp',
-				data     : searchOptions,
-				success  : function (searchResults) {
-
-					searchOptions.lat = searchResults.lat;
-					searchOptions.lng = searchResults.lng;
-					searchOptions.start = searchResults.start;
-					if (searchResults.num_events) {
-						_setEvents(searchResults.events, 'events');
-					}
-					$.ajax('http://api.parkwhiz.com/search/', {
-						dataType : 'jsonp',
-						data     : searchOptions,
-						success  : function (searchResults) {
-							_setLocations(searchResults.parking_listings, 'location-place');
-							_putListingsOnMap(searchResults.parking_listings);
-						},
-						error    : function (xhr, err1, err2) {
-							alert(err1 + " " + err2);
-						}
-					});
-
-				},
-				error    : function (xhr, err1, err2) {
-					alert(err1 + " " + err2);
-				}
-			});
-		}
-
-		var _setLocations = function (locations, place) {
-			var html = '';
-			$.each(locations, function () {
-				html += '<li><a target="_blank" href="' + this.parkwhiz_url + '">' + this.address + '</a></li>';
-			});
-			$('.' + place).html(html);
-		};
-
-		var _setVenue = function (locations, place) {
-			var html = '';
-			$.each(locations, function () {
-				html += '<li><a target="_blank" href="#">' + this.name + '</a></li>';
-			});
-			$('.' + place).html(html);
-		};
-
-		plugin.getByEvents = function (opts) {
-			var searchOptions = {};
-
-			searchOptions.key = this.settings.parkwhizKey;
-
-			$.ajax('http://api.parkwhiz.com/' + opts.url + '/', {
-				dataType : 'jsonp',
-				data     : searchOptions,
-				success  : function (searchResults) {
-
-					config.showPrice = true;
-					plugin._iconMeta.size = new google.maps.Size(38, 33);
-					_setLocations(searchResults.parking_listings, 'location-place');
-					_putListingsOnMap(searchResults.parking_listings);
-					if (config.showChosenEvent === true && config.location.venue) {
-						$('.pfs').each(function () {
-							$(this).remove();
-						});
-						$('.map-button').hide();
-						$('.for-event').html(searchResults.event_name);
-					}
-				},
-				error    : function (xhr, err1, err2) {
-					alert(err1 + " " + err2);
-				}
-			});
-
-		};
-
-		var _setEvents = function (locations, place) {
-			var html = '';
-			var i = 0;
-			$.each(locations, function () {
-				i++;
-				if (i === 1) {
-					firstEvent.start = this.start;
-					firstEvent.end = this.end;
-					firstEvent.url = this.api_url;
-					firstEvent.showPrice = true;
-				}
-				html += '<li data-api-url="' + this.api_url + '" data-end="' + this.end + '" data-start="' + this.start + '" class="event-item">' + this.event_name + '</li>';
-			});
-
-			if (config.showEventList === true) {
-				$('.' + place).html(html);
-			}
-
-			if (config.loadFirstEvent === true) {
-				_clearMap();
-				$('.pfs').each(function () {
-					$(this).remove();
-				});
-				plugin.getByEvents(firstEvent);
-			}
-
-			$('.event-item').click(function () {
-				var $this = $(this);
-				$('.event-item').removeClass('active');
-				$this.addClass('active');
-
-				_clearMap();
-
-				opts = {};
-				opts.start = $this.data('start');
-				opts.end = $this.data('end');
-				opts.showPrice = true;
-				opts.url = $this.data('api-url');
-
-				plugin.getByEvents(opts);
-			});
 		};
 
 		var _spriteCoordinates = function (icon, color) {
@@ -662,9 +471,7 @@
 
 		plugin._iconCache = {};
 		var _getIcons = function (dollars) {
-			plugin._iconCache = {};
 			if (!plugin._iconCache[dollars]) {
-
 				var sprite, scaledSize;
 
 				if (dollars <= 100) {
@@ -687,7 +494,7 @@
 					scaledSize = new google.maps.Size(380, 680);
 				}
 
-				if (config.showPrice === false) {
+				if (!config.showPrice) {
 					plugin._iconCache[dollars] = {
 						'normal' : {
 							url        : sprite,
