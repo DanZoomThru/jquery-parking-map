@@ -73,11 +73,6 @@
 			config.defaultTime.end += fixTimeZone;
 		}
 
-//		var venues = [];
-//		var overlays = [];
-
-//		var venue_listings = [];
-
 		var listings = [],
 			locations = [];
 
@@ -206,10 +201,6 @@
 			});
 
 			$('.start, .end').change(function () {
-				// set filters
-				// 1. send request to API
-				// 2. get response
-				// 3. re-build map
 				$('.event-item').removeClass('active');
 
 				var startDate = $('.start.date').val();
@@ -232,8 +223,6 @@
 				var d = startDate.split('/');
 				var myDate = new Date(d[2], parseInt(d[0]) - 1, d[1], parseInt(sHours), sMinutes);
 				var myStart = myDate.getTime() / 1000.0;
-
-				// end time
 
 				hours = Number(endTime.match(/^(\d+)/)[1]);
 				minutes = Number(endTime.match(/:(\d+)/)[1]);
@@ -263,138 +252,6 @@
 				return $(this);
 			});
 		};
-
-		/*plugin.venueSearch = function (venue_url, mapOptions) {
-			var searchOptions = {};
-			searchOptions.key = this.settings.parkwhizKey;
-			if (this.settings.location.start && this.settings.location.end) {
-				searchOptions.start = this.settings.location.start;
-				searchOptions.end = this.settings.location.end;
-			}
-			$.ajax('//api.parkwhiz.com/' + venue_url + '/', {
-				dataType : 'jsonp',
-				data     : searchOptions,
-				success  : function (searchResults) {
-					venues.push(venue_url);
-					if (!(config.location.lat && config.location.lng)) {
-						config.location.lat = searchResults.lat;
-						config.location.lng = searchResults.lng;
-					}
-					var markerOptions = {};
-					if (config.location.lat) {
-						mapOptions.latLng = [
-							config.location.lat,
-							config.location.lng
-						];
-						if (config.showLocationMarker) {
-							markerOptions.latLng = mapOptions.latLng;
-						}
-					}
-
-					plugin.$el.gmap3({
-						map    : mapOptions,
-						marker : markerOptions
-					});
-					$.each(config.overlays, function (index, overlay) {
-						plugin.$el.gmap3({
-							groundoverlay : overlay
-						});
-					});
-
-					if (config.groundoverlay) {
-						plugin.$el.gmap3({
-							groundoverlay : config.groundoverlay
-						});
-					}
-					if (!config.event) {
-//						plugin.listingsForTimePlace();
-					}
-					if (searchResults.parking_listings) {
-						venue_listings = venue_listings.concat(searchResults.parking_listings);
-					}
-
-					if ($.isArray(config.location.venue) && venues.length === config.location.venue.length) {
-						_putListingsOnMap(venue_listings);
-
-
-						var map = plugin.$el.gmap3('get');
-
-						var center = map.center;
-
-						var zoom_control = document.createElement('div');
-						zoom_control.className = "zoom_control hide";
-						zoom_control.innerHTML = 'Zoom Out';
-
-						google.maps.event.addDomListener(zoom_control, 'click', function () {
-							map.setCenter(center);
-							map.setZoom(config.minZoom);
-						});
-
-						map.controls[google.maps.ControlPosition.TOP_LEFT].push(zoom_control);
-
-						google.maps.event.addListener(map, 'zoom_changed', function () {
-							var zoomLevel = map.getZoom();
-
-							if (zoomLevel > config.minZoom) {
-								$('.zoom_control').removeClass('hide');
-							} else {
-								$('.zoom_control').addClass('hide');
-							}
-
-							plugin.$el.gmap3({
-								exec : {
-									name : "marker",
-									all  : "true",
-									func : function (data) {
-										// data.object is the google.maps.Marker object
-										if (data.object.minZoom) {
-//											data.object.setVisible(zoomLevel <= data.object.minZoom)
-										}
-										else if (data.tag == 'listing') {
-											data.object.setVisible(zoomLevel >= config.listingMaxZoom)
-										}
-									}
-								}
-							});
-
-							plugin.$el.gmap3({
-								exec : {
-									name : "overlay",
-									all  : "true",
-									func : function (data) {
-
-										var $overlay = $(data.object.getDOMElement().innerHTML);
-										if ($overlay.hasClass('clickable_label')) {
-											if (zoomLevel == 14) {
-												data.object.hide();
-											} else {
-												data.object.show();
-											}
-										}
-									}
-								}
-							});
-
-							plugin.$el.gmap3({
-								exec : {
-									name : "groundoverlay",
-									all  : "true",
-									func : function (data) {
-										if (data.object.maxZoom) {
-											var opacity = (zoomLevel <= data.object.maxZoom) ? 1 : 0;
-											data.object.setOpacity(opacity)
-										}
-									}
-								}
-							});
-						});
-					}
-				},
-				error    : function (xhr, err1, err2) {
-					alert(err1 + " " + err2);
-				}
-			});
-		};*/
 
 		plugin._getListings = function (callback) {
 			var venues = config.location.venue,
@@ -499,26 +356,6 @@
 			});
 
 			this._getListings(_putListingsOnMap);
-
-			/*
-			 if ($.isArray(config.location.venue)) {
-			 $.each(config.location.venue, function (index, venue) {
-			 plugin.venueSearch(venue, mapOptions);
-			 });
-			 return;
-			 } else if (config.location.venue) {
-			 _putListingsOnMap(plugin.venueSearch(config.location.venue, mapOptions));
-			 if (config.event) {
-			 var opts = {};
-			 opts.url = config.location.venue + '/' + config.event;
-			 plugin.getByEvents(opts);
-			 return;
-			 }
-			 return;
-			 }
-
-			 plugin.listingsForTimePlace();
-			 */
 		};
 
 		var _putListingsOnMap = function () {
@@ -569,130 +406,9 @@
 				}
 			};
 
-			/*			if (config.cluster) {
-			 var cluster = {
-			 radius  : config.cluster.radius,
-			 maxZoom : config.cluster.maxZoom,
-			 events  : {
-			 mouseover : function (cluster) {
-			 $(cluster.main.getDOMElement()).addClass('active');
-			 },
-			 mouseout  : function (cluster) {
-			 $(cluster.main.getDOMElement()).removeClass('active');
-			 },
-			 click     : function (cluster) {
-			 map.setCenter(cluster.main.getPosition());
-			 map.setZoom(config.cluster.clickZoom);
-			 }
-			 }
-			 };
-			 $.each(config.cluster.icons, function (index, value) {
-			 cluster[index] = value;
-			 });
-			 mapOptions.cluster = cluster;
-			 }*/
 			$el.gmap3(mapOptions);
 
-			/*			var markers = [];
-			 overlays = [];
-			 $.each(config.location.markers, function (index, value) {
-			 if(value.options) {
-			 if(value.options.minZoom) {
-			 value.options.visible = (config.zoom <= value.options.minZoom);
-			 }
-			 }
-
-			 markers.push(value);
-
-			 overlay = {
-			 address : value.address,
-			 options : {
-			 content : '<div class="marker_label static_label">' + value.data + '</div>',
-			 offset  : {
-			 y : 5,
-			 x : 0
-			 },
-			 pane    : "overlayLayer"
-			 }
-			 };
-
-			 overlays.push(overlay);
-
-			 overlay = {
-			 address : value.address,
-			 options : {
-			 content : '<div class="marker_label clickable_label">' + value.data + '</div>',
-			 offset  : {
-			 y : 5,
-			 x : 0
-			 },
-			 pane    : "floatPane"
-			 }
-			 };
-
-			 if (value.events && value.events.click) {
-			 overlay.events =
-			 {
-			 click : function (marker) {
-			 var map = $(this).gmap3("get");
-			 map.setCenter(marker.getPosition());
-			 map.setZoom(14);
-			 }
-			 };
-			 }
-
-			 overlays.push(overlay);
-			 });
-
-			 $el.gmap3({
-			 marker  : {
-			 values : markers,
-			 events : {
-			 mouseover : function (marker, event, context) {
-			 if (context.data.icon) {
-			 marker.setZIndex(999);
-			 marker.setIcon(context.data.icon.active);
-			 }
-			 },
-			 mouseout  : function (marker, event, context) {
-			 if (context.data.icon) {
-			 marker.setZIndex(998);
-			 marker.setIcon(context.data.icon.normal);
-			 }
-			 },
-			 click     : function (marker, event, context) {
-			 if (context.data.listing) {
-			 window.open(context.data.listing.parkwhiz_url + '&event=166471');
-			 }
-			 }
-			 }
-			 },
-			 overlay : {
-			 values : overlays
-			 }
-			 });*/
 		};
-
-		/*
-		 *
-		 * Options are any of those available to the 'search' endpoint of the ParkWhiz API:
-		 * https://www.parkwhiz.com/developers/search/
-		 */
-		/*		plugin.listingsForTimePlace = function (searchOptions) {
-		 this.searchOptions();
-
-		 $.ajax('//api.parkwhiz.com/search/', {
-		 dataType : 'jsonp',
-		 data     : searchOptions,
-		 success  : function (searchResults) {
-		 _setLocations(searchResults.parking_listings, 'location-place');
-		 _putListingsOnMap(searchResults.parking_listings);
-		 },
-		 error    : function (xhr, err1, err2) {
-		 alert(err1 + " " + err2);
-		 }
-		 });
-		 };*/
 
 		plugin.searchOptions = function () {
 			if (typeof searchOptions == "undefined") {
@@ -716,126 +432,7 @@
 			if (!searchOptions.end && !config.location.venue) {
 				searchOptions.end = searchOptions.start + config.defaultTime.hours * 60 * 60; // 3 hrs
 			}
-		}
-
-		/*		var _venueListings = function (venue, searchOptions) {
-		 $.ajax('//api.parkwhiz.com/' + venue + '/', {
-		 dataType : 'jsonp',
-		 data     : searchOptions,
-		 success  : function (searchResults) {
-
-		 searchOptions.lat = searchResults.lat;
-		 searchOptions.lng = searchResults.lng;
-		 searchOptions.start = searchResults.start;
-		 if (searchResults.num_events) {
-		 _setEvents(searchResults.events, 'events');
-		 }
-		 $.ajax('//api.parkwhiz.com/search/', {
-		 dataType : 'jsonp',
-		 data     : searchOptions,
-		 success  : function (searchResults) {
-		 _setLocations(searchResults.parking_listings, 'location-place');
-		 _putListingsOnMap(searchResults.parking_listings);
-		 },
-		 error    : function (xhr, err1, err2) {
-		 alert(err1 + " " + err2);
-		 }
-		 });
-
-		 },
-		 error    : function (xhr, err1, err2) {
-		 alert(err1 + " " + err2);
-		 }
-		 });
-		 }
-
-		 var _setLocations = function (locations, place) {
-		 var html = '';
-		 $.each(locations, function () {
-		 html += '<li><a target="_blank" href="' + this.parkwhiz_url + '">' + this.address + '</a></li>';
-		 });
-		 $('.' + place).html(html);
-		 };
-
-		 var _setVenue = function (locations, place) {
-		 var html = '';
-		 $.each(locations, function () {
-		 html += '<li><a target="_blank" href="#">' + this.name + '</a></li>';
-		 });
-		 $('.' + place).html(html);
-		 };
-
-		 plugin.getByEvents = function (opts) {
-		 var searchOptions = {};
-
-		 searchOptions.key = this.settings.parkwhizKey;
-
-		 $.ajax('//api.parkwhiz.com/' + opts.url + '/', {
-		 dataType : 'jsonp',
-		 data     : searchOptions,
-		 success  : function (searchResults) {
-
-		 config.showPrice = true;
-		 plugin._iconMeta.size = new google.maps.Size(38, 33);
-		 _setLocations(searchResults.parking_listings, 'location-place');
-		 _putListingsOnMap(searchResults.parking_listings);
-		 if (config.showChosenEvent === true && config.location.venue) {
-		 $('.pfs').each(function () {
-		 $(this).remove();
-		 });
-		 $('.map-button').hide();
-		 $('.for-event').html(searchResults.event_name);
-		 }
-		 },
-		 error    : function (xhr, err1, err2) {
-		 alert(err1 + " " + err2);
-		 }
-		 });
-
-		 };
-
-		 var _setEvents = function (locations, place) {
-		 var html = '';
-		 var i = 0;
-		 $.each(locations, function () {
-		 i++;
-		 if (i === 1) {
-		 firstEvent.start = this.start;
-		 firstEvent.end = this.end;
-		 firstEvent.url = this.api_url;
-		 firstEvent.showPrice = true;
-		 }
-		 html += '<li data-api-url="' + this.api_url + '" data-end="' + this.end + '" data-start="' + this.start + '" class="event-item">' + this.event_name + '</li>';
-		 });
-
-		 if (config.showEventList === true) {
-		 $('.' + place).html(html);
-		 }
-
-		 if (config.loadFirstEvent === true) {
-		 _clearMap();
-		 $('.pfs').each(function () {
-		 $(this).remove();
-		 });
-		 plugin.getByEvents(firstEvent);
-		 }
-
-		 $('.event-item').click(function () {
-		 var $this = $(this);
-		 $('.event-item').removeClass('active');
-		 $this.addClass('active');
-
-		 _clearMap();
-
-		 opts = {};
-		 opts.start = $this.data('start');
-		 opts.end = $this.data('end');
-		 opts.showPrice = true;
-		 opts.url = $this.data('api-url');
-
-		 plugin.getByEvents(opts);
-		 });
-		 };*/
+		};
 
 		var _spriteCoordinates = function (icon, color) {
 			if (icon == 'p') {
