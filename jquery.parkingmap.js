@@ -52,7 +52,8 @@
 			styles             : [],
 			mapOptions         : {
 				zoom : 14
-			}
+			},
+			overrideOptions	: {}
 		};
 
 		var $el = $cnt;
@@ -349,10 +350,8 @@
 			}
 
 
-			this.$el.gmap3({
-				map    : mapOptions,
-				marker : markerOptions
-			});
+			var allOptions = $.extend({}, { map : mapOptions, marker: markerOptions }, config.overrideOptions);
+			this.$el.gmap3(allOptions);
 
 			this._getListings(_putListingsOnMap);
 		};
