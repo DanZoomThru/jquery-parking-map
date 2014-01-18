@@ -13,11 +13,10 @@
 
 	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
 	<script type="text/javascript" src="contrib/gmap3.min.js"></script>
-	<script type="text/javascript" src="jquery.parkingmap.js"></script>
 	<script type="text/javascript" src="utils.js"></script>
 	<script type="text/javascript" src="timepicker/jquery.timepicker.js"></script>
 	<script type="text/javascript" src="timepicker/lib/base.js"></script>
-	<script type="text/javascript" src="timepicker/lib/datepair.js"></script>
+	<script type="text/javascript" src="jquery.parkingmap.js"></script>
 
 
 </head>
@@ -36,45 +35,19 @@
 		var map = new $.parkingMap($("#parkwhiz-widget-container"), {
 			parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
 			defaultTime: {
-				//start: 1485294400,
-				//end: 1485296200,
 				hours: 3
 			},
 			zoom: 12,
-			//additionalMarkers: "http://maps.google.com/mapfiles/marker_green.png",
 			width: '100%',
-//			event: 'philadelphia-eagles-at-dallas-cowboys-122312',
 			showChosenEvent: true,
 			showEventList: true,
 			height: '400px',
 			loadFirstEvent: false,
 			showLocationMarker: false,
 			showPrice: true,
-			modules: ['map'],
-			cluster            : {
-				radius    : 75,
-				maxZoom   : 12,
-				clickZoom : 16,
-				icons     : {
-					1 : {
-						content : '<div class="cluster"><strong>CLUSTER_COUNT</strong><br /><span style="font-size:10px;">SPOTS</span></div>',
-						width   : 50,
-						height  : 50
-					}
-				}
-			}
+			modules: ['map', 'time_picker']
 		});
 		map.createMap();
-
-/*		$('#parkwhiz-widget-container').find('.parking-map-widget-container').gmap3({
-			infowindow:{
-				address:"Newark Liberty International Airport",
-				options:{
-					content: "Find Parking near Newark Liberty International Airport",
-					disableAutoPan: true
-				}
-			}
-		});*/
 	});
 </script>
 
