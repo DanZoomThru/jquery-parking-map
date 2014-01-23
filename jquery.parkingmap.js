@@ -355,6 +355,8 @@
 		var _putListingsOnMap = function () {
 			var $el = plugin.$el;
 
+			var $events = $('.mod').find($('ul.location-place'));
+
 			var values = [];
 
 			for (var i = 0; i < listings.length; i++) {
@@ -374,6 +376,7 @@
 						},
 						tag     : 'listing'
 					});
+					$events.append($('<li><a href="' + listings[i].parkwhiz_url + '">' + listings[i].address + '</a></li>'));
 				}
 			}
 
