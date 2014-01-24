@@ -33,19 +33,23 @@
 		 */
 
 		var map = new $.parkingMap($("#parkwhiz-widget-container"), {
-			parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
-			defaultTime: {
-				hours: 3
+			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
+			defaultTime        : {
+				hours : 3
 			},
-			zoom: 12,
-			width: '100%',
-			showChosenEvent: true,
-			showEventList: true,
-			height: '400px',
-			loadFirstEvent: false,
-			showLocationMarker: false,
-			showPrice: true,
-			modules: ['map', 'time_picker', 'parking_locations']
+			location           : {
+				'venue'        : 'united-center-parking',
+				'defaultEvent' : 155019
+			},
+			center             : {
+				destination : 'United Center, Chicago, IL'
+			},
+			zoom               : 12,
+			width              : '100%',
+			height             : '400px',
+			showLocationMarker : false,
+			showPrice          : true,
+			modules            : ['map', 'event_list', 'parking_locations']
 		});
 		map.createMap();
 	});

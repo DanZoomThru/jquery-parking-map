@@ -29,14 +29,11 @@
 
 		var defaultConfig = {
 			additionalMarkers  : false,
-			showEventList      : true,
 			showLocationMarker : true,
-			loadFirstEvent     : false,
 			showPrice          : true,
 			event              : [],
 			width              : '600px',
 			height             : '400px',
-			showChosenEvent    : false,
 			modules            : ['map', 'time_picker'],
 			defaultTime        : {
 				start : moment().unix(),
@@ -44,11 +41,13 @@
 				hours : 3
 			},
 			center             : {
-				destination : '208 S. Jefferson St., Chicago, IL'
+				'destination' : null
 			},
 			location           : {
-				destination : [],
-				venue       : []
+				defaultEvent : null,
+				event        : [],
+				destination  : [],
+				venue        : []
 			},
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
 			overlays           : [],
@@ -56,7 +55,7 @@
 			mapOptions         : {
 				zoom : 14
 			},
-			overrideOptions	: {}
+			overrideOptions    : {}
 		};
 
 		var $el = $cnt;
@@ -70,11 +69,11 @@
 		var fix = new Date();
 		var fixTimeZone = (fix.getTimezoneOffset() - 300) * -60;
 
-		if(config.defaultTime.start) {
+		if (config.defaultTime.start) {
 			config.defaultTime.start += fixTimeZone;
 		}
 
-		if(config.defaultTime.end) {
+		if (config.defaultTime.end) {
 			config.defaultTime.end += fixTimeZone;
 		}
 
@@ -198,11 +197,11 @@
 			$('.start.date').val(start.format(DATEPICKER_FORMAT));
 			$('.end.date').val(end.format(DATEPICKER_FORMAT));
 
-			$('input.date').each(function(){
+			$('input.date').each(function () {
 				var $this = $(this);
 				if (!$this.attr('placeholder')) $this.attr('placeholder', 'date');
 
-				var opts = { 'format': 'm/d/yyyy', 'autoclose': true };
+				var opts = { 'format' : 'm/d/yyyy', 'autoclose' : true };
 
 				$this.datepicker(opts);
 
@@ -211,14 +210,14 @@
 				}
 			});
 
-			$('input.time').each(function() {
+			$('input.time').each(function () {
 				var $this = $(this);
 				if (!$this.attr('placeholder')) $this.attr('placeholder', 'time');
 
-				var opts = { 'showDuration': true, 'timeFormat': 'g:ia', 'scrollDefaultNow': true };
+				var opts = { 'showDuration' : true, 'timeFormat' : 'g:ia', 'scrollDefaultNow' : true };
 
 				if ($this.hasClass('start') || $this.hasClass('end')) {
-					$this.on('change', function() {
+					$this.on('change', function () {
 						$this.update_datepair();
 					});
 				}
@@ -228,16 +227,16 @@
 
 			var $datepair = $('.datepair');
 
-			$datepair.find('input').each(function() {
+			$datepair.find('input').each(function () {
 				var $this = $(this);
 
-				if($this.hasClass('start') || $this.hasClass('end')) {
-					$this.on('change', function() {
+				if ($this.hasClass('start') || $this.hasClass('end')) {
+					$this.on('change', function () {
 						var container = $this.closest('.datepair');
 						var $start = container.find('.datepair-start');
 						var $end = container.find('.datepair-end');
 						var start = moment($start.find('.date').val() + ' ' + $start.find('.time').val(), "MM-DD-YYYY h:mma");
-						var end = moment($end.find('.date').val() + ' ' + $end.find('.time').val(),  "MM-DD-YYYY h:mma");
+						var end = moment($end.find('.date').val() + ' ' + $end.find('.time').val(), "MM-DD-YYYY h:mma");
 						searchOptions.start = start.unix() + fixTimeZone;
 						searchOptions.end = end.unix() + fixTimeZone;
 						_clearMap();
@@ -255,7 +254,7 @@
 				destinations = config.location.destination,
 				listingOptions = searchOptions,
 				locations = [];
-			listings = []
+			listings = [];
 
 			if (!$.isArray(venues)) {
 				venues = [venues];
@@ -271,9 +270,9 @@
 
 			var search = [];
 
-			$.each(venues.concat(events), function(index, value) {
+			$.each(venues.concat(events), function (index, value) {
 				search.push({
-					uri : value,
+					uri     : value,
 					options : listingOptions
 				})
 			});
@@ -291,8 +290,8 @@
 					destinationOptions.destination = value;
 				}
 				search.push({
-					uri: 'search',
-					options: destinationOptions
+					uri     : 'search',
+					options : destinationOptions
 				})
 			});
 
@@ -301,8 +300,8 @@
 					listingOptions[index] = value;
 				});
 				search.push({
-					uri: 'search',
-					options: listingOptions
+					uri     : 'search',
+					options : listingOptions
 				});
 			}
 
@@ -310,9 +309,61 @@
 				$.ajax('//api.parkwhiz.com/' + value.uri, {
 					dataType : 'jsonp',
 					data     : value.options,
+					cache    : true,
 					success  : function (searchResults) {
-						locations.push(searchResults);
-						listings = listings.concat(searchResults.parking_listings);
+						if (searchResults.parking_listings) {
+							listings = listings.concat(searchResults.parking_listings);
+							locations.push(searchResults);
+						} else if (searchResults.events) {
+							var api_url,
+								$events = $('#parkwhiz-widget-container').find('ul.events'),
+								$event,
+								default_event = null,
+								$active_event = $events.find('li.active');
+							if ($active_event.length) {
+								default_event = $active_event.data('event_id');
+							} else if (config.location.defaultEvent) {
+								default_event = config.location.defaultEvent;
+							}
+							$events.empty();
+							$.each(searchResults.events, function (index, event) {
+								$event = $('<li>' + moment(event.start * 1000).format(DATEPICKER_FORMAT) + ': ' + event.event_name + '</li>');
+								$event.data('event_id', event.event_id);
+								if (default_event && parseInt(event.event_id, 10) === parseInt(default_event, 10)) {
+									api_url = event.api_url;
+									$event.addClass('active');
+								}
+								$events.append($event);
+							});
+							if (!api_url) {
+								api_url = searchResults.events[0].api_url;
+								$events.find('li:first').addClass('active');
+							}
+							delete value.options['start'];
+							delete value.options['end'];
+							$.ajax(api_url, {
+								dataType : 'jsonp',
+								data     : value.options,
+								cache    : true,
+								success  : function (eventResults) {
+									locations.push(eventResults);
+
+									listings = listings.concat(eventResults.parking_listings);
+
+									if (locations.length === search.length) {
+										callback();
+									}
+								}
+							});
+							var $li = $events.find('li');
+							$li.click(function () {
+								_clearMap();
+								var $this = $(this);
+								$li.removeClass('active').unbind('click');
+								$this.addClass('active');
+								plugin._getListings(_putListingsOnMap);
+							});
+						}
 						if (locations.length === search.length) {
 							callback();
 						}
@@ -346,7 +397,7 @@
 			}
 
 
-			var allOptions = $.extend({}, { map : mapOptions, marker: markerOptions }, config.overrideOptions);
+			var allOptions = $.extend({}, { map : mapOptions, marker : markerOptions }, config.overrideOptions);
 			this.$el.gmap3(allOptions);
 
 			this._getListings(_putListingsOnMap);
@@ -415,11 +466,11 @@
 			searchOptions.key = this.settings.parkwhizKey;
 
 			if (( config.location.destination || config.location.lat ) && ( !searchOptions.start && config.defaultTime.start )) {
-				searchOptions.start = 1800*Math.round(config.defaultTime.start/1800);
+				searchOptions.start = 1800 * Math.round(config.defaultTime.start / 1800);
 			}
 
 			if (( config.location.destination || config.location.lat ) && ( !searchOptions.end && config.defaultTime.end )) {
-				searchOptions.end = 1800*Math.round(config.defaultTime.end/1800);
+				searchOptions.end = 1800 * Math.round(config.defaultTime.end / 1800);
 			}
 
 			if (!searchOptions.start && !config.location.venue) {
@@ -533,9 +584,7 @@
 	};
 
 
-
-	var init_datepair = function()
-	{
+	var init_datepair = function () {
 		var container = $(this);
 
 		var startDateInput = container.find('input.start.date');
@@ -544,7 +593,7 @@
 
 		if (startDateInput.length && endDateInput.length) {
 			var startDate = moment(startDateInput.val(), DATEPICKER_FORMAT);
-			var endDate =  moment(endDateInput.val(), DATEPICKER_FORMAT);
+			var endDate = moment(endDateInput.val(), DATEPICKER_FORMAT);
 			dateDelta = moment.duration(endDate.unix() - startDate.unix());
 
 			container.data('dateDelta', dateDelta.asDays());
@@ -565,8 +614,7 @@
 		}
 	};
 
-	$.fn.update_datepair = function()
-	{
+	$.fn.update_datepair = function () {
 		var target = $(this);
 		var container = target.closest('.datepair');
 
@@ -578,8 +626,7 @@
 		}
 	};
 
-	var _update_date_pair = function(target, container)
-	{
+	var _update_date_pair = function (target, container) {
 		var start = container.find('input.start.date');
 		var end = container.find('input.end.date');
 
@@ -588,7 +635,7 @@
 		}
 
 		var startDate = moment(start.val());
-		var endDate =  moment(end.val());
+		var endDate = moment(end.val());
 
 		var oldDelta = moment.duration(container.data('dateDelta'));
 
@@ -614,20 +661,19 @@
 				var startTimeVal = container.find('input.start.time').val();
 
 				if (startTimeVal) {
-					container.find('input.end.time').timepicker('option', {'minTime': startTimeVal});
+					container.find('input.end.time').timepicker('option', {'minTime' : startTimeVal});
 				}
 			} else {
-				container.find('input.end.time').timepicker('option', {'minTime': null});
+				container.find('input.end.time').timepicker('option', {'minTime' : null});
 			}
 
 			container.data('dateDelta', newDelta.asSeconds());
 		}
 	};
 
-	var _update_time_pair = function(target, container)
-	{
-		var start = { el: container.find('input.start.time') };
-		var end = { el: container.find('input.end.time') };
+	var _update_time_pair = function (target, container) {
+		var start = { el : container.find('input.start.time') };
+		var end = { el : container.find('input.end.time') };
 
 		if (!start.el.length || !end.el.length) {
 			return;
@@ -658,7 +704,7 @@
 
 		// advance the end time only if the start time was advanced
 		if (oldDelta && target.hasClass('start') && newDelta < oldDelta) {
-			end.seconds = (start.seconds+oldDelta)%86400;
+			end.seconds = (start.seconds + oldDelta) % 86400;
 			end.el.timepicker('setTime', end.seconds);
 		}
 
