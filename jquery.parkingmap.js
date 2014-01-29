@@ -594,9 +594,10 @@
 		if (startDateInput.length && endDateInput.length) {
 			var startDate = moment(startDateInput.val(), DATEPICKER_FORMAT);
 			var endDate = moment(endDateInput.val(), DATEPICKER_FORMAT);
-			dateDelta = moment.duration(endDate.unix() - startDate.unix());
+			dateDelta = endDate.diff(startDate, 'days');
 
-			container.data('dateDelta', dateDelta.asDays());
+
+			container.data('dateDelta', dateDelta);
 		}
 
 		var startTimeInput = container.find('input.start.time');
@@ -608,7 +609,7 @@
 
 			container.data('timeDelta', endInt - startInt);
 
-			if (dateDelta.asDays() < 1) {
+			if (dateDelta < 1) {
 				endTimeInput.timepicker('option', 'minTime', startInt);
 			}
 		}
@@ -636,18 +637,18 @@
 
 		var startDate = moment(start.val());
 		var endDate = moment(end.val());
-
-		var oldDelta = moment.duration(container.data('dateDelta'));
+		var oldDelta = moment.duration(container.data('dateDelta'), 'days');
 
 		if (oldDelta && target.hasClass('start')) {
 			// lock the dates - update end date and return
-			var newEnd = moment(startDate.unix()).add(oldDelta);
+			var newEnd = startDate;
+			newEnd.add(oldDelta);
 			end.val(newEnd.format(DATEPICKER_FORMAT)).datepicker('update');
 			return;
 
 		} else {
 			// change the date delta. possibly update the timepicker settings
-			var newDelta = moment.duration(endDate.unix() - startDate.unix());
+			var newDelta = endDate.diff(startDate, 'days');
 
 			if (newDelta < 0) {
 				newDelta = 0;
@@ -655,9 +656,9 @@
 				if (target.hasClass('start')) {
 					end.val(startDate.format(DATEPICKER_FORMAT)).datepicker('update');
 				} else if (target.hasClass('end')) {
-					start.val(endDate.format(DATEPICKER_FORMAT)).datepicker('update');
+//					start.val(endDate.format(DATEPICKER_FORMAT)).datepicker('update');
 				}
-			} else if (newDelta.asDays() < 1) {
+			} else if (newDelta < 1) {
 				var startTimeVal = container.find('input.start.time').val();
 
 				if (startTimeVal) {
@@ -667,7 +668,7 @@
 				container.find('input.end.time').timepicker('option', {'minTime' : null});
 			}
 
-			container.data('dateDelta', newDelta.asSeconds());
+			container.data('dateDelta', newDelta);
 		}
 	};
 

@@ -7,15 +7,15 @@
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="css/style.css">
-	<link rel="stylesheet" type="text/css" href="css/popup.css">
-	<link rel="stylesheet" type="text/css" href="timepicker/jquery.timepicker.css">
-	<link rel="stylesheet" type="text/css" href="timepicker/lib/base.css">
+	<link rel="stylesheet" type="text/css" href="css/timepicker.css">
+	<link rel="stylesheet" type="text/css" href="css/datepicker.css">
 
 	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
 	<script type="text/javascript" src="contrib/gmap3.min.js"></script>
-	<script type="text/javascript" src="utils.js"></script>
-	<script type="text/javascript" src="timepicker/jquery.timepicker.js"></script>
-	<script type="text/javascript" src="timepicker/lib/base.js"></script>
+	<script type="text/javascript" src="contrib/moment.js"></script>
+	<script type="text/javascript" src="contrib/underscore.js"></script>
+	<script type="text/javascript" src="contrib/timepicker.js"></script>
+	<script type="text/javascript" src="contrib/datepicker.js"></script>
 	<script type="text/javascript" src="jquery.parkingmap.js"></script>
 
 
@@ -38,18 +38,17 @@
 				hours : 3
 			},
 			location           : {
-				'venue'        : 'united-center-parking',
-				'defaultEvent' : 155019
+				destination : '208 S. Jefferson, Chicago, IL'
 			},
 			center             : {
-				destination : 'United Center, Chicago, IL'
+				destination : '208 S. Jefferson, Chicago, IL'
 			},
 			zoom               : 12,
 			width              : '100%',
 			height             : '400px',
 			showLocationMarker : false,
 			showPrice          : true,
-			modules            : ['map', 'event_list', 'parking_locations']
+			modules            : ['map', 'time_picker', 'parking_locations']
 		});
 		map.createMap();
 	});
