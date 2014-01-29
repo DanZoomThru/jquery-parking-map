@@ -31,7 +31,6 @@
 			additionalMarkers  : false,
 			showLocationMarker : true,
 			showPrice          : true,
-			event              : [],
 			width              : '600px',
 			height             : '400px',
 			modules            : ['map', 'time_picker'],
@@ -250,7 +249,7 @@
 
 		plugin._getListings = function (callback) {
 			var venues = config.location.venue,
-				events = config.event,
+				events = config.location.event,
 				destinations = config.location.destination,
 				listingOptions = searchOptions,
 				locations = [];
@@ -271,9 +270,14 @@
 			var search = [];
 
 			$.each(venues.concat(events), function (index, value) {
+				var eventOptions = listingOptions;
+				if(_.contains(config.modules, 'event_list')) {
+					delete eventOptions.start;
+					delete eventOptions.end;
+				}
 				search.push({
 					uri     : value,
-					options : listingOptions
+					options : eventOptions
 				})
 			});
 			var destinationOptions;
