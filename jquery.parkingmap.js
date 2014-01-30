@@ -39,10 +39,8 @@
 				end   : moment().add('h', 3).unix(), // + 3 hrs
 				hours : 3
 			},
-			center             : {
-				'destination' : null
-			},
 			location           : {
+				center       : null,
 				defaultEvent : null,
 				event        : [],
 				destination  : [],
@@ -63,7 +61,7 @@
 		config.defaultTime = $.extend({}, defaultConfig.defaultTime, options.defaultTime);
 		config.location = $.extend({}, defaultConfig.location, options.location);
 		config.mapOptions = $.extend({}, defaultConfig.mapOptions, options.mapOptions);
-		config.center = $.extend({}, defaultConfig.center, options.center);
+		config.location.center = $.extend({}, defaultConfig.location.center, options.location.center);
 
 		var fix = new Date();
 		var fixTimeZone = (fix.getTimezoneOffset() - 300) * -60;
@@ -267,11 +265,14 @@
 				destinations = [destinations];
 			}
 
-			var search = [];
+			var eventOptions,
+				search = [],
+				markerOptions = {},
+				mapOptions = {};
 
 			$.each(venues.concat(events), function (index, value) {
-				var eventOptions = listingOptions;
-				if(_.contains(config.modules, 'event_list')) {
+				eventOptions = listingOptions;
+				if (_.contains(config.modules, 'event_list')) {
 					delete eventOptions.start;
 					delete eventOptions.end;
 				}
@@ -300,7 +301,7 @@
 			});
 
 			if (search.length === 0) {
-				$.each(config.center, function (index, value) {
+				$.each(config.location.center, function (index, value) {
 					listingOptions[index] = value;
 				});
 				search.push({
@@ -315,6 +316,25 @@
 					data     : value.options,
 					cache    : true,
 					success  : function (searchResults) {
+						if (_.isEmpty(config.location.center)) {
+							var allOptions = {
+								map : {
+									options : $.extend({center : [searchResults.lat,searchResults.lng]}, config.mapOptions)
+								},
+								marker : {}
+							};
+							config.location.center = {
+								lat : searchResults.lat,
+								lng : searchResults.lng
+							};
+							if (config.showLocationMarker) {
+								allOptions.marker.latLng = allOptions.map.latLng;
+							}
+
+							allOptions = $.extend(allOptions, config.overrideOptions)
+
+							$el.gmap3(allOptions);
+						}
 						if (searchResults.parking_listings) {
 							listings = listings.concat(searchResults.parking_listings);
 							locations.push(searchResults);
@@ -385,12 +405,12 @@
 			};
 
 			var markerOptions = {};
-			if (config.center.destination) {
-				mapOptions.address = config.center.destination;
+			if (config.location.center.destination) {
+				mapOptions.address = config.location.center.destination;
 				if (config.showLocationMarker) {
 					markerOptions.address = mapOptions.address;
 				}
-			} else if (config.center.lat && config.center.lng) {
+			} else if (config.location.center.lat && config.location.center.lng) {
 				mapOptions.latLng = [
 					config.location.lat,
 					config.location.lng
@@ -399,7 +419,6 @@
 					markerOptions.latLng = mapOptions.latLng;
 				}
 			}
-
 
 			var allOptions = $.extend({}, { map : mapOptions, marker : markerOptions }, config.overrideOptions);
 			this.$el.gmap3(allOptions);
@@ -417,6 +436,7 @@
 			for (var i = 0; i < listings.length; i++) {
 				if (listings[i].price) {
 					var icon = _getIcons(listings[i].price);
+
 					if (config.additionalMarkers) {
 						icon.normal = config.additionalMarkers;
 					}
