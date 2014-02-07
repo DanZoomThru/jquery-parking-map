@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=us-ascii"/>
+
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/timepicker.css">
+	<link rel="stylesheet" type="text/css" href="css/datepicker.css">
+
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+	<script type="text/javascript" src="contrib/gmap3.min.js"></script>
+	<script type="text/javascript" src="contrib/moment.js"></script>
+	<script type="text/javascript" src="contrib/underscore.js"></script>
+	<script type="text/javascript" src="contrib/timepicker.js"></script>
+	<script type="text/javascript" src="contrib/datepicker.js"></script>
+	<script type="text/javascript" src="jquery.parkingmap.js"></script>
+
+
+</head>
+<body>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		/*
+		 * locations type:
+		 * 1. address - default
+		 * 2. latlng
+		 * 3. venue
+		 * 4. event
+		 */
+
+		var map = new $.parkingMap($("#parkwhiz-widget-container"), {
+			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
+			defaultTime        : {
+				hours : 3
+			},
+			location           : {
+				destination : '208 S. Jefferson, Chicago, IL'
+			},
+			zoom               : 12,
+			width              : '100%',
+			height             : '400px',
+			showLocationMarker : false,
+			showPrice          : true,
+			modules            : ['map', 'time_picker', 'parking_locations']
+		});
+		map.createMap();
+	});
+</script>
+
+<div id="parkwhiz-widget-container">
+</div>
+
+</body>
+</html>
