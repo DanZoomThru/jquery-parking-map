@@ -74,7 +74,8 @@
 			config.defaultTime.end += fixTimeZone;
 		}
 
-		var listings = [];
+		var listings = [],
+			searchOptions = {};
 
 		var module_template = {
 			'map'               : $('<div class="parking-map-widget-container"></div>'),
@@ -173,76 +174,79 @@
 				plugin._iconMeta.shadow.scaledSize = new google.maps.Size(477, 1098);
 			}
 
-			var start = moment().add('m', 15);
-			var end = moment().add('m', 195);
+			searchOptions.key = plugin.settings.parkwhizKey;
 
-			if (start.minutes() >= 30) {
-				start.minutes(30);
-			} else {
-				start.minutes(0);
+			if(config.modules.indexOf("time_picker") > -1) {
+
+				var start = moment().add('m', 15);
+				var end = moment().add('m', 195);
+
+				if (start.minutes() >= 30) {
+					start.minutes(30);
+				} else {
+					start.minutes(0);
+				}
+				if (end.minutes() >= 30) {
+					end.minutes(30);
+				} else {
+					end.minutes(0);
+				}
+
+				$('.start.time').val(start.format(TIMEPICKER_FORMAT));
+				$('.end.time').val(end.format(TIMEPICKER_FORMAT));
+				$('.start.date').val(start.format(DATEPICKER_FORMAT));
+				$('.end.date').val(end.format(DATEPICKER_FORMAT));
+
+				$('input.date').each(function () {
+					var $this = $(this);
+					if (!$this.attr('placeholder')) $this.attr('placeholder', 'date');
+
+					var opts = { 'format' : 'm/d/yyyy', 'autoclose' : true };
+
+					$this.datepicker(opts);
+
+					if ($this.hasClass('start') || $this.hasClass('end')) {
+						$this.on('change changeDate', $this.update_datepair);
+					}
+				});
+
+				$('input.time').each(function () {
+					var $this = $(this);
+					if (!$this.attr('placeholder')) $this.attr('placeholder', 'time');
+
+					var opts = { 'showDuration' : true, 'timeFormat' : 'g:ia', 'scrollDefaultNow' : true };
+
+					if ($this.hasClass('start') || $this.hasClass('end')) {
+						$this.on('change', function () {
+							$this.update_datepair();
+						});
+					}
+
+					$this.timepicker(opts);
+				});
+
+				var $datepair = $('.datepair');
+
+				$datepair.find('input').each(function () {
+					var $this = $(this);
+
+					if ($this.hasClass('start') || $this.hasClass('end')) {
+						$this.on('change', function () {
+							var container = $this.closest('.datepair');
+							var $start = container.find('.datepair-start');
+							var $end = container.find('.datepair-end');
+							var start = moment($start.find('.date').val() + ' ' + $start.find('.time').val(), "MM-DD-YYYY h:mma");
+							var end = moment($end.find('.date').val() + ' ' + $end.find('.time').val(), "MM-DD-YYYY h:mma");
+							searchOptions.start = start.unix() + fixTimeZone;
+							searchOptions.end = end.unix() + fixTimeZone;
+							_clearMap();
+							plugin._getListings(_putListingsOnMap);
+						});
+					}
+				});
+
+				$datepair.each(init_datepair);
 			}
-			if (end.minutes() >= 30) {
-				end.minutes(30);
-			} else {
-				end.minutes(0);
-			}
-
-			plugin.searchOptions();
-
-			$('.start.time').val(start.format(TIMEPICKER_FORMAT));
-			$('.end.time').val(end.format(TIMEPICKER_FORMAT));
-			$('.start.date').val(start.format(DATEPICKER_FORMAT));
-			$('.end.date').val(end.format(DATEPICKER_FORMAT));
-
-			$('input.date').each(function () {
-				var $this = $(this);
-				if (!$this.attr('placeholder')) $this.attr('placeholder', 'date');
-
-				var opts = { 'format' : 'm/d/yyyy', 'autoclose' : true };
-
-				$this.datepicker(opts);
-
-				if ($this.hasClass('start') || $this.hasClass('end')) {
-					$this.on('change changeDate', $this.update_datepair);
-				}
-			});
-
-			$('input.time').each(function () {
-				var $this = $(this);
-				if (!$this.attr('placeholder')) $this.attr('placeholder', 'time');
-
-				var opts = { 'showDuration' : true, 'timeFormat' : 'g:ia', 'scrollDefaultNow' : true };
-
-				if ($this.hasClass('start') || $this.hasClass('end')) {
-					$this.on('change', function () {
-						$this.update_datepair();
-					});
-				}
-
-				$this.timepicker(opts);
-			});
-
-			var $datepair = $('.datepair');
-
-			$datepair.find('input').each(function () {
-				var $this = $(this);
-
-				if ($this.hasClass('start') || $this.hasClass('end')) {
-					$this.on('change', function () {
-						var container = $this.closest('.datepair');
-						var $start = container.find('.datepair-start');
-						var $end = container.find('.datepair-end');
-						var start = moment($start.find('.date').val() + ' ' + $start.find('.time').val(), "MM-DD-YYYY h:mma");
-						var end = moment($end.find('.date').val() + ' ' + $end.find('.time').val(), "MM-DD-YYYY h:mma");
-						searchOptions.start = start.unix() + fixTimeZone;
-						searchOptions.end = end.unix() + fixTimeZone;
-						_clearMap();
-						plugin._getListings(_putListingsOnMap);
-					});
-				}
-			});
-
-			$datepair.each(init_datepair);
 		};
 
 		plugin._getListings = function (callback) {
@@ -266,9 +270,7 @@
 			}
 
 			var eventOptions,
-				search = [],
-				markerOptions = {},
-				mapOptions = {};
+				search = [];
 
 			$.each(venues.concat(events), function (index, value) {
 				eventOptions = listingOptions;
@@ -480,30 +482,6 @@
 
 			$el.gmap3(mapOptions);
 
-		};
-
-		plugin.searchOptions = function () {
-			if (typeof searchOptions == "undefined") {
-				searchOptions = {};
-			}
-
-			searchOptions.key = this.settings.parkwhizKey;
-
-			if (( config.location.destination || config.location.lat ) && ( !searchOptions.start && config.defaultTime.start )) {
-				searchOptions.start = 1800 * Math.round(config.defaultTime.start / 1800);
-			}
-
-			if (( config.location.destination || config.location.lat ) && ( !searchOptions.end && config.defaultTime.end )) {
-				searchOptions.end = 1800 * Math.round(config.defaultTime.end / 1800);
-			}
-
-			if (!searchOptions.start && !config.location.venue) {
-				searchOptions.start = moment().unix();
-			}
-
-			if (!searchOptions.end && !config.location.venue) {
-				searchOptions.end = searchOptions.start + config.defaultTime.hours * 60 * 60; // 3 hrs
-			}
 		};
 
 		var _spriteCoordinates = function (icon, color) {
