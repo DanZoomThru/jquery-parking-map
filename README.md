@@ -1,4 +1,4 @@
-parkingMap(options, options.additionalMarkers, options.showLocationMarker, options.showPrice, \[options.width=600px\], \[options.height=600px\], options.modules, options.defaultTime, options.defaultTime.start, options.defaultTime.end, options.location, options.location.event, options.location.destination, options.location.venue, options.location.defaultEvent, options.location.center, options.location.center.destination, options.location.center.lat, options.location.center.lng, options.parkwhizKey, options.styles, options.mapOptions, options.overrideOptions)
+pwMap
 ----------------------------------------------------------------------------------------------------
 Creates a ParkWhiz Widget in a jQuery object.
 
