@@ -32,11 +32,8 @@
 		 * 4. event
 		 */
 
-		var map = new $.parkingMap($("#parkwhiz-widget-container"), {
+		$("#parkwhiz-widget-container").parkingMap({
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
-			defaultTime        : {
-				hours : 3
-			},
 			location           : {
 				venue        : 'united-center-parking',
 				defaultEvent : 151307
@@ -48,7 +45,6 @@
 			showPrice          : true,
 			modules            : ['map', 'event_list', 'parking_locations']
 		});
-		map.createMap();
 	});
 </script>
 

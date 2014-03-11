@@ -32,11 +32,8 @@
 		 * 4. event
 		 */
 
-		var map = new $.parkingMap($("#parkwhiz-widget-container"), {
+		$("#parkwhiz-widget-container").parkingMap({
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
-			defaultTime        : {
-				hours : 3
-			},
 			location           : {
 				destination : '208 S. Jefferson, Chicago, IL'
 			},
@@ -46,8 +43,7 @@
 			showLocationMarker : false,
 			showPrice          : true,
 			modules            : ['map', 'time_picker', 'parking_locations']
-		});
-		map.createMap();
+		}).createMap();
 	});
 </script>
 
