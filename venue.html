@@ -35,15 +35,16 @@
 		$("#parkwhiz-widget-container").parkingMap({
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
 			location           : {
-				destination : '208 S. Jefferson, Chicago, IL'
+				venue        : 'united-center-parking',
+				defaultEvent : 151307
 			},
 			zoom               : 12,
 			width              : '100%',
 			height             : '400px',
 			showLocationMarker : false,
 			showPrice          : true,
-			modules            : ['map', 'time_picker', 'parking_locations']
-		}).createMap();
+			modules            : ['map', 'event_list', 'parking_locations']
+		});
 	});
 </script>
 

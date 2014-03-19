@@ -32,13 +32,10 @@
 		 * 4. event
 		 */
 
-		var map = new $.parkingMap($("#parkwhiz-widget-container"), {
+		$("#parkwhiz-widget-container").parkingMap({
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
-			defaultTime        : {
-				hours : 3
-			},
 			location           : {
-				venue        : 'united-center-parking',
+				event		 : 'grant-park-parking/shamrock-shuffle-200958/',
 				defaultEvent : 151307
 			},
 			zoom               : 12,
@@ -46,9 +43,8 @@
 			height             : '400px',
 			showLocationMarker : false,
 			showPrice          : true,
-			modules            : ['map', 'event_list', 'parking_locations']
+			modules            : ['map', 'parking_locations']
 		});
-		map.createMap();
 	});
 </script>
 

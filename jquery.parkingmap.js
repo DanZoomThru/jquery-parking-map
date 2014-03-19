@@ -1,8 +1,9 @@
 /*
+ * @module pwMap
+ * @author ParkWhiz.com
  * jquery.parkingmap.js
  *
  * Copyright (C) 2014 ParkWhiz, Inc.
- *
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
@@ -13,9 +14,9 @@
  */
 
 // Usage:
-//     var map = new $.parkingMap($(".parking-map-widget-container"), { 
-//         width: 400,
-//         height: 300,
+//     $("#parkwhiz-widget-container").parkingMap({
+//         width: '400px',
+//         height: '300px',
 //         location {
 //         }
 //     });
@@ -25,7 +26,36 @@
 	var config;
 	var DATEPICKER_FORMAT = 'M/D/YYYY';
 	var TIMEPICKER_FORMAT = 'h:mma';
-	$.parkingMap = function ($cnt, options) {
+	/**
+	 * Creates a ParkWhiz Widget in a jQuery object.
+	 *
+	 * @constructor
+	 * @param {Object} options Configuration data for the ParkWhiz Widget.
+	 * @param {Object=} options.additionalMarkers An icon to replace the default ParkWhiz price marker that denotes location, as defined in the Google Maps API (https://developers.google.com/maps/documentation/javascript/reference?hl=fr#Icon)
+	 * @param {boolean=} options.showLocationMarker If true, show a marker to denote the location searched by the widget as specified in the Location object.
+	 * @param {boolean=} options.showPrice If true, show prices for each lot. If false, show a generic "P" icon.
+	 * @param {string=} [options.width=600px] A css width value for the map module.
+	 * @param {string=} [options.height=600px] A css height value for the map module.
+	 * @param {string[]=} options.modules An array of module codes to dictate how the module is arranged on the screen. Possible codes include map, parking_locations, event_list and time_picker
+	 * @param {Object=} options.defaultTime An object containing default timestamps for the timepicker, if present.
+	 * @param {int=} options.defaultTime.start A unix timestring representing the default search start time in the timepicker, rounded to the nearest half hour.
+	 * @param {int=} options.defaultTime.end A unix timestring representing the default search end time in the timepicker, rounded to the nearest half hour.
+	 * @param {Object} options.location An object describing the search area for the widget.
+	 * @param {(string|string[])=} options.location.event An event slug, such as 'united-center-parking/san-antonio-spurs-at-chicago-bulls-155217', or an array of event slugs corresponding to a URL on parkwhiz.com
+	 * @param {(string|string[])=} options.location.destination A plaintext address or array of plaintext addresses around which to search parking.
+	 * @param {(string|string[])=} options.location.venue A venue slug, such as 'united-center-parking', or an array of venue slugs corresponding to a URL on parkwhiz.com
+	 * @param {string=} options.location.defaultEvent An event ID number, found as an integer at the end of an event URL slug, to select by default when the event picker module is present
+	 * @param {Object=} options.location.center An optional object for centering the map away from the search location.
+	 * @param {string=} options.location.center.destination A plaintext address to optionally manually center the map away from the search location.
+	 * @param {string=} options.location.center.lat A plaintext latitude to optionally manually center the map away from the search location. Requires longitude.
+	 * @param {string=} options.location.center.lng A plaintext longitude to optionally manually center the map away from the search location. Requires latitude.
+	 * @param {string} options.parkwhizKey Your ParkWhiz API key, available here: http://www.parkwhiz.com/developers/
+	 * @param {Object=} options.styles An object containing stylers, as defined in the Google Maps API (https://developers.google.com/maps/documentation/javascript/reference#MapTypeStyle)
+	 * @param {Object=} options.mapOptions An object with any option you can pass through to Google Maps' MapOptions object (https://developers.google.com/maps/documentation/javascript/reference#MapOptions)
+	 * @param {Object=} options.overrideOptions An object with any option you can pass through to the gmap3 plugin (http://gmap3.net/en/), upon which this plugin is based.
+	 *
+	 */
+	$.fn.parkingMap = function (options) {
 
 		var defaultConfig = {
 			additionalMarkers  : false,
@@ -36,8 +66,7 @@
 			modules            : ['map', 'time_picker'],
 			defaultTime        : {
 				start : moment().unix(),
-				end   : moment().add('h', 3).unix(), // + 3 hrs
-				hours : 3
+				end   : moment().add('h', 3).unix() // + 3 hrs
 			},
 			location           : {
 				center       : null,
@@ -47,7 +76,6 @@
 				venue        : []
 			},
 			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
-			overlays           : [],
 			styles             : [],
 			mapOptions         : {
 				zoom : 14
@@ -55,6 +83,7 @@
 			overrideOptions    : {}
 		};
 
+		var $cnt = $(this);
 		var $el = $cnt;
 
 		config = $.extend({}, defaultConfig, options);
@@ -142,12 +171,22 @@
 			});
 		}
 
+		/**
+		 * Removes all parking locations from the map.
+		 *
+		 * @private
+		 */
+
 		var _clearMap = function () {
 			$('#parking-popup').remove();
 			$('.psf').remove();
 			$('.location-place').html('');
 			$el.gmap3('clear');
 		};
+
+		/**
+		 * Initializes ParkWhiz Widget.
+		 */
 
 		var init = function () {
 
@@ -178,8 +217,8 @@
 
 			if(config.modules.indexOf("time_picker") > -1) {
 
-				var start = moment().add('m', 15);
-				var end = moment().add('m', 195);
+				var start = moment.unix(config.defaultTime.start).add('m', 15);
+				var end = moment.unix(config.defaultTime.end).add('m', 15);
 
 				if (start.minutes() >= 30) {
 					start.minutes(30);
@@ -199,7 +238,9 @@
 
 				$('input.date').each(function () {
 					var $this = $(this);
-					if (!$this.attr('placeholder')) $this.attr('placeholder', 'date');
+					if (!$this.attr('placeholder')) {
+						$this.attr('placeholder', 'date');
+					}
 
 					var opts = { 'format' : 'm/d/yyyy', 'autoclose' : true };
 
@@ -212,7 +253,9 @@
 
 				$('input.time').each(function () {
 					var $this = $(this);
-					if (!$this.attr('placeholder')) $this.attr('placeholder', 'time');
+					if (!$this.attr('placeholder')) {
+						$this.attr('placeholder', 'time');
+					}
 
 					var opts = { 'showDuration' : true, 'timeFormat' : 'g:ia', 'scrollDefaultNow' : true };
 
@@ -249,6 +292,13 @@
 			}
 		};
 
+		/**
+		 * Pulls listings from ParkWhiz API based on configuration.
+		 *
+		 * @param callback The function to be called after listings are loaded.
+		 * @private
+		 */
+
 		plugin._getListings = function (callback) {
 			var venues = config.location.venue,
 				events = config.location.event,
@@ -281,7 +331,7 @@
 				search.push({
 					uri     : value,
 					options : eventOptions
-				})
+				});
 			});
 			var destinationOptions;
 			$.each(destinations, function (index, value) {
@@ -299,7 +349,7 @@
 				search.push({
 					uri     : 'search',
 					options : destinationOptions
-				})
+				});
 			});
 
 			if (search.length === 0) {
@@ -333,7 +383,7 @@
 								allOptions.marker.latLng = allOptions.map.latLng;
 							}
 
-							allOptions = $.extend(allOptions, config.overrideOptions)
+							allOptions = $.extend(allOptions, config.overrideOptions);
 
 							$el.gmap3(allOptions);
 						}
@@ -365,8 +415,8 @@
 								api_url = searchResults.events[0].api_url;
 								$events.find('li:first').addClass('active');
 							}
-							delete value.options['start'];
-							delete value.options['end'];
+							delete value.options.start;
+							delete value.options.end;
 							$.ajax(api_url, {
 								dataType : 'jsonp',
 								data     : value.options,
@@ -398,7 +448,11 @@
 			});
 		};
 
-		plugin.createMap = function () {
+		/**
+		 * Create map inside container
+		 * @private
+		 */
+		plugin._createMap = function () {
 			this.$el.width(config.width);
 			this.$el.height(config.height);
 
@@ -428,6 +482,10 @@
 			this._getListings(_putListingsOnMap);
 		};
 
+		/**
+		 * Refresh map with listings generated by _getListings.
+		 * @private
+		 */
 		var _putListingsOnMap = function () {
 			var $el = plugin.$el;
 
@@ -484,16 +542,23 @@
 
 		};
 
+		/**
+		 * Given an icon code and a color, return the offset for the icon sprite to be displayed.
+		 * @param icon
+		 * @param color
+		 * @returns {google.maps.Point}
+		 * @private
+		 */
 		var _spriteCoordinates = function (icon, color) {
-			if (icon == 'p') {
-				if (color == 'active') {
+			if (icon === 'p') {
+				if (color === 'active') {
 					return new google.maps.Point(56, 693);
 				} else {
 					return new google.maps.Point(0, 693);
 				}
-			} else if (icon == 'number_shadow') {
+			} else if (icon === 'number_shadow') {
 				return new google.maps.Point(396, 23);
-			} else if (icon == 'p_shadow') {
+			} else if (icon === 'p_shadow') {
 				return new google.maps.Point(24, 693);
 			} else {
 				// money icon is 36x33, rows of 10, 100 blue (normal)
@@ -510,7 +575,7 @@
 				}
 
 				var top = Math.floor(double_digits / 10) * 34;
-				if (color == 'active') {
+				if (color === 'active') {
 					top += 339;
 				}
 
@@ -583,9 +648,12 @@
 		};
 
 		init();
+		plugin._createMap();
 	};
 
-
+	/**
+	 * pairs all start datetimes in a container with end datetimes so that a valid time range is always available.
+	 */
 	var init_datepair = function () {
 		var container = $(this);
 
@@ -617,6 +685,9 @@
 		}
 	};
 
+	/**
+	 * Update date pair and time pair
+	 */
 	$.fn.update_datepair = function () {
 		var target = $(this);
 		var container = target.closest('.datepair');
@@ -654,11 +725,8 @@
 
 			if (newDelta < 0) {
 				newDelta = 0;
-
 				if (target.hasClass('start')) {
 					end.val(startDate.format(DATEPICKER_FORMAT)).datepicker('update');
-				} else if (target.hasClass('end')) {
-//					start.val(endDate.format(DATEPICKER_FORMAT)).datepicker('update');
 				}
 			} else if (newDelta < 1) {
 				var startTimeVal = container.find('input.start.time').val();
@@ -688,10 +756,6 @@
 		if (start.seconds === null || end.seconds === null) {
 			return;
 		}
-
-		// if (end.seconds <= start.seconds) {
-		// 	end.seconds += 86400;
-		// }
 
 		var oldDelta = container.data('timeDelta');
 		var dateDelta = container.data('dateDelta');
@@ -732,7 +796,7 @@
 			container.data('dateDelta', 0);
 		}
 
-		if (endDateAdvance != 0) {
+		if (endDateAdvance !== 0) {
 			if (dateDelta || dateDelta === 0) {
 				var newEnd = moment(endInput.val(), DATEPICKER_FORMAT).add(endDateAdvance);
 
