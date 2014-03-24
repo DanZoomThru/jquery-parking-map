@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>ParkWhiz Transient Map</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=us-ascii"/>
+
+	<!-- demo.css for examples -->
+	<link rel="stylesheet" type="text/css" href="examples.css">
+
+	<!-- jquery.parkingmap.css -->
+	<link rel="stylesheet" type="text/css" href="../source/css/jquery.parkingmap.css">
+
+	<!-- jQuery & Google Maps -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+
+	<!-- Dependencies
+	<script type="text/javascript" src="../source/dependencies/gmap3.min.js"></script>
+	<script type="text/javascript" src="../source/dependencies/moment.min.js"></script>
+	<script type="text/javascript" src="../source/dependencies/underscore.min.js"></script>
+	<script type="text/javascript" src="../source/dependencies/timepicker.min.js"></script>
+	<script type="text/javascript" src="../source/dependencies/datepicker.min.js"></script>-->
+
+	<!-- jquery.parkingmap.js -->
+	<script type="text/javascript" src="../source/jquery.parkingmap-dependencies.js"></script>
+	<script type="text/javascript" src="../jquery.parkingmap.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		$(function() {
+			$("#parkwhiz-widget").parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				location: {
+					destination : '208 S. Jefferson, Chicago, IL'
+				},
+				mapOptions: {
+					zoom: 14
+				},
+				height: '275px',
+				showLocationMarker: false,
+				showPrice: true,
+				modules: ['map', 'time_picker', 'parking_locations']
+			});
+			$("#parkwhiz-widget-event").parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				location: {
+					event: 'united-center-parking/indiana-pacers-at-chicago-bulls-155283/'
+				},
+				mapOptions: {
+					zoom: 16
+				},
+				height: '400px',
+				modules: ['map', 'time_picker', 'parking_locations']
+			});
+			$("#parkwhiz-widget-venue").parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				location: {
+					venue: 'united-center-parking',
+				},
+				mapOptions: {
+					zoom: 15
+				},
+				height: '400px',
+				modules: ['map',  'event_list', 'time_picker', 'parking_locations']
+			});
+		});
+	</script>
+	<div id="transient_example1">
+		<div id="parkwhiz-widget"></div>
+	</div>
+	<div id="transient_example2">
+		<div id="parkwhiz-widget-event"></div>
+	</div>
+	<div id="transient_example3">
+		<div id="parkwhiz-widget-venue"></div>
+	</div>
+</body>
+</html>

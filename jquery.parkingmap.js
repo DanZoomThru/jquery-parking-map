@@ -1,90 +1,55 @@
-/*
- * @module pwMap
- * @author ParkWhiz.com
- * jquery.parkingmap.js
- *
- * Copyright (C) 2014 ParkWhiz, Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- */
-
-// Usage:
-//     $("#parkwhiz-widget-container").parkingMap({
-//         width: '400px',
-//         height: '300px',
-//         location {
-//         }
-//     });
-
+/**
+*
+*  @module pwMap
+*  @author ParkWhiz.com
+*  jquery.parkingmap.js : v1.0.0
+*  https://github.com/ParkWhiz/jquery-parking-map
+*  Copyright (c) 2014 ParkWhiz, Inc.
+*  MIT licensed
+*
+*  Usage:
+*
+*    $("#parkwhiz-widget-container").parkingMap({
+*      width: '400px',
+*      height: '300px',
+*      location {
+*      }
+*    });
+*
+*/
 ;
 (function ($) {
 	var config;
 	var DATEPICKER_FORMAT = 'M/D/YYYY';
 	var TIMEPICKER_FORMAT = 'h:mma';
-	/**
-	 * Creates a ParkWhiz Widget in a jQuery object.
-	 *
-	 * @constructor
-	 * @param {Object} options Configuration data for the ParkWhiz Widget.
-	 * @param {Object=} options.additionalMarkers An icon to replace the default ParkWhiz price marker that denotes location, as defined in the Google Maps API (https://developers.google.com/maps/documentation/javascript/reference?hl=fr#Icon)
-	 * @param {boolean=} options.showLocationMarker If true, show a marker to denote the location searched by the widget as specified in the Location object.
-	 * @param {boolean=} options.showPrice If true, show prices for each lot. If false, show a generic "P" icon.
-	 * @param {string=} [options.width=600px] A css width value for the map module.
-	 * @param {string=} [options.height=600px] A css height value for the map module.
-	 * @param {string[]=} options.modules An array of module codes to dictate how the module is arranged on the screen. Possible codes include map, parking_locations, event_list and time_picker
-	 * @param {Object=} options.defaultTime An object containing default timestamps for the timepicker, if present.
-	 * @param {int=} options.defaultTime.start A unix timestring representing the default search start time in the timepicker, rounded to the nearest half hour.
-	 * @param {int=} options.defaultTime.end A unix timestring representing the default search end time in the timepicker, rounded to the nearest half hour.
-	 * @param {Object} options.location An object describing the search area for the widget.
-	 * @param {(string|string[])=} options.location.event An event slug, such as 'united-center-parking/san-antonio-spurs-at-chicago-bulls-155217', or an array of event slugs corresponding to a URL on parkwhiz.com
-	 * @param {(string|string[])=} options.location.destination A plaintext address or array of plaintext addresses around which to search parking.
-	 * @param {(string|string[])=} options.location.venue A venue slug, such as 'united-center-parking', or an array of venue slugs corresponding to a URL on parkwhiz.com
-	 * @param {string=} options.location.defaultEvent An event ID number, found as an integer at the end of an event URL slug, to select by default when the event picker module is present
-	 * @param {Object=} options.location.center An optional object for centering the map away from the search location.
-	 * @param {string=} options.location.center.destination A plaintext address to optionally manually center the map away from the search location.
-	 * @param {string=} options.location.center.lat A plaintext latitude to optionally manually center the map away from the search location. Requires longitude.
-	 * @param {string=} options.location.center.lng A plaintext longitude to optionally manually center the map away from the search location. Requires latitude.
-	 * @param {string} options.parkwhizKey Your ParkWhiz API key, available here: http://www.parkwhiz.com/developers/
-	 * @param {Object=} options.styles An object containing stylers, as defined in the Google Maps API (https://developers.google.com/maps/documentation/javascript/reference#MapTypeStyle)
-	 * @param {Object=} options.mapOptions An object with any option you can pass through to Google Maps' MapOptions object (https://developers.google.com/maps/documentation/javascript/reference#MapOptions)
-	 * @param {Object=} options.overrideOptions An object with any option you can pass through to the gmap3 plugin (http://gmap3.net/en/), upon which this plugin is based.
-	 *
-	 */
 	$.fn.parkingMap = function (options) {
 
 		var defaultConfig = {
-			additionalMarkers  : false,
-			showLocationMarker : true,
-			showPrice          : true,
-			width              : '600px',
-			height             : '400px',
-			modules            : ['map', 'time_picker'],
-			defaultTime        : {
-				start : moment().unix(),
-				end   : moment().add('h', 3).unix() // + 3 hrs
+				parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
+				additionalMarkers  : false,
+				showLocationMarker : true,
+				showPrice          : true,
+				width              : '100%',
+				height             : '400px',
+				modules            : ['map', 'time_picker'],
+				defaultTime        : {
+					start : moment().unix(),
+					end   : moment().add('h', 3).unix() // + 3 hrs
+				},
+				location           : {
+					center       : null,
+					defaultEvent : null,
+					event        : [],
+					destination  : [],
+					venue        : []
+				},
+				styles             : [],
+				mapOptions         : {
+					zoom : 14
+				},
+				overrideOptions    : {}
 			},
-			location           : {
-				center       : null,
-				defaultEvent : null,
-				event        : [],
-				destination  : [],
-				venue        : []
-			},
-			parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
-			styles             : [],
-			mapOptions         : {
-				zoom : 14
-			},
-			overrideOptions    : {}
-		};
-
-		var $cnt = $(this);
-		var $el = $cnt;
+			$cnt = $(this);
 
 		config = $.extend({}, defaultConfig, options);
 		config.defaultTime = $.extend({}, defaultConfig.defaultTime, options.defaultTime);
@@ -92,8 +57,8 @@
 		config.mapOptions = $.extend({}, defaultConfig.mapOptions, options.mapOptions);
 		config.location.center = $.extend({}, defaultConfig.location.center, options.location.center);
 
-		var fix = new Date();
-		var fixTimeZone = (fix.getTimezoneOffset() - 300) * -60;
+		var fix = new Date(),
+			fixTimeZone = (fix.getTimezoneOffset() - 300) * -60;
 
 		if (config.defaultTime.start) {
 			config.defaultTime.start += fixTimeZone;
@@ -107,7 +72,7 @@
 			searchOptions = {};
 
 		var module_template = {
-			'map'               : $('<div class="parking-map-widget-container"></div>'),
+			'map'               : $('<div class="parking-map-widget-container mod"></div>'),
 			'parking_locations' : $(
 				'<div class="mod">' +
 					'   <h2>Parking Locations</h2>' +
@@ -123,25 +88,30 @@
 			'time_picker'       : $(
 				'<div class="mod">' +
 					'<h2>Timeframe</h2>' +
+					// Still cleaning this up... -Zach
+					'<p class="form-help">ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. However, if you have additional plans (like dinner) be sure to book extra time.</p>' +
+					//'<p class="form-help">Change the start and end times below to when you\'ll need parking.</p>' +
 					'<div class="datepair">' +
-					'<div class="datepair-start">' +
-					'<strong>From:</strong><br />' +
-					'<input type="text" class="time start" /> on' +
-					'<input type="text" class="date start" /><br />' +
+						'<div class="datepair-start">' +
+							'<strong>From:</strong>' +
+							'<input type="text" class="time start" /> on ' +
+							'<input type="text" class="date start" />' +
+						'</div>' +
+						'<div class="datepair-end">' +
+							'<strong>To:</strong>' +
+							'<input type="text" class="time end" /> on ' +
+							'<input type="text" class="date end" />' +
+						'</div>' +
 					'</div>' +
-					'<div class="datepair-end">' +
-					'<strong>To:</strong><br />' +
-					'<input type="text" class="time end" /> on' +
-					'<input type="text" class="date end" />' +
-					'</div>' +
-					'</div>' +
-					'</div>'
+				'</div>'
 			)
 		};
-		$cnt.empty();
+		$cnt.addClass('parkwhiz-widget-container').width(config.width).empty();
 		$.each(config.modules, function (index, module) {
 			$cnt.append(module_template[module]);
 		});
+
+		$cnt.append('<a href="http://www.parkwhiz.com/" target="_blank" title="Powered by ParkWhiz" class="powered-by-pw">Powered by <span>ParkWhiz</span></a>');
 
 		$el = $cnt.find('.parking-map-widget-container');
 
@@ -153,21 +123,21 @@
 
 		if (plugin.settings.HDPI) {
 			$.extend(plugin.settings, {
-				MAIN_SPRITE             : 'https://dxqviapaoowtl.cloudfront.net/static/images/parkwhiz-sprite@2x.png',
-				EXTENDED_SPRITE_101_300 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-101-300@2x.png',
-				EXTENDED_SPRITE_301_500 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-301-500@2x.png',
-				EXTENDED_SPRITE_501_700 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-501-700@2x.png',
-				EXTENDED_SPRITE_701_900 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-701-900@2x.png',
-				EXTENDED_SPRITE_901_999 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-901-999@2x.png'
+				MAIN_SPRITE             : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/parkwhiz-sprite@2x.png',
+				EXTENDED_SPRITE_101_300 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-101-300@2x.png',
+				EXTENDED_SPRITE_301_500 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-301-500@2x.png',
+				EXTENDED_SPRITE_501_700 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-501-700@2x.png',
+				EXTENDED_SPRITE_701_900 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-701-900@2x.png',
+				EXTENDED_SPRITE_901_999 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-901-999@2x.png'
 			});
 		} else {
 			$.extend(plugin.settings, {
-				MAIN_SPRITE             : 'https://dxqviapaoowtl.cloudfront.net/static/images/parkwhiz-sprite.png',
-				EXTENDED_SPRITE_101_300 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-101-300.png',
-				EXTENDED_SPRITE_301_500 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-301-500.png',
-				EXTENDED_SPRITE_501_700 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-501-700.png',
-				EXTENDED_SPRITE_701_900 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-701-900.png',
-				EXTENDED_SPRITE_901_999 : 'https://dxqviapaoowtl.cloudfront.net/static/images/map-price-sprite-extended-901-999.png'
+				MAIN_SPRITE             : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/parkwhiz-sprite.png',
+				EXTENDED_SPRITE_101_300 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-101-300.png',
+				EXTENDED_SPRITE_301_500 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-301-500.png',
+				EXTENDED_SPRITE_501_700 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-501-700.png',
+				EXTENDED_SPRITE_701_900 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-701-900.png',
+				EXTENDED_SPRITE_901_999 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-901-999.png'
 			});
 		}
 
@@ -191,9 +161,11 @@
 		var init = function () {
 
 			$.extend(plugin.settings, config, options);
+
 			plugin.$el = $el;
 
 			var iconSize = new google.maps.Size(38, 33);
+
 			if (config.showPrice === false) {
 				iconSize = new google.maps.Size(53, 43);
 			}
@@ -298,7 +270,6 @@
 		 * @param callback The function to be called after listings are loaded.
 		 * @private
 		 */
-
 		plugin._getListings = function (callback) {
 			var venues = config.location.venue,
 				events = config.location.event,
@@ -333,7 +304,9 @@
 					options : eventOptions
 				});
 			});
+
 			var destinationOptions;
+
 			$.each(destinations, function (index, value) {
 				destinationOptions = listingOptions;
 				if ($.isPlainObject(value)) {
@@ -392,7 +365,7 @@
 							locations.push(searchResults);
 						} else if (searchResults.events) {
 							var api_url,
-								$events = $('#parkwhiz-widget-container').find('ul.events'),
+								$events = $cnt.find('ul.events'),
 								$event,
 								default_event = null,
 								$active_event = $events.find('li.active');
@@ -457,10 +430,10 @@
 			this.$el.height(config.height);
 
 			var mapOptions = {
-				options : config.mapOptions
-			};
+					options : config.mapOptions
+				},
+				markerOptions = {};
 
-			var markerOptions = {};
 			if (config.location.center.destination) {
 				mapOptions.address = config.location.center.destination;
 				if (config.showLocationMarker) {
@@ -477,8 +450,8 @@
 			}
 
 			var allOptions = $.extend({}, { map : mapOptions, marker : markerOptions }, config.overrideOptions);
-			this.$el.gmap3(allOptions);
 
+			this.$el.gmap3(allOptions);
 			this._getListings(_putListingsOnMap);
 		};
 
@@ -487,11 +460,9 @@
 		 * @private
 		 */
 		var _putListingsOnMap = function () {
-			var $el = plugin.$el;
-
-			var $events = $('.mod').find($('ul.location-place'));
-
-			var values = [];
+			var $el = plugin.$el,
+				$events = $('.mod').find($('ul.location-place')),
+				values = [];
 
 			for (var i = 0; i < listings.length; i++) {
 				if (listings[i].price) {
@@ -539,7 +510,6 @@
 			};
 
 			$el.gmap3(mapOptions);
-
 		};
 
 		/**

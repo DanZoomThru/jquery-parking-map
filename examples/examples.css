@@ -1,0 +1,27 @@
+html, body { margin: 0 }
+body {
+	background: #fff;
+	color: #383838;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 15px;
+	line-height: 145%;
+}
+h1, h2, h3 {
+	margin: 0;
+	font-weight: 400;
+	color: #272727;
+	line-height: 1.2;
+}
+a {
+	color: #06c;
+	text-decoration: none;
+}
+a:hover { text-decoration: underline }
+image { border: 0 }
+
+#transient_example1, #transient_example2, #transient_example3 {
+	margin: 20px 80px;
+	padding: 0;
+	width: 600px;
+	/*height: 500px;*/
+}
