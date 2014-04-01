@@ -28,7 +28,7 @@
 <body>
 	<script type="text/javascript">
 		$(function() {
-			$("#parkwhiz-widget").parkingMap({
+			$("#parkwhiz-widget").pwMap_parkingMap({
 				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
 				location: {
 					destination : '208 S. Jefferson, Chicago, IL'
@@ -41,10 +41,10 @@
 				showPrice: true,
 				modules: ['map', 'time_picker', 'parking_locations']
 			});
-			$("#parkwhiz-widget-event").parkingMap({
+			$("#parkwhiz-widget-event").pwMap_parkingMap({
 				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
 				location: {
-					event: 'united-center-parking/indiana-pacers-at-chicago-bulls-155283/'
+					event: 'united-center-parking/prismatic-world-tour-204091'
 				},
 				mapOptions: {
 					zoom: 16
@@ -52,10 +52,10 @@
 				height: '400px',
 				modules: ['map', 'time_picker', 'parking_locations']
 			});
-			$("#parkwhiz-widget-venue").parkingMap({
+			$("#parkwhiz-widget-venue").pwMap_parkingMap({
 				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
 				location: {
-					venue: 'united-center-parking',
+					venue: 'united-center-parking'
 				},
 				mapOptions: {
 					zoom: 15
