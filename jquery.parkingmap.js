@@ -7,21 +7,11 @@
 *  Copyright (c) 2014 ParkWhiz, Inc.
 *  MIT licensed
 *
-*  Usage:
-*
-*    $("#parkwhiz-widget-container").parkingMap({
-*      width: '400px',
-*      height: '300px',
-*      location {
-*      }
-*    });
-*
 */
 ;(function ( $ ) {
 	if (!$.pwMap) {
 		$.pwMap = {};
 	}
-
 	$.pwMap.parkingMap = function ( el, options ) {
 		var base = this;
 		var DATEPICKER_FORMAT = 'M/D/YYYY';
@@ -40,23 +30,21 @@
 		base.module_template = {
 			'map'               : $('<div class="parking-map-widget-container mod"></div>'),
 			'parking_locations' : $(
-				'<div class="mod">' +
+				'<div class="parking-locations-widget-container mod">' +
 					'   <h2>Parking Locations</h2>' +
 					'   <ul class="location-place parking"></ul>' +
 					'</div>'
 			),
 			'event_list'        : $(
-				'<div class="mod">' +
+				'<div class="parking-events-widget-container mod">' +
 					'   <h2>Events</h2>' +
-					'   <ul class="parking events"></ul>' +
+					'   <ul class="parking parking-events"></ul>' +
 					'</div>'
 			),
 			'time_picker'       : $(
-				'<div class="mod">' +
+				'<div class="parking-timepicker-widget-container mod">' +
 					'<h2>Timeframe</h2>' +
-					// Still cleaning this up... -Zach
-					'<p class="form-help">ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. However, if you have additional plans (like dinner) be sure to book extra time.</p>' +
-					//'<p class="form-help">Change the start and end times below to when you\'ll need parking.</p>' +
+					'<p class="form-help">Change the start and end times below to when you\'ll need parking.</p>' +
 					'<div class="datepair">' +
 					'<div class="datepair-start">' +
 					'<strong>From:</strong>' +
@@ -100,16 +88,11 @@
 		}
 
 		base.init = function () {
-			base.options = $.extend({},
-				$.pwMap.parkingMap.defaultOptions, options);
-			base.options.defaultTime = $.extend({},
-				$.pwMap.parkingMap.defaultOptions.defaultTime, options.defaultTime);
-			base.options.location = $.extend({},
-				$.pwMap.parkingMap.defaultOptions.location, options.location);
-			base.options.mapOptions = $.extend({},
-				$.pwMap.parkingMap.defaultOptions.mapOptions, options.mapOptions);
-			base.options.location.center = $.extend({},
-				$.pwMap.parkingMap.defaultOptions.location.center, options.location.center);
+			base.options = $.extend({}, $.pwMap.parkingMap.defaultOptions, options);
+			base.options.defaultTime = $.extend({}, $.pwMap.parkingMap.defaultOptions.defaultTime, options.defaultTime);
+			base.options.location = $.extend({}, $.pwMap.parkingMap.defaultOptions.location, options.location);
+			base.options.mapOptions = $.extend({}, $.pwMap.parkingMap.defaultOptions.mapOptions, options.mapOptions);
+			base.options.location.center = $.extend({}, $.pwMap.parkingMap.defaultOptions.location.center, options.location.center);
 
 			var fix = new Date(),
 				fixTimeZone = (fix.getTimezoneOffset() - 300) * -60;
@@ -123,9 +106,15 @@
 			}
 
 			base.$el.addClass('parkwhiz-widget-container').width(base.options.width).empty();
+
 			$.each(base.options.modules, function (index, module) {
 				base.$el.append(base.module_template[module]);
 			});
+
+			if ((_.contains(base.options.modules, 'event_list') || !$.isEmptyObject(base.options.location.event)) && _.contains(base.options.modules, 'time_picker')) {
+				base.$el.find('.datepair, .datepair-end').hide();
+				base.$el.find('.parking-timepicker-widget-container .form-help').html('ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. <strong>However, if you have additional plans be sure to <a href="http://www.parkwhiz.com/" target="_blank" title="ParkWhiz.com">book extra time via the ParkWhiz website &rarr;</a></strong>');
+			}
 
 			base.$map = base.$el.find('.parking-map-widget-container');
 
@@ -152,7 +141,7 @@
 
 			base.searchOptions.key = base.options.parkwhizKey;
 
-			if(base.options.modules.indexOf("time_picker") > -1) {
+			if (_.contains(base.options.modules, 'time_picker')) {
 
 				var start = moment.unix(base.options.defaultTime.start).add('m', 15);
 				var end = moment.unix(base.options.defaultTime.end).add('m', 15);
@@ -168,12 +157,12 @@
 					end.minutes(0);
 				}
 
-				$('.start.time').val(start.format(TIMEPICKER_FORMAT));
-				$('.end.time').val(end.format(TIMEPICKER_FORMAT));
-				$('.start.date').val(start.format(DATEPICKER_FORMAT));
-				$('.end.date').val(end.format(DATEPICKER_FORMAT));
+				base.$el.find('.start.time').val(start.format(TIMEPICKER_FORMAT));
+				base.$el.find('.end.time').val(end.format(TIMEPICKER_FORMAT));
+				base.$el.find('.start.date').val(start.format(DATEPICKER_FORMAT));
+				base.$el.find('.end.date').val(end.format(DATEPICKER_FORMAT));
 
-				$('input.date').each(function () {
+				base.$el.find('input.date').each(function () {
 					var $this = $(this);
 					if (!$this.attr('placeholder')) {
 						$this.attr('placeholder', 'date');
@@ -181,14 +170,14 @@
 
 					var opts = { 'format' : 'm/d/yyyy', 'autoclose' : true };
 
-					$this.datepicker(opts);
-
 					if ($this.hasClass('start') || $this.hasClass('end')) {
 						$this.on('change changeDate', $this.update_datepair);
 					}
+
+					$this.datepicker(opts);
 				});
 
-				$('input.time').each(function () {
+				base.$el.find('input.time').each(function () {
 					var $this = $(this);
 					if (!$this.attr('placeholder')) {
 						$this.attr('placeholder', 'time');
@@ -197,15 +186,13 @@
 					var opts = { 'showDuration' : true, 'timeFormat' : 'g:ia', 'scrollDefaultNow' : true };
 
 					if ($this.hasClass('start') || $this.hasClass('end')) {
-						$this.on('change', function () {
-							$this.update_datepair();
-						});
+						$this.on('change', $this.update_datepair);
 					}
 
 					$this.timepicker(opts);
 				});
 
-				var $datepair = $('.datepair');
+				var $datepair = base.$el.find('.datepair');
 
 				$datepair.find('input').each(function () {
 					var $this = $(this);
@@ -220,7 +207,7 @@
 							base.searchOptions.start = start.unix() + fixTimeZone;
 							base.searchOptions.end = end.unix() + fixTimeZone;
 							base._clearMap();
-							base._getListings(_putListingsOnMap);
+							base._getListings(base._putListingsOnMap);
 						});
 					}
 				});
@@ -237,9 +224,9 @@
 		 * @private
 		 */
 		base._clearMap = function () {
-			$('#parking-popup').remove();
-			$('.psf').remove();
-			$('.location-place').html('');
+			base.$el.find('#parking-popup').remove();
+			base.$el.find('.psf').remove();
+			base.$el.find('.location-place').html('');
 			base.$map.gmap3('clear');
 		};
 
@@ -255,6 +242,7 @@
 				destinations = base.options.location.destination,
 				listingOptions = base.searchOptions,
 				locations = [];
+
 			base.listings = [];
 
 			if (!$.isArray(venues)) {
@@ -314,15 +302,23 @@
 				});
 			}
 
+
+			base.searchOptions.start = '1396893600';
+			base.searchOptions.end = '1396911600';
+
+			console.log(search);
+
+
 			$.each(search, function (index, value) {
 				$.ajax('//api.parkwhiz.com/' + value.uri, {
 					dataType : 'jsonp',
 					data     : value.options,
 					cache    : true,
-					error    : function (jqXHR, textStatus, errorThrown) {
-
-					},
+					error    : function (jqXHR, textStatus, errorThrown) {},
 					success  : function (searchResults) {
+
+						console.log(searchResults);
+
 						if (_.isEmpty(base.options.location.center)) {
 							var allOptions = {
 								map : {
@@ -335,11 +331,9 @@
 								lng : searchResults.lng
 							};
 							if (base.options.showLocationMarker) {
-								allOptions.marker.latLng = allOptions.map.latLng;
+								allOptions.marker.latLng = allOptions.map.options.center;
 							}
-
 							allOptions = $.extend(allOptions, base.options.overrideOptions);
-
 							base.$map.gmap3(allOptions);
 						}
 						if (searchResults.parking_listings) {
@@ -347,8 +341,9 @@
 							locations.push(searchResults);
 						} else if (searchResults.events) {
 							var api_url,
-								$events = base.$el.find('ul.events'),
+								$events = base.$el.find('ul.parking-events'),
 								$event,
+								pw_url = null,
 								default_event = null,
 								$active_event = $events.find('li.active');
 							if ($active_event.length) {
@@ -372,15 +367,17 @@
 							}
 							delete value.options.start;
 							delete value.options.end;
+							if(base.$el.find('.form-help a').length){
+								pw_url = api_url.replace('api.parkwhiz.com', 'www.parkwhiz.com');
+								$('.parking-timepicker-widget-container .form-help a').attr("href", pw_url)
+							}
 							$.ajax(api_url, {
 								dataType : 'jsonp',
 								data     : value.options,
 								cache    : true,
 								success  : function (eventResults) {
 									locations.push(eventResults);
-
 									base.listings = base.listings.concat(eventResults.parking_listings);
-
 									if (locations.length === search.length) {
 										callback();
 									}
@@ -392,7 +389,7 @@
 								var $this = $(this);
 								$li.removeClass('active').unbind('click');
 								$this.addClass('active');
-								base._getListings(base._putListingsOnMap);
+								base._createMap();
 							});
 						}
 						if (locations.length === search.length) {
@@ -423,8 +420,8 @@
 				}
 			} else if (base.options.location.center.lat && base.options.location.center.lng) {
 				mapOptions.latLng = [
-					base.options.location.lat,
-					base.options.location.lng
+					base.options.location.center.lat,
+					base.options.location.center.lng
 				];
 				if (base.options.showLocationMarker) {
 					markerOptions.latLng = mapOptions.latLng;
@@ -437,13 +434,12 @@
 			base._getListings(base._putListingsOnMap);
 		};
 
-
 		/**
 		 * Refresh map with listings generated by _getListings.
 		 * @private
 		 */
 		base._putListingsOnMap = function () {
-			var $events = $('.mod').find($('ul.location-place')),
+			var $events = base.$el.find('.mod ul.location-place'),
 				values = [];
 
 			for (var i = 0; i < base.listings.length; i++) {
@@ -464,7 +460,7 @@
 						},
 						tag     : 'listing'
 					});
-					$events.append($('<li><a href="' + base.listings[i].parkwhiz_url + '">' + base.listings[i].address + '</a></li>'));
+					$events.append('<li><a href="' + base.listings[i].parkwhiz_url + '">' + base.listings[i].address + '</a></li>');
 				}
 			}
 
@@ -493,7 +489,6 @@
 
 			base.$map.gmap3(mapOptions);
 		};
-
 
 		/**
 		 * Given an icon code and a color, return the offset for the icon sprite to be displayed.
@@ -535,9 +530,13 @@
 				var left = ((double_digits % 10) + (10 * hundreds)) * 38;
 				return new google.maps.Point(left, top);
 			}
-
 		};
 
+		/**
+		 * Given a dollar amount, returns price icon
+		 * @param dollars
+		 * @private
+		 */
 		base._getIcons = function (dollars) {
 			if (!base._iconCache[dollars]) {
 				var sprite, scaledSize;
@@ -603,10 +602,11 @@
 		 * pairs all start datetimes in a container with end datetimes so that a valid time range is always available.
 		 */
 		base.init_datepair = function () {
-			var container = $(this);
 
-			var startDateInput = container.find('input.start.date');
-			var endDateInput = container.find('input.end.date');
+			var $container = $(this);
+
+			var startDateInput = $container.find('input.start.date');
+			var endDateInput = $container.find('input.end.date');
 			var dateDelta = moment.duration(0, "days");
 
 			if (startDateInput.length && endDateInput.length) {
@@ -614,18 +614,17 @@
 				var endDate = moment(endDateInput.val(), DATEPICKER_FORMAT);
 				dateDelta = endDate.diff(startDate, 'days');
 
-
-				container.data('dateDelta', dateDelta);
+				$container.data('dateDelta', dateDelta);
 			}
 
-			var startTimeInput = container.find('input.start.time');
-			var endTimeInput = container.find('input.end.time');
+			var startTimeInput = $container.find('input.start.time');
+			var endTimeInput = $container.find('input.end.time');
 
 			if (startTimeInput.length && endTimeInput.length) {
 				var startInt = startTimeInput.timepicker('getSecondsFromMidnight');
 				var endInt = endTimeInput.timepicker('getSecondsFromMidnight');
 
-				container.data('timeDelta', endInt - startInt);
+				$container.data('timeDelta', endInt - startInt);
 
 				if (dateDelta < 1) {
 					endTimeInput.timepicker('option', 'minTime', startInt);
@@ -634,20 +633,23 @@
 		};
 
 		/**
-		 * Update date pair and time pair
+		 * Update date pair
 		 */
 		$.fn.update_datepair = function () {
 			var target = $(this);
 			var container = target.closest('.datepair');
 
 			if (target.hasClass('date')) {
-				_update_date_pair(target, container);
+				base._update_date_pair(target, container);
 
 			} else if (target.hasClass('time')) {
-				_update_time_pair(target, container);
+				base._update_time_pair(target, container);
 			}
 		};
 
+		/**
+		 * Update date pair
+		 */
 		base._update_date_pair = function (target, container) {
 			var start = container.find('input.start.date');
 			var end = container.find('input.end.date');
@@ -767,7 +769,7 @@
 		modules            : ['map', 'time_picker'],
 		defaultTime        : {
 			start : moment().unix(),
-			end   : moment().add('h', 3).unix() // + 3 hrs
+			end   : moment().add('h', 8).unix() // + 3 hrs
 		},
 		location           : {
 			center       : null,
@@ -776,9 +778,9 @@
 			destination  : [],
 			venue        : []
 		},
-		styles             : [],
 		mapOptions         : {
-			zoom : 14
+			zoom   : 14,
+			styles : []
 		},
 		overrideOptions    : {}
 	};
@@ -790,4 +792,4 @@
 		});
 	};
 
-})( jQuery );
+})(jQuery);

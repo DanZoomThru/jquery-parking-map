@@ -51,34 +51,34 @@
 	line-height: 1.5;
 	white-space: normal;
 }
-.parkwhiz-widget-container ul.parking, .parkwhiz-widget-container ul.events {
+.parkwhiz-widget-container ul.parking, .parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events {
 	overflow: auto;
 	margin: 0;
 	padding: 0;
 }
 .parkwhiz-widget-container ul.parking { max-height: 350px }
-.parkwhiz-widget-container ul.events { max-height: 175px }
-.parkwhiz-widget-container ul.parking li, .parkwhiz-widget-container ul.events li {
+.parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events { max-height: 175px }
+.parkwhiz-widget-container ul.parking li, .parkwhiz-widget-container ul.events li, .parkwhiz-widget-container ul.parking-events li {
 	border-top: 1px solid #ddd;
 	list-style: none;
 	white-space: normal;
 }
 .parkwhiz-widget-container ul.parking li { padding: 0 }
-.parkwhiz-widget-container ul.events li { padding: 6px }
-.parkwhiz-widget-container ul.parking li a, .parkwhiz-widget-container ul.events li a {
+.parkwhiz-widget-container ul.events li, .parkwhiz-widget-container ul.parking-events li { padding: 6px }
+.parkwhiz-widget-container ul.parking li a, .parkwhiz-widget-container ul.parking-events li a, .parkwhiz-widget-container ul.events li a {
 	text-decoration: none;
 	color: #0f5ebc;
 	display: block;
 	line-height: 30px;
 }
 .parkwhiz-widget-container ul.parking li a { padding: 6px 10px }
-.parkwhiz-widget-container ul.parking li a:hover, .parkwhiz-widget-container ul.events li:hover {
+.parkwhiz-widget-container ul.parking li a:hover, .parkwhiz-widget-container ul.parking-events li:hover, .parkwhiz-widget-container ul.events li:hover {
 	text-decoration: none;
 	background: #0f5ebc;
 	color: #fff;
 	cursor: pointer;
 }
-.parkwhiz-widget-container ul.events li.active, .parkwhiz-widget-container ul.parking li.active a {
+.parkwhiz-widget-container ul.events li.active, .parkwhiz-widget-container ul.parking-events li.active, .parkwhiz-widget-container ul.parking li.active a {
 	text-decoration: none;
 	background: #0f5ebc;
 	color: #fff;
@@ -101,6 +101,14 @@
 	-moz-border-radius-topright: 5px;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
+}
+.parkwhiz-widget-container .mod:last-child {
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	-moz-border-radius-bottomright: 5px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 .parkwhiz-widget-container .mod h2 {
 	padding: 7px 10px;
