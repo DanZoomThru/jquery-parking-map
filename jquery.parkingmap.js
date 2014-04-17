@@ -157,10 +157,18 @@
 					end.minutes(0);
 				}
 
+				if(moment().isDST()) {
+					start = start.subtract('h', 1);
+					end = end.subtract('h', 1);
+				}
+
 				base.$el.find('.start.time').val(start.format(TIMEPICKER_FORMAT));
 				base.$el.find('.end.time').val(end.format(TIMEPICKER_FORMAT));
 				base.$el.find('.start.date').val(start.format(DATEPICKER_FORMAT));
 				base.$el.find('.end.date').val(end.format(DATEPICKER_FORMAT));
+
+				base.searchOptions.start = start.unix();
+				base.searchOptions.end = end.unix();
 
 				base.$el.find('input.date').each(function () {
 					var $this = $(this);
@@ -204,6 +212,10 @@
 							var $end = container.find('.datepair-end');
 							var start = moment($start.find('.date').val() + ' ' + $start.find('.time').val(), "MM-DD-YYYY h:mma");
 							var end = moment($end.find('.date').val() + ' ' + $end.find('.time').val(), "MM-DD-YYYY h:mma");
+							if(moment().isDST()) {
+								start = start.subtract('h', 1);
+								end = end.subtract('h', 1);
+							}
 							base.searchOptions.start = start.unix() + fixTimeZone;
 							base.searchOptions.end = end.unix() + fixTimeZone;
 							base._clearMap();
@@ -262,10 +274,8 @@
 
 			$.each(venues.concat(events), function (index, value) {
 				eventOptions = listingOptions;
-				if (_.contains(base.options.modules, 'event_list')) {
-					delete eventOptions.start;
-					delete eventOptions.end;
-				}
+				delete eventOptions.start;
+				delete eventOptions.end;
 				search.push({
 					uri     : value,
 					options : eventOptions
@@ -302,13 +312,6 @@
 				});
 			}
 
-
-			base.searchOptions.start = '1396893600';
-			base.searchOptions.end = '1396911600';
-
-			console.log(search);
-
-
 			$.each(search, function (index, value) {
 				$.ajax('//api.parkwhiz.com/' + value.uri, {
 					dataType : 'jsonp',
@@ -316,8 +319,6 @@
 					cache    : true,
 					error    : function (jqXHR, textStatus, errorThrown) {},
 					success  : function (searchResults) {
-
-						console.log(searchResults);
 
 						if (_.isEmpty(base.options.location.center)) {
 							var allOptions = {
@@ -369,7 +370,7 @@
 							delete value.options.end;
 							if(base.$el.find('.form-help a').length){
 								pw_url = api_url.replace('api.parkwhiz.com', 'www.parkwhiz.com');
-								$('.parking-timepicker-widget-container .form-help a').attr("href", pw_url)
+								$('.parking-timepicker-widget-container .form-help a').attr("href", pw_url);
 							}
 							$.ajax(api_url, {
 								dataType : 'jsonp',
@@ -575,7 +576,7 @@
 							scaledSize : scaledSize,
 							origin     : (new google.maps.Point(56, 693) )
 						}
-					}
+					};
 				} else {
 					base._iconCache[dollars] = {
 						'normal' : {
@@ -590,7 +591,7 @@
 							scaledSize : scaledSize,
 							origin     : (dollars === 0 ? new google.maps.Point(418, 645) : base._spriteCoordinates(dollars, 'active') )
 						}
-					}
+					};
 				}
 
 			}
@@ -769,7 +770,7 @@
 		modules            : ['map', 'time_picker'],
 		defaultTime        : {
 			start : moment().unix(),
-			end   : moment().add('h', 8).unix() // + 3 hrs
+			end   : moment().add('h', 8).unix() // + 8 hrs
 		},
 		location           : {
 			center       : null,
