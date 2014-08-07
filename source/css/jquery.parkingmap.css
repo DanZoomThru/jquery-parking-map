@@ -2,7 +2,7 @@
 *
 *  @module pwMap
 *  @author ParkWhiz.com
-*  jquery.parkingmap.js : v1.0.0
+*  jquery.parkingmap.js : v1.0.1
 *  https://github.com/ParkWhiz/jquery-parking-map
 *  Copyright (c) 2014 ParkWhiz, Inc.
 *  MIT licensed
@@ -22,6 +22,7 @@
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
+	background-clip: padding-box;
 }
 .parkwhiz-widget-container .powered-by-pw {
 	width: 100%;
@@ -54,9 +55,10 @@
 .parkwhiz-widget-container ul.parking, .parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events {
 	overflow: auto;
 	margin: 0;
+	position: relative;
 	padding: 0;
 }
-.parkwhiz-widget-container ul.parking { max-height: 350px }
+.parkwhiz-widget-container ul.parking { max-height: 175px; }
 .parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events { max-height: 175px }
 .parkwhiz-widget-container ul.parking li, .parkwhiz-widget-container ul.events li, .parkwhiz-widget-container ul.parking-events li {
 	border-top: 1px solid #ddd;
@@ -91,8 +93,15 @@
 .parkwhiz-widget-container .mod {
 	border-top: 1px solid #272727;
 	background: #f8f8f8;
-	/*margin-top: 4px;*/
 }
+
+.parkwhiz-widget-container ul.parking:before, .parkwhiz-widget-container ul.parking-events:before, .parkwhiz-widget-container ul.events:before, .parkwhiz-widget-container ul.parking:after, .parkwhiz-widget-container ul.parking-events:after, .parkwhiz-widget-container ul.events:after, .parkwhiz-widget-container .mod:before, .parkwhiz-widget-container .mod:after {
+	content: " ";
+	display: table;
+}
+.parkwhiz-widget-container ul.parking:after, .parkwhiz-widget-container ul.parking-events:after, .parkwhiz-widget-container ul.events:after, .parkwhiz-widget-container .mod:after { clear: both; }
+
+.parkwhiz-widget-container ul.parking, .parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events, .parkwhiz-widget-container .mod { *zoom: 1; }
 .parkwhiz-widget-container .mod:first-child {
 	border: none;
 	-webkit-border-top-left-radius: 5px;
@@ -101,18 +110,25 @@
 	-moz-border-radius-topright: 5px;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
+	background-clip: padding-box;
 }
-.parkwhiz-widget-container .mod:last-child {
+.parkwhiz-widget-container .mod:last-child,
+.parkwhiz-widget-container .mod:last-child ul.parking {
 	-webkit-border-bottom-left-radius: 5px;
 	-webkit-border-bottom-right-radius: 5px;
 	-moz-border-radius-bottomleft: 5px;
 	-moz-border-radius-bottomright: 5px;
 	border-bottom-left-radius: 5px;
 	border-bottom-right-radius: 5px;
+	background-clip: padding-box;
 }
 .parkwhiz-widget-container .mod h2 {
 	padding: 7px 10px;
 	margin: 0;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+	background-clip: padding-box;
 }
 .parkwhiz-widget-container .form-help {
 	padding: 0 10px 0;
@@ -133,6 +149,7 @@
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
+	background-clip: padding-box;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
@@ -159,6 +176,7 @@
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
+	background-clip: padding-box;
 	-webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 	-moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
@@ -183,6 +201,7 @@
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
+	background-clip: padding-box;
 	background-color: rgba(255, 255, 255, 0.9);
 	padding: 10px;
 	cursor: pointer;
@@ -206,6 +225,7 @@
 	border: 2px solid #fff;
 	padding: 10px;
 	border-radius: 20px;
+	background-clip: padding-box;
 	font-weight: bold;
 	font-size: 14px !important;
 	text-align: center;
@@ -223,20 +243,11 @@
 .parkwhiz-widget-container:after { clear: both; }
 
 /**
- * For IE 6/7 only
- * Include this rule to trigger hasLayout and contain floats.
- */
-.cf {
-    *zoom: 1;
-}
-
-
-/**
 *
 *  Timepicker.css
 *
 */
-.ui-timepicker-wrapper {
+.parkwhiz-widget-timepicker.ui-timepicker-wrapper {
 	overflow-y: auto;
 	height: 150px;
 	width: 6.5em;
@@ -249,18 +260,18 @@
 	z-index: 10001;
 	margin: 0;
 }
-.ui-timepicker-wrapper.ui-timepicker-with-duration { width: 11em }
-.ui-timepicker-list {
+.ui-timepicker-wrapper.parkwhiz-widget-timepicker.ui-timepicker-with-duration { width: 11em }
+.parkwhiz-widget-timepicker .ui-timepicker-list {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
-.ui-timepicker-duration {
+.parkwhiz-widget-timepicker .ui-timepicker-duration {
 	margin-left: 5px;
 	color: #888;
 }
-.ui-timepicker-list:hover .ui-timepicker-duration { color: #888 }
-.ui-timepicker-list li {
+.parkwhiz-widget-timepicker .ui-timepicker-list:hover .ui-timepicker-duration { color: #888 }
+.parkwhiz-widget-timepicker .ui-timepicker-list li {
 	padding: 3px 0 3px 5px;
 	cursor: pointer;
 	white-space: nowrap;
@@ -268,20 +279,20 @@
 	list-style: none;
 	margin: 0;
 }
-.ui-timepicker-list:hover .ui-timepicker-selected {
+.parkwhiz-widget-timepicker .ui-timepicker-list:hover .ui-timepicker-selected {
 	background: #fff;
 	color: #000;
 }
-li.ui-timepicker-selected, .ui-timepicker-list li:hover, .ui-timepicker-list .ui-timepicker-selected:hover {
+.parkwhiz-widget-timepicker li.ui-timepicker-selected, .parkwhiz-widget-timepicker .ui-timepicker-list li:hover, .parkwhiz-widget-timepicker .ui-timepicker-list .ui-timepicker-selected:hover {
 	background: #1980EC;
 	color: #fff;
 }
-li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover .ui-timepicker-duration { color: #ccc }
-.ui-timepicker-list li.ui-timepicker-disabled, .ui-timepicker-list li.ui-timepicker-disabled:hover, .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
+.parkwhiz-widget-timepicker li.ui-timepicker-selected .ui-timepicker-duration, .parkwhiz-widget-timepicker .ui-timepicker-list li:hover .ui-timepicker-duration { color: #ccc }
+.parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-disabled, .parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-disabled:hover, .parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
 	color: #888;
 	cursor: default;
 }
-.ui-timepicker-list li.ui-timepicker-disabled:hover, .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled { background: #f2f2f2 }
+.parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-disabled:hover, .parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled { background: #f2f2f2 }
 
 /*!
 * Datepicker for Bootstrap
@@ -292,7 +303,7 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 * http://www.apache.org/licenses/LICENSE-2.0
 *
 */
-.dropdown-menu {
+.parkwhiz-widget-datepicker.dropdown-menu {
 	position: absolute;
 	top: 100%;
 	left: 0;
@@ -322,12 +333,12 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	*border-right-width: 2px;
 	*border-bottom-width: 2px;
 }
-.dropdown-menu.bottom-up {
+.parkwhiz-widget-datepicker.dropdown-menu.bottom-up {
 	top: auto;
 	bottom: 100%;
 	margin-bottom: 2px;
 }
-.dropdown-menu .divider {
+.parkwhiz-widget-datepicker.dropdown-menu .divider {
 	height: 1px;
 	margin: 5px 1px;
 	overflow: hidden;
@@ -336,7 +347,7 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	*width: 100%;
 	*margin: -5px 0 5px;
 }
-.dropdown-menu a {
+.parkwhiz-widget-datepicker.dropdown-menu a {
 	display: block;
 	padding: 3px 15px;
 	clear: both;
@@ -345,25 +356,25 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	color: #555555;
 	white-space: nowrap;
 }
-.dropdown-menu li > a:hover, .dropdown-menu .active > a, .dropdown-menu .active > a:hover {
+.parkwhiz-widget-datepicker.dropdown-menu li > a:hover, .parkwhiz-widget-datepicker.dropdown-menu .active > a, .parkwhiz-widget-datepicker.dropdown-menu .active > a:hover {
 	color: #ffffff;
 	text-decoration: none;
 	background-color: #0060b6;
 }
-.dropdown.open { *z-index: 1000 }
+.parkwhiz-widget-datepicker.dropdown.open { *z-index: 1000 }
 .dropdown.open .dropdown-toggle {
 	color: #ffffff;
 	background: #cccccc;
 	background: rgba(0,0,0,0.3);
 }
-.dropdown.open .dropdown-menu { display: block }
-.typeahead {
+.parkwhiz-widget-datepicker.dropdown.open .dropdown-menu { display: block }
+.parkwhiz-widget-datepicker .typeahead {
 	margin-top: 2px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 }
-.datepicker {
+.parkwhiz-widget-datepicker.datepicker {
 	top: 0;
 	left: 0;
 	padding: 4px;
@@ -372,7 +383,7 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 }
-.datepicker:before {
+.parkwhiz-widget-datepicker.datepicker:before {
 	content: '';
 	display: inline-block;
 	border-left: 7px solid transparent;
@@ -383,7 +394,7 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	top: -7px;
 	left: 6px;
 }
-.datepicker:after {
+.parkwhiz-widget-datepicker.datepicker:after {
 	content: '';
 	display: inline-block;
 	border-left: 6px solid transparent;
@@ -393,12 +404,12 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	top: -6px;
 	left: 7px;
 }
-.datepicker > div { display: none }
-.datepicker.days div.datepicker-days { display: block }
-.datepicker.months div.datepicker-months { display: block }
-.datepicker.years div.datepicker-years { display: block }
-.datepicker table { margin: 0 }
-.datepicker td, .datepicker th {
+.parkwhiz-widget-datepicker.datepicker > div { display: none }
+.parkwhiz-widget-datepicker.datepicker.days div.datepicker-days { display: block }
+.parkwhiz-widget-datepicker.datepicker.months div.datepicker-months { display: block }
+.parkwhiz-widget-datepicker.datepicker.years div.datepicker-years { display: block }
+.parkwhiz-widget-datepicker.datepicker table { margin: 0 }
+.parkwhiz-widget-datepicker.datepicker td, .datepicker th {
 	text-align: center;
 	width: 20px;
 	height: 20px;
@@ -406,17 +417,17 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 }
-.datepicker td.day:hover {
+.parkwhiz-widget-datepicker.datepicker td.day:hover {
 	background: #eeeeee;
 	cursor: pointer;
 }
-.datepicker td.old, .datepicker td.new { color: #999999 }
-.datepicker td.disabled, .datepicker td.disabled:hover {
+.parkwhiz-widget-datepicker.datepicker td.old, .parkwhiz-widget-datepicker.datepicker td.new { color: #999999 }
+.parkwhiz-widget-datepicker.datepicker td.disabled, .parkwhiz-widget-datepicker.datepicker td.disabled:hover {
 	background: none;
 	color: #999999;
 	cursor: default;
 }
-.datepicker td.today, .datepicker td.today:hover, .datepicker td.today.disabled, .datepicker td.today.disabled:hover {
+.parkwhiz-widget-datepicker.datepicker td.today, .parkwhiz-widget-datepicker.datepicker td.today:hover, .parkwhiz-widget-datepicker.datepicker td.today.disabled, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover {
 	background-color: #fde19a;
 	background-image: -moz-linear-gradient(top, #fdd49a, #fdf59a);
 	background-image: -ms-linear-gradient(top, #fdd49a, #fdf59a);
@@ -430,9 +441,9 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	filter: progid:dximagetransform.microsoft.gradient(enabled=false);
 }
-.datepicker td.today:hover, .datepicker td.today:hover:hover, .datepicker td.today.disabled:hover, .datepicker td.today.disabled:hover:hover, .datepicker td.today:active, .datepicker td.today:hover:active, .datepicker td.today.disabled:active, .datepicker td.today.disabled:hover:active, .datepicker td.today.active, .datepicker td.today:hover.active, .datepicker td.today.disabled.active, .datepicker td.today.disabled:hover.active, .datepicker td.today.disabled, .datepicker td.today:hover.disabled, .datepicker td.today.disabled.disabled, .datepicker td.today.disabled:hover.disabled, .datepicker td.today[disabled], .datepicker td.today:hover[disabled], .datepicker td.today.disabled[disabled], .datepicker td.today.disabled:hover[disabled] { background-color: #fdf59a }
-.datepicker td.today:active, .datepicker td.today:hover:active, .datepicker td.today.disabled:active, .datepicker td.today.disabled:hover:active, .datepicker td.today.active, .datepicker td.today:hover.active, .datepicker td.today.disabled.active, .datepicker td.today.disabled:hover.active { background-color: #fbf069 \9 }
-.datepicker td.active, .datepicker td.active:hover, .datepicker td.active.disabled, .datepicker td.active.disabled:hover {
+.parkwhiz-widget-datepicker.datepicker td.today:hover, .parkwhiz-widget-datepicker.datepicker td.today:hover:hover, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover:hover, .parkwhiz-widget-datepicker.datepicker td.today:active, .parkwhiz-widget-datepicker.datepicker td.today:hover:active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td.today.active, .parkwhiz-widget-datepicker.datepicker td.today:hover.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled, .parkwhiz-widget-datepicker.datepicker td.today:hover.disabled, .parkwhiz-widget-datepicker.datepicker td.today.disabled.disabled, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover.disabled, .parkwhiz-widget-datepicker.datepicker td.today[disabled], .parkwhiz-widget-datepicker.datepicker td.today:hover[disabled], .parkwhiz-widget-datepicker.datepicker td.today.disabled[disabled], .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover[disabled] { background-color: #fdf59a }
+.parkwhiz-widget-datepicker.datepicker td.today:active, .parkwhiz-widget-datepicker.datepicker td.today:hover:active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td.today.active, .parkwhiz-widget-datepicker.datepicker td.today:hover.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover.active { background-color: #fbf069 \9 }
+.parkwhiz-widget-datepicker.datepicker td.active, .parkwhiz-widget-datepicker.datepicker td.active:hover, .parkwhiz-widget-datepicker.datepicker td.active.disabled, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover {
 	background-color: #006dcc;
 	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -ms-linear-gradient(top, #0088cc, #0044cc);
@@ -448,9 +459,9 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	color: #fff;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
-.datepicker td.active:hover, .datepicker td.active:hover:hover, .datepicker td.active.disabled:hover, .datepicker td.active.disabled:hover:hover, .datepicker td.active:active, .datepicker td.active:hover:active, .datepicker td.active.disabled:active, .datepicker td.active.disabled:hover:active, .datepicker td.active.active, .datepicker td.active:hover.active, .datepicker td.active.disabled.active, .datepicker td.active.disabled:hover.active, .datepicker td.active.disabled, .datepicker td.active:hover.disabled, .datepicker td.active.disabled.disabled, .datepicker td.active.disabled:hover.disabled, .datepicker td.active[disabled], .datepicker td.active:hover[disabled], .datepicker td.active.disabled[disabled], .datepicker td.active.disabled:hover[disabled] { background-color: #0044cc }
-.datepicker td.active:active, .datepicker td.active:hover:active, .datepicker td.active.disabled:active, .datepicker td.active.disabled:hover:active, .datepicker td.active.active, .datepicker td.active:hover.active, .datepicker td.active.disabled.active, .datepicker td.active.disabled:hover.active { background-color: #003399 \9 }
-.datepicker td span {
+.parkwhiz-widget-datepicker.datepicker td.active:hover, .parkwhiz-widget-datepicker.datepicker td.active:hover:hover, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover:hover, .parkwhiz-widget-datepicker.datepicker td.active:active, .parkwhiz-widget-datepicker.datepicker td.active:hover:active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td.active.active, .parkwhiz-widget-datepicker.datepicker td.active:hover.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled, .parkwhiz-widget-datepicker.datepicker td.active:hover.disabled, .parkwhiz-widget-datepicker.datepicker td.active.disabled.disabled, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover.disabled, .parkwhiz-widget-datepicker.datepicker td.active[disabled], .parkwhiz-widget-datepicker.datepicker td.active:hover[disabled], .parkwhiz-widget-datepicker.datepicker td.active.disabled[disabled], .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover[disabled] { background-color: #0044cc }
+.parkwhiz-widget-datepicker.datepicker td.active:active, .parkwhiz-widget-datepicker.datepicker td.active:hover:active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td.active.active, .parkwhiz-widget-datepicker.datepicker td.active:hover.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover.active { background-color: #003399 \9 }
+.parkwhiz-widget-datepicker.datepicker td span {
 	display: block;
 	width: 23%;
 	height: 54px;
@@ -462,13 +473,13 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 }
-.datepicker td span:hover { background: #eeeeee }
-.datepicker td span.disabled, .datepicker td span.disabled:hover {
+.parkwhiz-widget-datepicker.datepicker td span:hover { background: #eeeeee }
+.parkwhiz-widget-datepicker.datepicker td span.disabled, .parkwhiz-widget-datepicker.datepicker td span.disabled:hover {
 	background: none;
 	color: #999999;
 	cursor: default;
 }
-.datepicker td span.active, .datepicker td span.active:hover, .datepicker td span.active.disabled, .datepicker td span.active.disabled:hover {
+.parkwhiz-widget-datepicker.datepicker td span.active, .parkwhiz-widget-datepicker.datepicker td span.active:hover, .parkwhiz-widget-datepicker.datepicker td span.active.disabled, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover {
 	background-color: #006dcc;
 	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -ms-linear-gradient(top, #0088cc, #0044cc);
@@ -484,19 +495,19 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	color: #fff;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
-.datepicker td span.active:hover, .datepicker td span.active:hover:hover, .datepicker td span.active.disabled:hover, .datepicker td span.active.disabled:hover:hover, .datepicker td span.active:active, .datepicker td span.active:hover:active, .datepicker td span.active.disabled:active, .datepicker td span.active.disabled:hover:active, .datepicker td span.active.active, .datepicker td span.active:hover.active, .datepicker td span.active.disabled.active, .datepicker td span.active.disabled:hover.active, .datepicker td span.active.disabled, .datepicker td span.active:hover.disabled, .datepicker td span.active.disabled.disabled, .datepicker td span.active.disabled:hover.disabled, .datepicker td span.active[disabled], .datepicker td span.active:hover[disabled], .datepicker td span.active.disabled[disabled], .datepicker td span.active.disabled:hover[disabled] { background-color: #0044cc }
-.datepicker td span.active:active, .datepicker td span.active:hover:active, .datepicker td span.active.disabled:active, .datepicker td span.active.disabled:hover:active, .datepicker td span.active.active, .datepicker td span.active:hover.active, .datepicker td span.active.disabled.active, .datepicker td span.active.disabled:hover.active { background-color: #003399 \9 }
-.datepicker td span.old { color: #999999 }
-.datepicker th.switch { width: 145px }
-.datepicker thead tr:first-child th, .datepicker tfoot tr:first-child th { cursor: pointer }
-.datepicker thead tr:first-child th:hover, .datepicker tfoot tr:first-child th:hover { background: #eeeeee }
-.input-append.date .add-on i, .input-prepend.date .add-on i {
+.parkwhiz-widget-datepicker.datepicker td span.active:hover, .parkwhiz-widget-datepicker.datepicker td span.active:hover:hover, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover:hover, .parkwhiz-widget-datepicker.datepicker td span.active:active, .parkwhiz-widget-datepicker.datepicker td span.active:hover:active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td span.active.active, .parkwhiz-widget-datepicker.datepicker td span.active:hover.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled, .parkwhiz-widget-datepicker.datepicker td span.active:hover.disabled, .parkwhiz-widget-datepicker.datepicker td span.active.disabled.disabled, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover.disabled, .parkwhiz-widget-datepicker.datepicker td span.active[disabled], .parkwhiz-widget-datepicker.datepicker td span.active:hover[disabled], .parkwhiz-widget-datepicker.datepicker td span.active.disabled[disabled], .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover[disabled] { background-color: #0044cc }
+.parkwhiz-widget-datepicker.datepicker td span.active:active, .parkwhiz-widget-datepicker.datepicker td span.active:hover:active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td span.active.active, .parkwhiz-widget-datepicker.datepicker td span.active:hover.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover.active { background-color: #003399 \9 }
+.parkwhiz-widget-datepicker.datepicker td span.old { color: #999999 }
+.parkwhiz-widget-datepicker.datepicker th.switch { width: 145px }
+.parkwhiz-widget-datepicker.datepicker thead tr:first-child th, .parkwhiz-widget-datepicker.datepicker tfoot tr:first-child th { cursor: pointer }
+.parkwhiz-widget-datepicker.datepicker thead tr:first-child th:hover, .parkwhiz-widget-datepicker.datepicker tfoot tr:first-child th:hover { background: #eeeeee }
+.parkwhiz-widget-datepicker .input-append.date .add-on i, .input-prepend.date .add-on i {
 	display: block;
 	cursor: pointer;
 	width: 16px;
 	height: 16px;
 }
-.datepicker [class^="icon-"], .datepicker [class*=" icon-"] {
+.parkwhiz-widget-datepicker.datepicker [class^="icon-"], .datepicker [class*=" icon-"] {
 	display: inline-block;
 	width: 14px;
 	height: 14px;
@@ -507,6 +518,6 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
 	background-position: 14px 14px;
 	background-repeat: no-repeat;
 }
-.datepicker [class^="icon-"]:last-child, .datepicker [class*=" icon-"]:last-child { *margin-left: 0 }
-.datepicker .icon-arrow-left { background-position: -240px -96px }
-.datepicker .icon-arrow-right { background-position: -264px -96px }
+.parkwhiz-widget-datepicker.datepicker [class^="icon-"]:last-child, .datepicker [class*=" icon-"]:last-child { *margin-left: 0 }
+.parkwhiz-widget-datepicker.datepicker .icon-arrow-left { background-position: -240px -96px }
+.parkwhiz-widget-datepicker.datepicker .icon-arrow-right { background-position: -264px -96px }

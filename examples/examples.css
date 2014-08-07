@@ -19,9 +19,8 @@ a {
 a:hover { text-decoration: underline }
 image { border: 0 }
 
-#transient_example1, #transient_example2, #transient_example3 {
+#transient_example1, #transient_example2, #transient_example3, #transient_example4 {
 	margin: 20px 80px;
 	padding: 0;
 	width: 445px;
-	/*height: 500px;*/
 }

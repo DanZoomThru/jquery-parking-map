@@ -1,9 +1,9 @@
 ![ParkWhiz](http://s3.parkwhiz.com/pw-blue-logo.png)
-# jQuery ParkWhiz Parking Map (1.0)
+# jQuery ParkWhiz Parking Map (1.0.1)
 
 A jQuery plugin that creates a ParkWhiz parking map widget.
 
-*   jquery.parkingmap.js : v1.0.0
+*   jquery.parkingmap.js : v1.0.1
 *   Released under the MIT License.
 *   [Parkwhiz.com/developers](http://www.parkwhiz.com/developers/)
 *   *Copyright (c) 2014 ParkWhiz, Inc.*
@@ -81,6 +81,9 @@ Then, init the plugin by calling it inside a jQuery ready function. Something li
 
 ## Changelog
 
+Version 1.0.1 - August 7, 2014
+* Cleaned up how events work. Fixed CSS to be plugin specific.
+*
 Version 1.0.0 - March, 2014
 * First public release of jquery.parkingmap.js.
 
