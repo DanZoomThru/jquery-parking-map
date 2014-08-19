@@ -136,6 +136,7 @@
 			}
 
 			base.searchOptions.key = base.options.parkwhizKey;
+			if (base.options.monthly) { base.searchOptions.monthly = 1; }
 
 			if (_.contains(base.options.modules, 'time_picker')) {
 
@@ -315,9 +316,6 @@
 					dataType : 'jsonp',
 					data     : value.options,
 					cache    : true,
-					beforeSend: function(jqXHR, settings) {
-						console.log(settings.url);
-					},
 					success  : function (searchResults) {
 						if ((_.contains(base.options.modules, 'event_list') || !$.isEmptyObject(base.options.location.event)) && _.contains(base.options.modules, 'time_picker')) {
 							base.$el.find('.parking-timepicker-widget-container .form-help a').attr('href', searchResults.parkwhiz_url);
@@ -780,6 +778,7 @@
 		additionalMarkers  : false,
 		showLocationMarker : true,
 		showPrice          : true,
+		monthly			   : false,
 		width              : '100%',
 		height             : '400px',
 		modules            : ['map', 'time_picker'],
@@ -798,7 +797,7 @@
 			zoom   : 14,
 			mapTypeControl: false,
 			panControl: false,
-    		streetViewControl: false,
+			streetViewControl: false,
 			zoomControlOptions: {
 				style: google.maps.ZoomControlStyle.SMALL
 			},
