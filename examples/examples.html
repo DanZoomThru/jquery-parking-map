@@ -47,7 +47,7 @@
 			$("#parkwhiz-widget-event").pwMap_parkingMap({
 				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
 				location: {
-					event: 'united-center-parking/prismatic-world-tour-204091'
+					event: 'united-center-parking/edmonton-oilers-at-chicago-blackhawks-250893'
 				},
 				height: '250px',
 				modules: ['map', 'time_picker', 'parking_locations'],
@@ -104,6 +104,18 @@
 					}
 				}
 			});
+			$("#parkwhiz-widget-monthly").pwMap_parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				height: '250px',
+				modules: ['map', 'parking_locations'],
+				monthly: true,
+				location: {
+					venue: 'parkwhiz-hq-parking'
+				},
+				mapOptions: {
+					zoom: 14
+				}
+			});
 		});
 	</script>
 	<div id="transient_example1">
@@ -117,6 +129,9 @@
 	</div>
 	<div id="transient_example4">
 		<div id="parkwhiz-widget-venue2"></div>
+	</div>
+	<div id="transient_example5">
+		<div id="parkwhiz-widget-monthly"></div>
 	</div>
 </body>
 </html>
