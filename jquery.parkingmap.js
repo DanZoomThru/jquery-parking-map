@@ -341,7 +341,7 @@
 							base.$el.find('.datepair, .datepair-end').hide();
 							base.$el.find('.parking-timepicker-widget-container .form-help').html('ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. <strong>However, if you have additional plans be sure to <a href="http://www.parkwhiz.com/" target="_blank" title="ParkWhiz.com">book extra time via the ParkWhiz website &rarr;</a></strong>');
 						}
-						if (searchResults.parking_listings && _.contains(base.options.modules, 'parking_locations')) {
+						if (searchResults.parking_listings) {
 							base.listings = base.listings.concat(searchResults.parking_listings);
 							locations.push(searchResults);
 						}
