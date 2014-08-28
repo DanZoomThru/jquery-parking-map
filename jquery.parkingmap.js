@@ -117,7 +117,7 @@
 			var iconSize = new google.maps.Size(38, 33);
 
 			if (base.options.showPrice === false) {
-				iconSize = new google.maps.Size(53, 43);
+				iconSize = new google.maps.Size(22, 37);
 			}
 
 			base._iconMeta = {
