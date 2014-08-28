@@ -106,7 +106,7 @@
 				base.options.defaultTime.end += fixTimeZone;
 			}
 
-			base.$el.addClass('parkwhiz-widget-container').width(base.options.width).empty();
+			base.$el.addClass('parkwhiz-widget-container').css("width", base.options.width).empty();
 
 			$.each(base.options.modules, function (index, module) {
 				base.$el.append(base.module_template[module]);
