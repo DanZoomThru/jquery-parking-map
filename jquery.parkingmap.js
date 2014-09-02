@@ -2,7 +2,7 @@
 *
 *	@module pwMap
 *	@author ParkWhiz.com
-*	jquery.parkingmap.js : v1.0.1
+*	jquery.parkingmap.js : v1.0.2
 *	https://github.com/ParkWhiz/jquery-parking-map
 *	Copyright (c) 2014 ParkWhiz, Inc.
 *	MIT licensed
@@ -27,40 +27,6 @@
 		base.searchOptions = {};
 
 		base._iconCache = {};
-
-		base.module_template = {
-			'map'               : $('<div class="parking-map-widget-container map-mod mod"></div>'),
-			'parking_locations' : $(
-				'<div class="parking-locations-widget-container parking_locations-mod mod">' +
-					'   <h2>Parking Locations</h2>' +
-					'   <ul class="location-place parking"></ul>' +
-					'</div>'
-			),
-			'event_list'        : $(
-				'<div class="parking-events-widget-container event_list-mod mod">' +
-					'   <h2>Events</h2>' +
-					'   <ul class="parking-events parking"></ul>' +
-					'</div>'
-			),
-			'time_picker'       : $(
-				'<div class="parking-timepicker-widget-container time_picker-mod mod">' +
-					'<h2>Timeframe</h2>' +
-					'<p class="form-help">Change the start and end times below to when you\'ll need parking.</p>' +
-					'<div class="datepair">' +
-					'<div class="datepair-start">' +
-					'<strong>From:</strong>' +
-					'<input type="text" class="time start" /> on ' +
-					'<input type="text" class="date start" />' +
-					'</div>' +
-					'<div class="datepair-end">' +
-					'<strong>To:</strong>' +
-					'<input type="text" class="time end" /> on ' +
-					'<input type="text" class="date end" />' +
-					'</div>' +
-					'</div>' +
-					'</div>'
-			)
-		};
 
 		base.$el.append('<a href="http://www.parkwhiz.com/" target="_blank" title="Powered by ParkWhiz" class="powered-by-pw">Powered by <span>ParkWhiz</span></a>');
 
@@ -106,10 +72,10 @@
 				base.options.defaultTime.end += fixTimeZone;
 			}
 
-			base.$el.addClass('parkwhiz-widget-container').css("width", base.options.width).empty();
+			base.$el.addClass('parkwhiz-widget-container clearfix').css("width", base.options.width).empty();
 
 			$.each(base.options.modules, function (index, module) {
-				base.$el.append(base.module_template[module]);
+				base.$el.append(base.options.moduleMarkup[module]);
 			});
 
 			base.$map = base.$el.find('.parking-map-widget-container');
@@ -350,7 +316,7 @@
 						}
 						if (searchResults.events && _.contains(base.options.modules, 'event_list')) {
 							var api_url,
-								$events = base.$el.find('ul.parking-events'),
+								$events = base.$el.find('.parking-events'),
 								$event,
 								pw_url = null,
 								default_event = null,
@@ -386,10 +352,16 @@
 								data     : value.options,
 								cache    : true,
 								success  : function (eventResults) {
+									base.$el.find('.location-place').html('');
+									locations = [];
 									locations.push(eventResults);
-									base.listings = base.listings.concat(eventResults.parking_listings);
+									base.listings = eventResults.parking_listings;
 									if (locations.length === search.length) {
 										callback();
+									} else {
+										if (_.contains(base.options.modules, 'parking_locations')) {
+											base.$el.find('.location-place').animate({height:40},600,'easeInBack').append('<li><em>Sorry, parking is currently not available....</em></li>');
+										}
 									}
 								}
 							});
@@ -407,6 +379,10 @@
 						}
 						if (locations.length === search.length) {
 							callback();
+						} else {
+							if (_.contains(base.options.modules, 'parking_locations')) {
+								base.$el.find('.location-place').animate({height:40},600,'easeInBack').append('<li><em>Sorry, parking is currently not available....</em></li>');
+							}
 						}
 					}
 				});
@@ -453,7 +429,7 @@
 		 * @private
 		 */
 		base._putListingsOnMap = function () {
-			var $events = base.$el.find('ul.location-place'),
+			var $events = base.$el.find('.location-place'),
 				values = [];
 
 			for (var i = 0; i < base.listings.length; i++) {
@@ -474,7 +450,7 @@
 						},
 						tag     : 'listing'
 					});
-					$events.append('<li><a href="' + base.listings[i].parkwhiz_url + '">' + base.listings[i].address + '</a></li>');
+					$events.append('<li><a href="' + base.listings[i].parkwhiz_url + '" target="_blank" title="' + base.listings[i].price_formatted +' Parking for ' + base.listings[i].location_name + '">' + base.listings[i].address + '</a></li>');
 				}
 			}
 
@@ -774,29 +750,57 @@
 	};
 
 	$.pwMap.parkingMap.defaultOptions = {
-		parkwhizKey        : 'd4c5b1639a3e443de77c43bb4d4bc888',
-		additionalMarkers  : false,
-		showLocationMarker : true,
-		showPrice          : true,
-		monthly			   : false,
-		width              : '100%',
-		height             : '400px',
-		modules            : ['map', 'time_picker'],
-		defaultTime        : {
+		parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+		additionalMarkers: false,
+		showLocationMarker: true,
+		showPrice: true,
+		monthly: false,
+		width: '100%',
+		height: '400px',
+		modules: ['map', 'time_picker', 'parking_locations'],
+		moduleMarkup: {
+			map: '<div class="parking-map-widget-container map-mod mod"></div>',
+			parking_locations: '<div class="parking-locations-widget-container parking_locations-mod mod"> \
+					<h2>Parking Locations</h2> \
+					<ul class="location-place parking"></ul> \
+				</div>',
+			event_list: '<div class="parking-events-widget-container event_list-mod mod"> \
+					<h2>Events</h2> \
+					<ul class="parking-events parking"></ul> \
+				</div>',
+			time_picker: '<div class="parking-timepicker-widget-container time_picker-mod mod"> \
+					<h2>Timeframe</h2> \
+					<p class="form-help">Change the start and end times below to when you\'ll need parking.</p> \
+					<div class="datepair"> \
+						<div class="datepair-start"> \
+							<strong>From:</strong> \
+							<input type="text" class="time start" /> on \
+							<input type="text" class="date start" /> \
+						</div> \
+						<div class="datepair-end"> \
+							<strong>To:</strong> \
+							<input type="text" class="time end" /> on  \
+							<input type="text" class="date end" /> \
+						</div> \
+					</div> \
+				</div>',
+		},
+		defaultTime: {
 			start : moment().unix(),
 			end   : moment().add('h', 8).unix() // + 8 hrs
 		},
-		location           : {
-			center       : null,
-			defaultEvent : null,
-			event        : [],
-			destination  : [],
-			venue        : []
+		location: {
+			center: null,
+			defaultEvent: null,
+			event: [],
+			destination: [],
+			venue: []
 		},
-		mapOptions         : {
-			zoom   : 14,
+		mapOptions: {
+			zoom: 14,
 			mapTypeControl: false,
 			panControl: false,
+			scrollwheel: false,
 			streetViewControl: false,
 			zoomControlOptions: {
 				style: google.maps.ZoomControlStyle.SMALL
@@ -805,7 +809,7 @@
 				{"stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#60a8f0"},{"saturation":50},{"lightness":15}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"saturation":0},{"lightness":30}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"lightness":20}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#7fbf6f"},{"lightness":20}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"},{"saturation":5},{"lightness":5}]},{"featureType":"poi.park","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"simplified"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"on"},{"saturation":30}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"road.local","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"all","elementType":"all","stylers":[{"lightness":14}]},{"featureType":"transit.line","elementType":"all","stylers":[{"visibility":"simplified"},{"lightness":35}]},{"featureType":"transit.station.rail","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"poi","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.bus","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"transit.station.airport","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"}]}
 			]
 		},
-		overrideOptions    : {}
+		overrideOptions: {}
 	};
 
 	$.fn.pwMap_parkingMap = function(options) {

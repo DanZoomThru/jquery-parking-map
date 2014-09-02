@@ -1,9 +1,9 @@
 ![ParkWhiz](http://s3.parkwhiz.com/pw-blue-logo.png)
-# jQuery ParkWhiz Parking Map (1.0.1)
+# jQuery ParkWhiz Parking Map (1.0.2)
 
 A jQuery plugin that creates a ParkWhiz parking map widget.
 
-*   jquery.parkingmap.js : v1.0.1
+*   jquery.parkingmap.js : v1.0.2
 *   Released under the MIT License.
 *   [Parkwhiz.com/developers](http://www.parkwhiz.com/developers/)
 *   *Copyright (c) 2014 ParkWhiz, Inc.*
@@ -43,7 +43,7 @@ Then, init the plugin by calling it inside a jQuery ready function. Something li
 |        Option        |    Type   |                  Default                   |                                                                                       Description                                                                                       |
 | -------------------- | --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | * `parkwhizKey`      | `string`  |                                            | Your ParkWhiz API key, available at [Parkwhiz.com/developers](http://www.parkwhiz.com/developers/).                                                                                     |
-| * `location`         | `Object`  | [*See details below*](#location-object) | An object describing the search area for the widget.                                                                                                                                    |
+| * `location`         | `Object`  | [*See details below*](#location-object)    | An object describing the search area for the widget.                                                                                                                                    |
 | `additionalMarkers`  | `Object`  | `false`                                    | An icon to replace the default ParkWhiz price marker for a location. Defined in the [Google Maps API](https://developers.google.com/maps/documentation/javascript/reference?hl=fr#Icon) |
 | `showLocationMarker` | `boolean` | `true`                                     | If true, show a marker to denote the location searched by the widget as specified in the Location object.                                                                               |
 | `showPrice`          | `boolean` | `true`                                     | If true, show prices for each lot. If false, show a generic "P" icon.                                                                                                                   |
@@ -51,7 +51,8 @@ Then, init the plugin by calling it inside a jQuery ready function. Something li
 | `width`              | `string`  | `100%`                                     | A css width value for the map module. We recommend you don't make the width smaller than `300px`.                                                                                       |
 | `height`             | `string`  | `400px`                                    | A css height value for the map module.                                                                                                                                                  |
 | `modules`            | `string`  | `['map', 'time_picker']`                   | An array of module codes to dictate the module order on the screen, accepted values are `map`, `parking_locations`, `event_list` and `time_picker`                                      |
-| `defaultTime`        | `Object`  | [*See details below*](#defaulttime-object)    | An object containing default timestamps for the timepicker, if present.                                                                                                                 |
+| `moduleMarkup`       | `Object`  |                                            | An array of markup for each module above in `modules`                                                                                                                                   |
+| `defaultTime`        | `Object`  | [*See details below*](#defaulttime-object) | An object containing default timestamps for the timepicker, if present.                                                                                                                 |
 | `mapOptions`         | `Object`  |                                            | An object with any option you can pass through to [Google Maps' MapOptions object](https://developers.google.com/maps/documentation/javascript/reference#MapOptions).                   |
 | `overrideOptions`    | `Object`  |                                            | An object with any option you can pass through to the [gmap3 plugin](http://gmap3.net/en/), upon which this plugin is based.                                                            |
 
@@ -80,11 +81,18 @@ Then, init the plugin by calling it inside a jQuery ready function. Something li
 
 ## Methods
 
+Coming soon.
+
 ## Changelog
+
+Version 1.0.2 - September 2, 2014
+* Added `moduleMarkup` option for custom templates
+* Added minified version of plugin to repo (`jquery.parkingmap.min.js`)
+* Various bug fixes
 
 Version 1.0.1 - August 7, 2014
 * Cleaned up how events work. Fixed CSS to be plugin specific.
-*
+
 Version 1.0.0 - March, 2014
 * First public release of jquery.parkingmap.js.
 
@@ -95,6 +103,7 @@ Here are some of the features planned for the future:
 Version 2.0:
 
 * Speed improvements
+* Methods
 * Further flexibility
 * Create self service generator
 
