@@ -1,3 +1,4 @@
+/* Just for the demo, ignore */
 html, body { margin: 0 }
 body {
 	background: #fff;
@@ -19,8 +20,8 @@ a {
 a:hover { text-decoration: underline }
 image { border: 0 }
 
-#transient_example1, #transient_example2, #transient_example3, #transient_example4, #transient_example5 {
-	margin: 20px 80px;
+.widget-example {
+	margin: 20px;
 	padding: 0;
 	width: 445px;
 }

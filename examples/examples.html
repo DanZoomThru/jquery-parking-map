@@ -23,76 +23,138 @@
 
 	<!-- jquery.parkingmap.js -->
 	<script type="text/javascript" src="../source/jquery.parkingmap-dependencies.js"></script>
-	<script type="text/javascript" src="../jquery.parkingmap.js"></script>
+	<script type="text/javascript" src="../jquery.parkingmap.min.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
 		$(function() {
-			$("#parkwhiz-widget").pwMap_parkingMap({
+
+			// Single address (results)
+			$("#parkwhiz-widget-single-address").pwMap_parkingMap({
 				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
 				location: {
-					destination : '208 S. Jefferson, Chicago, IL'
+					destination: [
+						'208 S. Jefferson, Chicago, IL',
+					],
+				},
+				mapHeight: '275px',
+				modules: ['map', 'time_picker', 'parking_locations']
+			});
+
+			// Multiple addresses
+			$("#parkwhiz-widget-multi-addresses").pwMap_parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				location: {
+					destination: [
+						'208 S. Jefferson, Chicago, IL',
+						{lat: '41.884499', lng: '-87.640461'},
+						{destination: 'anchorage, alaska'},
+					],
+				},
+				mapHeight: '275px',
+				modules: ['map', 'time_picker', 'parking_locations']
+			});
+
+			// Single address (no results)
+			$("#parkwhiz-widget-single-no-results").pwMap_parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				location: {
+					destination: [
+						{destination: 'anchorage, alaska'},
+					],
+				},
+				mapHeight: '275px',
+				modules: ['map', 'time_picker', 'parking_locations']
+			});
+
+			// Single address (results) - Zoom override, special center
+			$("#parkwhiz-widget-single-address-overrides").pwMap_parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				location: {
+					destination: [
+						'208 S. Jefferson, Chicago, IL',
+					],
+					center: {
+						destination: '1 World Way Los Angeles, CA 90045',
+					}
 				},
 				mapOptions: {
-					zoom: 14
+					zoom: 20
 				},
-				height: '200px',
-				showLocationMarker: true,
-				showPrice: true,
-				modules: ['map', 'event_list', 'time_picker', 'parking_locations'],
-				defaultTime: {
-					end: moment().add('h', 8).unix() // + 8 hrs
-				}
+				mapHeight: '275px',
+				modules: ['map', 'parking_locations']
 			});
+
+			// Monthly parking
+			$("#parkwhiz-widget-monthly").pwMap_parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				mapHeight: '250px',
+				modules: ['map', 'parking_locations'],
+				monthly: true,
+				location: {
+					destination: [
+						'208 S. Jefferson, Chicago, IL',
+					]
+				},
+			});
+
+			// Single venue
+			$("#parkwhiz-widget-venue").pwMap_parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				location: {
+					venue: 'madison-square-garden-parking',
+					defaultEvent: '234037',
+				},
+				mapHeight: '300px',
+				modules: ['map', 'event_list', 'parking_locations']
+			});
+
+			// Multiple venues (with default event)
+			$("#parkwhiz-widget-venue-multiple").pwMap_parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				location: {
+					venue: [
+						'madison-square-garden-parking',
+						'united-center-parking',
+					],
+					defaultEvent: '266678',
+				},
+				mapOptions: {
+					zoom: 20
+				},
+				mapHeight: '300px',
+				modules: ['map', 'event_list', 'parking_locations']
+			});
+
+			// Single event
 			$("#parkwhiz-widget-event").pwMap_parkingMap({
 				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
 				location: {
-					event: 'united-center-parking/edmonton-oilers-at-chicago-blackhawks-250893'
+					event: 'madison-square-garden-parking/detroit-pistons-at-new-york-knicks-266678/',
 				},
-				height: '250px',
-				modules: ['map', 'time_picker', 'parking_locations'],
-				mapOptions: {
-					zoom: 16
-				}
+				mapHeight: '300px',
+				modules: ['map', 'time_picker', 'parking_locations']
 			});
-			$("#parkwhiz-widget-venue").pwMap_parkingMap({
+
+			// Custom Google overrides
+			$("#parkwhiz-widget-custom-overrides").pwMap_parkingMap({
 				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
-				height: '400px',
-				modules: ['map', 'event_list', 'time_picker', 'parking_locations'],
 				location: {
-					venue: 'mccormick-place-parking'
+					destination: [
+						'208 S. Jefferson, Chicago, IL',
+					],
 				},
 				mapOptions: {
-					zoom: 14,
 					styles: [
 						{"featureType":"water","stylers":[{"saturation":43},{"lightness":-11},{"hue":"#0088ff"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":99}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#808080"},{"lightness":54}]},{"featureType":"landscape.man_made","elementType":"geometry.fill","stylers":[{"color":"#ece2d9"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#ccdca1"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#767676"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"}]},{"featureType":"poi","stylers":[{"visibility":"off"}]},{"featureType":"landscape.natural","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#b8cb93"}]},{"featureType":"poi.park","stylers":[{"visibility":"on"}]},{"featureType":"poi.sports_complex","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","stylers":[{"visibility":"on"}]},{"featureType":"poi.business","stylers":[{"visibility":"simplified"}]}
 					]
 				},
-				overrideOptions: {
-					circle:{
-						options:{
-							center: [41.880649155074, -87.69],
-							radius : 250,
-							fillColor : "#008BB2",
-							strokeColor : "#005BB7"
-						}
-					}
-				}
-			});
-			$("#parkwhiz-widget-venue2").pwMap_parkingMap({
-				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
-				height: '250px',
-				modules: ['map', 'event_list', 'time_picker', 'parking_locations'],
+				mapHeight: '275px',
+				modules: ['map', 'time_picker', 'parking_locations'],
 				defaultTime: {
-					start: moment().add('d', 2).unix(), // + 3 days
+					start: moment().add('d', 1).unix(), // + 1 day
 					end: moment().add('d', 8).unix() // + 8 days
 				},
-				location: {
-					venue: 'madison-square-garden-parking'
-				},
-				mapOptions: {
-					zoom: 14
-				},
 				overrideOptions: {
 					circle:{
 						options:{
@@ -104,34 +166,26 @@
 					}
 				}
 			});
-			$("#parkwhiz-widget-monthly").pwMap_parkingMap({
-				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
-				height: '250px',
-				modules: ['map', 'parking_locations'],
-				monthly: true,
-				location: {
-					venue: 'parkwhiz-hq-parking'
-				},
-				mapOptions: {
-					zoom: 14
-				}
-			});
+
 		});
 	</script>
-	<div id="transient_example1">
-		<div id="parkwhiz-widget"></div>
-	</div>
-	<div id="transient_example2">
-		<div id="parkwhiz-widget-event"></div>
-	</div>
-	<div id="transient_example3">
-		<div id="parkwhiz-widget-venue"></div>
-	</div>
-	<div id="transient_example4">
-		<div id="parkwhiz-widget-venue2"></div>
-	</div>
-	<div id="transient_example5">
-		<div id="parkwhiz-widget-monthly"></div>
-	</div>
+	<h1>Single address (results)</h1>
+	<div class="widget-example"><div id="parkwhiz-widget-single-address"></div></div>
+	<h1>Multiple addresses</h1>
+	<div class="widget-example"><div id="parkwhiz-widget-multi-addresses"></div></div>
+	<h1>Single address (no results)</h1>
+	<div class="widget-example"><div id="parkwhiz-widget-single-no-results"></div></div>
+	<h1>Single address (results) - Zoom override, special center</h1>
+	<div class="widget-example"><div id="parkwhiz-widget-single-address-overrides"></div></div>
+	<h1>Monthly parking</h1>
+	<div class="widget-example"><div id="parkwhiz-widget-monthly"></div></div>
+	<h1>Single venue</h1>
+	<div class="widget-example"><div id="parkwhiz-widget-venue"></div></div>
+	<h1>Multiple venues (with a default event)</h1>
+	<div class="widget-example"><div id="parkwhiz-widget-venue-multiple"></div></div>
+	<h1>Single event</h1>
+	<div class="widget-example"><div id="parkwhiz-widget-event"></div></div>
+	<h1>Custom Google overrides</h1>
+	<div class="widget-example"><div id="parkwhiz-widget-custom-overrides"></div></div>
 </body>
 </html>

@@ -1,12 +1,17 @@
 ![ParkWhiz](http://s3.parkwhiz.com/pw-blue-logo.png)
-# jQuery ParkWhiz Parking Map (1.0.2)
+# jQuery ParkWhiz Parking Map (2.0.0)
 
 A jQuery plugin that creates a ParkWhiz parking map widget.
 
-*   jquery.parkingmap.js : v1.0.2
+*   jquery.parkingmap.js : v2.0.0
 *   Released under the MIT License.
 *   [Parkwhiz.com/developers](http://www.parkwhiz.com/developers/)
 *   *Copyright (c) 2014 ParkWhiz, Inc.*
+
+## Demo & Wizard
+
+*   [Repo Demo](http://parkwhiz.github.io/jquery-parking-map/)
+*   [Parking Widget Generator](http://www.parkwhiz.com/developers/parking-widget/)
 
 ## Getting Started
 
@@ -40,21 +45,20 @@ Then, init the plugin by calling it inside a jQuery ready function. Something li
 
 **Required Setting** = *
 
-|        Option        |    Type   |                  Default                   |                                                                                       Description                                                                                       |
-| -------------------- | --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| * `parkwhizKey`      | `string`  |                                            | Your ParkWhiz API key, available at [Parkwhiz.com/developers](http://www.parkwhiz.com/developers/).                                                                                     |
-| * `location`         | `Object`  | [*See details below*](#location-object)    | An object describing the search area for the widget.                                                                                                                                    |
-| `additionalMarkers`  | `Object`  | `false`                                    | An icon to replace the default ParkWhiz price marker for a location. Defined in the [Google Maps API](https://developers.google.com/maps/documentation/javascript/reference?hl=fr#Icon) |
-| `showLocationMarker` | `boolean` | `true`                                     | If true, show a marker to denote the location searched by the widget as specified in the Location object.                                                                               |
-| `showPrice`          | `boolean` | `true`                                     | If true, show prices for each lot. If false, show a generic "P" icon.                                                                                                                   |
-| `monthly`            | `boolean` | `false`                                    | If true, only monthly listings. If false, show only transient listings.                                                                                                                 |
-| `width`              | `string`  | `100%`                                     | A css width value for the map module. We recommend you don't make the width smaller than `300px`.                                                                                       |
-| `height`             | `string`  | `400px`                                    | A css height value for the map module.                                                                                                                                                  |
-| `modules`            | `string`  | `['map', 'time_picker']`                   | An array of module codes to dictate the module order on the screen, accepted values are `map`, `parking_locations`, `event_list` and `time_picker`                                      |
-| `moduleMarkup`       | `Object`  |                                            | An array of markup for each module above in `modules`                                                                                                                                   |
-| `defaultTime`        | `Object`  | [*See details below*](#defaulttime-object) | An object containing default timestamps for the timepicker, if present.                                                                                                                 |
-| `mapOptions`         | `Object`  |                                            | An object with any option you can pass through to [Google Maps' MapOptions object](https://developers.google.com/maps/documentation/javascript/reference#MapOptions).                   |
-| `overrideOptions`    | `Object`  |                                            | An object with any option you can pass through to the [gmap3 plugin](http://gmap3.net/en/), upon which this plugin is based.                                                            |
+|        Option        |    Type   |                    Default                    |                                                                              Description                                                                              |
+| -------------------- | --------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| * `parkwhizKey`      | `string`  |                                               | Your ParkWhiz API key, available at [Parkwhiz.com/developers](http://www.parkwhiz.com/developers/).                                                                   |
+| * `location`         | `Object`  | [*See details below*](#location-object)       | An object describing the search area for the widget.                                                                                                                  |
+| `showLocationMarker` | `boolean` | `true`                                        | If true, show a marker to denote the location searched by the widget as specified in the Location object.                                                             |
+| `showPrice`          | `boolean` | `true`                                        | If true, show prices for each lot. If false, show a generic "P" icon.                                                                                                 |
+| `monthly`            | `boolean` | `false`                                       | If true, only monthly listings. If false, show only transient listings.                                                                                               |
+| `width`              | `string`  | `100%`                                        | A css width value for the map module. We recommend you don't make the width smaller than `300px`.                                                                     |
+| `height`             | `string`  | `400px`                                       | A css height value for the map module.                                                                                                                                |
+| `modules`            | `string`  | `['map', 'time_picker', 'parking_locations']` | An array of module codes to dictate the module order on the screen, accepted values are `map`, `parking_locations`, `event_list` and `time_picker`                    |
+| `moduleMarkup`       | `Object`  |                                               | An array of output markup for each module above in `modules`                                                                                                          |
+| `defaultTime`        | `Object`  | [*See details below*](#defaulttime-object)    | An object containing default timestamps for the timepicker, if present.                                                                                               |
+| `mapOptions`         | `Object`  |                                               | An object with any option you can pass through to [Google Maps' MapOptions object](https://developers.google.com/maps/documentation/javascript/reference#MapOptions). |
+| `overrideOptions`    | `Object`  |                                               | An object with any option you can pass through to the [gmap3 plugin](http://gmap3.net/en/), upon which this plugin is based.                                          |
 
 >#### `defaultTime` Object
 
@@ -67,23 +71,29 @@ Then, init the plugin by calling it inside a jQuery ready function. Something li
 
 >#### `location` Object
 
-|             Option            |        Type       | Default |                                                                                Description                                                                                 |
-| ----------------------------- | ----------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `location`                    | `Object`          |         | An object describing the search area for the widget.                                                                                                                       |
-| `location.event`              | `string/string[]` | `[]`    | An event slug (such as `att-park-parking/nlcs-89152`), or an array of event slugs corresponding to a URL on parkwhiz.com. **The slug should NOT contain a forward slash.** |
-| `location.destination`        | `string/string[]` | `[]`    | A plaintext address or array of plaintext addresses around which to search parking.                                                                                        |
-| `location.venue`              | `string/string[]` | `[]`    | A venue slug, such as `united-center-parking`, or an array of venue slugs corresponding to a URL on parkwhiz.com.                                                          |
-| `location.defaultEvent`       | `string`          | `null`  | An event ID number, found as an integer at the end of an event URL slug, to select by default when the event picker module is present.                                     |
-| `location.center`             | `Object`          | `null`  | An optional object for centering the map away from the search location.                                                                                                    |
-| `location.center.destination` | `string`          | `null`  | A plaintext address to optionally manually center the map away from the search location.                                                                                   |
-| `location.center.lat`         | `string`          | `null`  | A plaintext latitude to optionally manually center the map away from the search location. Requires longitude.                                                              |
-| `location.center.lng`         | `string`          | `null`  | A plaintext longitude to optionally manually center the map away from the search location. Requires latitude.                                                              |
+|             Option            |        Type       | Default |                                                                                              Description                                                                                               |
+| ----------------------------- | ----------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `location`                    | `Object`          |         | An object describing the search area for the widget.                                                                                                                                                   |
+| `location.event`              | `string/string[]` | `[]`    | An event slug (such as `att-park-parking/nlcs-89152`) that corresponds to a URL on parkwhiz.com. **The slug should NOT contain a forward slash.**                                                      |
+| `location.destination`        | `string/string[]` | `[]`    | A plaintext address, zip, lat/lng, or array of plaintext addresses around which to search parking.                                                                                                     |
+| `location.venue`              | `string/string[]` | `[]`    | A venue slug, such as `united-center-parking`, or an array of venue slugs corresponding to a URL on parkwhiz.com.                                                                                      |
+| `location.defaultEvent`       | `string`          | `null`  | An event ID number, found as an integer at the end of an event URL slug, to select by default when the event picker module is present. The default event must be apart of the venue you are searching. |
+| `location.center`             | `Object`          | `null`  | An optional object for centering the map away from the search location.                                                                                                                                |
+| `location.center.destination` | `string`          | `null`  | A plaintext address to optionally manually center the map away from the search location.                                                                                                               |
+| `location.center.lat`         | `string`          | `null`  | A plaintext latitude to optionally manually center the map away from the search location. Requires longitude.                                                                                          |
+| `location.center.lng`         | `string`          | `null`  | A plaintext longitude to optionally manually center the map away from the search location. Requires latitude.                                                                                          |
 
 ## Methods
 
 Coming soon.
 
 ## Changelog
+
+Version 2.0.0 - October 8, 2014
+* Refactored
+* Updated markers
+* Many bug fixes
+* Major overhaul
 
 Version 1.0.2 - September 2, 2014
 * Added `moduleMarkup` option for custom templates
@@ -100,12 +110,7 @@ Version 1.0.0 - March, 2014
 
 Here are some of the features planned for the future:
 
-Version 2.0:
-
-* Speed improvements
 * Methods
-* Further flexibility
-* Create self service generator
 
 ## Contact, FAQ, Etc.
 
@@ -121,7 +126,7 @@ Feel free to [contact us](mailto:dev@parkwhiz.com) if you have any further quest
   * License: MIT license
 * **[gmap3](http://gmap3.net/)**
   * Repo: [github.com/jbdemonte/gmap3](https://github.com/jbdemonte/gmap3)
-  * Version: 5.1.1
+  * Version: 6.0.0
   * License: GPL v3
 * **[jquery.timepicker](http://jonthornton.github.io/jquery-timepicker/)**
   * Repo: [github.com/jonthornton/jquery-timepicker](https://github.com/jonthornton/jquery-timepicker)

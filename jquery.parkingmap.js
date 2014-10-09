@@ -2,7 +2,7 @@
 *
 *	@module pwMap
 *	@author ParkWhiz.com
-*	jquery.parkingmap.js : v1.0.2
+*	jquery.parkingmap.js : v2.0.0
 *	https://github.com/ParkWhiz/jquery-parking-map
 *	Copyright (c) 2014 ParkWhiz, Inc.
 *	MIT licensed
@@ -12,103 +12,71 @@
 	if (!$.pwMap) {
 		$.pwMap = {};
 	}
-	$.pwMap.parkingMap = function ( el, options ) {
-
+	$.pwMap.parkingMap = function (el, options) {
 		var base = this,
 			DATEPICKER_FORMAT = 'M/D/YYYY',
 			TIMEPICKER_FORMAT = 'h:mma';
-
 		base.$el = $(el);
 		base.el = el;
-
 		base.$el.data( "pwMap.parkingMap" , base );
-
 		base.listings = [];
+		base.LocationMarkers = [];
 		base.searchOptions = {};
-
 		base._iconCache = {};
-
-		base.$el.append('<a href="http://www.parkwhiz.com/" target="_blank" title="Powered by ParkWhiz" class="powered-by-pw">Powered by <span>ParkWhiz</span></a>');
-
 		base.settings = {
 			HDPI : (window.retina || window.devicePixelRatio > 1)
 		};
-
 		if (base.settings.HDPI) {
 			$.extend(base.settings, {
-				MAIN_SPRITE             : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/parkwhiz-sprite@2x.png',
-				EXTENDED_SPRITE_101_300 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-101-300@2x.png',
-				EXTENDED_SPRITE_301_500 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-301-500@2x.png',
-				EXTENDED_SPRITE_501_700 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-501-700@2x.png',
-				EXTENDED_SPRITE_701_900 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-701-900@2x.png',
-				EXTENDED_SPRITE_901_999 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-901-999@2x.png'
+				MAIN_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-1-100@2x.png',
+				SPECIAL_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-special@2x.png',
+				EXTENDED_SPRITE_101_300: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-101-300@2x.png',
+				EXTENDED_SPRITE_301_500: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-301-500@2x.png',
+				EXTENDED_SPRITE_501_700: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-501-700@2x.png',
+				EXTENDED_SPRITE_701_900: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-701-900@2x.png',
+				EXTENDED_SPRITE_901_999: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-901-999@2x.png'
 			});
 		} else {
 			$.extend(base.settings, {
-				MAIN_SPRITE             : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/parkwhiz-sprite.png',
-				EXTENDED_SPRITE_101_300 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-101-300.png',
-				EXTENDED_SPRITE_301_500 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-301-500.png',
-				EXTENDED_SPRITE_501_700 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-501-700.png',
-				EXTENDED_SPRITE_701_900 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-701-900.png',
-				EXTENDED_SPRITE_901_999 : 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/map-price-sprite-extended-901-999.png'
+				MAIN_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-1-100.png',
+				SPECIAL_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-special.png',
+				EXTENDED_SPRITE_101_300: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-101-300.png',
+				EXTENDED_SPRITE_301_500: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-301-500.png',
+				EXTENDED_SPRITE_501_700: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-501-700.png',
+				EXTENDED_SPRITE_701_900: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-701-900.png',
+				EXTENDED_SPRITE_901_999: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-901-999.png'
 			});
 		}
 
-		base.init = function () {
+		base._init = function () {
 			base.options = $.extend({}, $.pwMap.parkingMap.defaultOptions, options);
 			base.options.defaultTime = $.extend({}, $.pwMap.parkingMap.defaultOptions.defaultTime, options.defaultTime);
 			base.options.location = $.extend({}, $.pwMap.parkingMap.defaultOptions.location, options.location);
 			base.options.mapOptions = $.extend({}, $.pwMap.parkingMap.defaultOptions.mapOptions, options.mapOptions);
 			base.options.location.center = $.extend({}, $.pwMap.parkingMap.defaultOptions.location.center, options.location.center);
-
 			var fix = new Date(),
 				fixTimeZone = (fix.getTimezoneOffset() - 300) * -60;
-
 			if (base.options.defaultTime.start) {
 				base.options.defaultTime.start += fixTimeZone;
 			}
-
 			if (base.options.defaultTime.end) {
 				base.options.defaultTime.end += fixTimeZone;
 			}
-
 			base.$el.addClass('parkwhiz-widget-container clearfix').css("width", base.options.width).empty();
-
 			$.each(base.options.modules, function (index, module) {
 				base.$el.append(base.options.moduleMarkup[module]);
 			});
-
 			base.$map = base.$el.find('.parking-map-widget-container');
-
-			var iconSize = new google.maps.Size(38, 33);
-
-			if (base.options.showPrice === false) {
-				iconSize = new google.maps.Size(22, 37);
-			}
-
 			base._iconMeta = {
-				size   : iconSize, //new google.maps.Size(38,33), // 38, 33 (normal for P - 53, 43);
-				shadow : {
-					url        : base.settings.MAIN_SPRITE,
-					size       : new google.maps.Size(53, 23),
-					origin     : base._spriteCoordinates('number_shadow'),
-					anchor     : new google.maps.Point(20, 23),
-					scaledSize : null
-				}
+				size: new google.maps.Size(44, 76),
 			};
-
 			if (base.settings.HDPI) {
 				base._iconMeta.shadow.scaledSize = new google.maps.Size(477, 1098);
 			}
-
 			base.searchOptions.key = base.options.parkwhizKey;
 			if (base.options.monthly) { base.searchOptions.monthly = 1; }
-
-			if (_.contains(base.options.modules, 'time_picker')) {
-
-				var start = moment.unix(base.options.defaultTime.start).add('m', 15);
-				var end = moment.unix(base.options.defaultTime.end).add('m', 15);
-
+				var start = moment.unix(base.options.defaultTime.start).add('m', 15),
+					end = moment.unix(base.options.defaultTime.end).add('m', 15);
 				if (start.minutes() >= 30) {
 					start.minutes(30);
 				} else {
@@ -119,62 +87,49 @@
 				} else {
 					end.minutes(0);
 				}
-
 				if(moment().isDST()) {
 					start = start.subtract('h', 1);
 					end = end.subtract('h', 1);
 				}
-
+				base.searchOptions.start = start.unix();
+				base.searchOptions.end = end.unix();
+			if (_.contains(base.options.modules, 'time_picker')) {
 				base.$el.find('.start.time').val(start.format(TIMEPICKER_FORMAT));
 				base.$el.find('.end.time').val(end.format(TIMEPICKER_FORMAT));
 				base.$el.find('.start.date').val(start.format(DATEPICKER_FORMAT));
 				base.$el.find('.end.date').val(end.format(DATEPICKER_FORMAT));
-
-				base.searchOptions.start = start.unix();
-				base.searchOptions.end = end.unix();
-
 				base.$el.find('input.date').each(function () {
-					var $this = $(this);
+					var $this = $(this),
+						opts = { format: 'm/d/yyyy', autoclose: true };
 					if (!$this.attr('placeholder')) {
 						$this.attr('placeholder', 'date');
 					}
-
-					var opts = { 'format' : 'm/d/yyyy', 'autoclose' : true };
-
 					if ($this.hasClass('start') || $this.hasClass('end')) {
-						$this.on('change changeDate', $this.update_datepair);
+						$this.on('change changeDate', $this._updateDatepair);
 					}
-
 					$this.datepicker(opts);
 				});
-
 				base.$el.find('input.time').each(function () {
 					var $this = $(this);
 					if (!$this.attr('placeholder')) {
 						$this.attr('placeholder', 'time');
 					}
-
 					var opts = { 'showDuration' : true, 'className' : 'parkwhiz-widget-timepicker', 'timeFormat' : 'g:ia', 'scrollDefaultNow' : true };
-
 					if ($this.hasClass('start') || $this.hasClass('end')) {
-						$this.on('change', $this.update_datepair);
+						$this.on('change', $this._updateDatepair);
 					}
-
 					$this.timepicker(opts);
 				});
-
 				var $datepair = base.$el.find('.datepair');
-
 				$datepair.find('input').each(function () {
 					var $this = $(this);
-
 					if ($this.hasClass('start') || $this.hasClass('end')) {
 						$this.on('change', function () {
-							var container = $this.closest('.datepair');
-							var $start = container.find('.datepair-start');
-							var $end = container.find('.datepair-end');
-							var start = moment($start.find('.date').val() + ' ' + $start.find('.time').val(), "MM-DD-YYYY h:mma");
-							var end = moment($end.find('.date').val() + ' ' + $end.find('.time').val(), "MM-DD-YYYY h:mma");
+							var container = $this.closest('.datepair'),
+								$start = container.find('.datepair-start'),
+								$end = container.find('.datepair-end'),
+								start = moment($start.find('.date').val() + ' ' + $start.find('.time').val(), "MM-DD-YYYY h:mma"),
+								end = moment($end.find('.date').val() + ' ' + $end.find('.time').val(), "MM-DD-YYYY h:mma");
 							if(moment().isDST()) {
 								start = start.subtract('h', 1);
 								end = end.subtract('h', 1);
@@ -186,19 +141,19 @@
 						});
 					}
 				});
-
-				$datepair.each(base.init_datepair);
+				$datepair.each(base._initDatepair);
 			}
-
+			base.$el.find('.mod:last-child').after('<a href="http://www.parkwhiz.com/" target="_blank" title="Powered by ParkWhiz" class="powered-by-pw">Powered by <span>ParkWhiz</span></a>');
 			base._createMap();
 		};
 
 		/**
-		 * Removes all parking locations from the map.
-		 *
-		 * @private
-		 */
+		* Removes all parking locations from the map.
+		*
+		* @private
+		*/
 		base._clearMap = function () {
+			base.LocationMarkers = [];
 			base.$el.find('#parking-popup').remove();
 			base.$el.find('.psf').remove();
 			base.$el.find('.location-place').html('');
@@ -206,416 +161,597 @@
 		};
 
 		/**
-		 * Pulls listings from ParkWhiz API based on configuration.
-		 *
-		 * @param callback The function to be called after listings are loaded.
-		 * @private
-		 */
-		base._getListings = function (callback) {
+		* Pulls listings from ParkWhiz API based on configuration.
+		*
+		* @param callback The function to be called after listings are loaded.
+		* @private
+		*/
+		base._getListings = function (callback, eventCall) {
 			var venues = base.options.location.venue,
 				events = base.options.location.event,
 				destinations = base.options.location.destination,
-				listingOptions = base.searchOptions,
-				locations = [];
-
+				locations = [],
+				search = [],
+				eventList = [],
+				default_event = null,
+				i = 0;
 			base.listings = [];
-
 			if (!$.isArray(venues)) {
 				venues = [venues];
 			}
-
 			if (!$.isArray(events)) {
 				events = [events];
 			}
-
 			if (!$.isArray(destinations)) {
 				destinations = [destinations];
 			}
-
-			var eventOptions,
-				search = [];
-
-			$.each(venues.concat(events), function (index, value) {
-				eventOptions = listingOptions;
-				if(!options.defaultTime) {
-					delete eventOptions.start;
-					delete eventOptions.end;
-				}
-				search.push({
-					uri     : value,
-					options : eventOptions
-				});
-			});
-
-			var destinationOptions;
-
-			$.each(destinations, function (index, value) {
-				destinationOptions = listingOptions;
-				if ($.isPlainObject(value)) {
-					if (value.lat && value.lng) {
-						destinationOptions.lat = value.lat;
-						destinationOptions.lng = value.lng;
-					} else if (value.destination) {
-						destinationOptions.destination = value.destination;
+			if(venues || events){
+				$.each(venues.concat(events), function (index, value) {
+					var eventOptions = [];
+					eventOptions.push(base.searchOptions);
+					eventOptions.push({
+						no_event_301: 1,
+					});
+					if(!base.options.defaultTime) {
+						delete eventOptions.start;
+						delete eventOptions.end;
 					}
-				} else {
-					destinationOptions.destination = value;
-				}
-				search.push({
-					uri     : 'search',
-					options : destinationOptions
+					var searchOptions = $.extend({}, eventOptions[0], eventOptions[1]);
+					search.push({
+						uri: value,
+						options: searchOptions
+					});
 				});
-			});
-
-			if (search.length === 0) {
-				$.each(base.options.location.center, function (index, value) {
-					listingOptions[index] = value;
-				});
-				search.push({
-					uri     : 'search',
-					options : listingOptions
+			}
+			if(destinations){
+				// Loop through each of the `destinations`
+				$.each(destinations, function (index, value) {
+					var listingOptions = [],
+						pushToSearch = true;
+					listingOptions.push(base.searchOptions);
+					if ($.isPlainObject(value)) {
+						if (value.lat && value.lng) {
+							listingOptions.push({
+								lat: value.lat,
+								lng: value.lng
+							});
+						} else if (value.destination) {
+							listingOptions.push({
+								destination: value.destination
+							});
+						} else {
+							// Something is really crumby about this plain object, lets not push this to search
+							pushToSearch = false;
+						}
+					} else {
+						// Push the `destination` to the `listingOptions`
+						listingOptions.push({
+							destination: value
+						});
+					}
+					if(pushToSearch){
+						// Are we allowed to push this to search?
+						var searchOptions = $.extend({}, listingOptions[0], listingOptions[1]);
+						search.push({
+							uri: 'search',
+							options: searchOptions
+						});
+					}
 				});
 			}
 
-			$.each(search, function (index, value) {
-				$.ajax('//api.parkwhiz.com/' + value.uri, {
-					dataType : 'jsonp',
-					data     : value.options,
-					cache    : true,
-					success  : function (searchResults) {
-						if ((_.contains(base.options.modules, 'event_list') || !$.isEmptyObject(base.options.location.event)) && _.contains(base.options.modules, 'time_picker')) {
-							base.$el.find('.parking-timepicker-widget-container .form-help a').attr('href', searchResults.parkwhiz_url);
-						}
-						if (_.isEmpty(base.options.location.center)) {
-							var allOptions = {
-								map : {
-									options : $.extend({center : [searchResults.lat,searchResults.lng]}, base.options.mapOptions)
-								},
-								marker : {}
-							};
-							base.options.location.center = {
-								lat : searchResults.lat,
-								lng : searchResults.lng
-							};
-							if (base.options.showLocationMarker) {
-								allOptions.marker.latLng = allOptions.map.options.center;
-							}
-							allOptions = $.extend(allOptions, base.options.overrideOptions);
-							base.$map.gmap3(allOptions);
-						}
-						if ((_.contains(base.options.modules, 'event_list') || !$.isEmptyObject(base.options.location.event)) && _.contains(base.options.modules, 'time_picker') && (searchResults.events || searchResults.event_name)) {
-							base.$el.find('.datepair, .datepair-end').hide();
-							base.$el.find('.parking-timepicker-widget-container .form-help').html('ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. <strong>However, if you have additional plans be sure to <a href="http://www.parkwhiz.com/" target="_blank" title="ParkWhiz.com">book extra time via the ParkWhiz website &rarr;</a></strong>');
-						}
-						if (searchResults.parking_listings) {
-							base.listings = base.listings.concat(searchResults.parking_listings);
-							locations.push(searchResults);
-						}
-						if (searchResults.event_name && _.contains(base.options.modules, 'event_list')) {
-							base.$el.find('.event_list-mod h2').text('Parking for ' + searchResults.event_name);
-						}
-						if (searchResults.events && _.contains(base.options.modules, 'event_list')) {
-							var api_url,
-								$events = base.$el.find('.parking-events'),
-								$event,
-								pw_url = null,
-								default_event = null,
-								$active_event = $events.find('li.active');
-							if ($active_event.length) {
-								default_event = $active_event.data('event_id');
-							} else if (base.options.location.defaultEvent) {
-								default_event = base.options.location.defaultEvent;
-							}
-							base.$el.find('.event_list-mod h2').html(searchResults.num_events + ' Upcoming' + ((searchResults.num_events > 1) ? ' Events' : ' Event'));
-							$events.empty();
-							$.each(searchResults.events, function (index, event) {
-								$event = $('<li>' + moment(event.start * 1000).format(DATEPICKER_FORMAT) + ': <span>' + event.event_name + '</span></li>');
-								$event.data('event_id', event.event_id);
-								if (default_event && parseInt(event.event_id, 10) === parseInt(default_event, 10)) {
-									api_url = event.api_url;
-									$event.addClass('active');
+			$.each(search, function (index, searchQuery) {
+				$.ajax('//api.parkwhiz.com/' + searchQuery.uri, {
+					dataType: 'jsonp',
+					data: searchQuery.options,
+					cache: true,
+					// beforeSend: function(jqXHR, settings) {
+					// 	console.log(settings.url);
+					// },
+					success: function(searchResults) {
+						i++;
+						// Are there any results?
+						if(searchResults){
+							// Is there any result locations?
+							if(searchResults.locations && searchResults.parking_listings || searchResults.events){
+								base.LocationMarkers = base.LocationMarkers.concat({latLng: [searchResults.lat, searchResults.lng]});
+								if(searchResults.parking_listings){
+									$.each(searchResults.parking_listings, function(index, location) {
+										base.listings.push(location);
+									});
+									base.listings = _.uniq(base.listings, function(item, key) {
+										return item.listing_id;
+									});
 								}
-								$events.append($event);
-							});
-							if (!api_url) {
-								api_url = searchResults.events[0].api_url;
-								$events.find('li:first').addClass('active');
+							} else {
+								if(i == search.length == 1){
+									base.LocationMarkers = base.LocationMarkers.concat({latLng: [searchResults.lat, searchResults.lng]});
+								}
 							}
-							delete value.options.start;
-							delete value.options.end;
-							if(base.$el.find('.form-help a').length){
-								pw_url = api_url.replace('api.parkwhiz.com', 'www.parkwhiz.com');
-								$('.parking-timepicker-widget-container .form-help a').attr("href", pw_url);
-							}
-							$.ajax(api_url, {
-								dataType : 'jsonp',
-								data     : value.options,
-								cache    : true,
-								success  : function (eventResults) {
-									base.$el.find('.location-place').html('');
-									locations = [];
-									locations.push(eventResults);
-									base.listings = eventResults.parking_listings;
-									if (locations.length === search.length) {
-										callback();
-									} else {
-										if (_.contains(base.options.modules, 'parking_locations')) {
-											base.$el.find('.location-place').animate({height:40},600,'easeInBack').append('<li><em>Sorry, parking is currently not available....</em></li>');
+							// Is there any events?
+							if(searchResults.events && _.contains(base.options.modules, 'event_list')){
+								if (_.contains(base.options.modules, 'event_list')) {
+									if (_.contains(base.options.modules, 'time_picker')) {
+										base.$el.find('.datepair, .datepair-end').hide();
+										base.$el.find('.parking-timepicker-widget-container .form-help').html('ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. <strong>However, if you have additional plans be sure to <a href="http://www.parkwhiz.com/" target="_blank" title="ParkWhiz.com">book extra time via the ParkWhiz website &rarr;</a></strong>');
+									}
+
+									var api_url,
+										$events = base.$el.find('.parking-events'),
+										$event,
+										pw_url = null,
+										$active_event = $events.find('li.active');
+
+									if ($active_event.length) {
+										default_event = $active_event.data('event_id');
+									} else if (base.options.location.defaultEvent) {
+										default_event = base.options.location.defaultEvent;
+									}
+
+									base.$el.find('.event_list-mod h2').html(searchResults.num_events + ' Upcoming' + ((searchResults.num_events > 1) ? ' Events' : ' Event'));
+
+									$.each(searchResults.events, function (index, event) {
+										eventList.push(event);
+									});
+									eventList = _.uniq(eventList, function(item, key) {
+										return item.event_id;
+									});
+									eventList = _.sortBy(eventList, function(item, key) {
+										return item.start;
+									});
+
+									if (i === search.length) {
+										if(!eventCall){
+											$.when(
+												$.each(eventList, function(index, event) {
+													$event = $('<li>'+moment.unix(event.start).format(DATEPICKER_FORMAT)+': <span>'+event.event_name+'</span></li>');
+													$event.data('event_id', event.event_id);
+													$event.data('api_url', event.api_url);
+													if (default_event && parseInt(event.event_id, 10) === parseInt(default_event, 10)) {
+														api_url = event.api_url;
+														$event.addClass('active');
+													}
+													$events.append($event);
+												})
+											).then(function() {
+												if(eventList.length > 1){
+													$events.animate({height:175},300);
+													$events.animate({scrollTop: 0}, 50, function(){
+														var activeEvent = $events.find('li.active').position();
+														if(!_.isUndefined(activeEvent)){
+															$events.animate({scrollTop: activeEvent.top+'px'}, 600, function(){
+																$events.clearQueue();
+															});
+														}
+													});
+												} else {
+													$events.animate({height:43},300);
+												}
+											});
 										}
+
+										if (!api_url) {
+											api_url = eventList[0].api_url;
+											$events.find('li:first').addClass('active');
+										}
+
+										delete searchQuery.options.start;
+										delete searchQuery.options.end;
+
+										// Change the timeframe help url to the api url
+										if (_.contains(base.options.modules, 'time_picker')) {
+											if(base.$el.find('.form-help a').length){
+												pw_url = api_url.replace('api.parkwhiz.com', 'www.parkwhiz.com');
+												$('.parking-timepicker-widget-container .form-help a').attr("href", pw_url);
+											}
+										}
+
+										$.ajax(api_url, {
+											dataType: 'jsonp',
+											data: searchQuery.options,
+											cache: true,
+											// beforeSend: function(jqXHR, settings) {
+											// 	console.log(settings.url);
+											// },
+											success: function (eventResults) {
+												base._clearMap();
+												base.listings = [];
+												base.$el.find('.location-place').html('');
+												// Is there any event locations?
+												if(eventResults.locations && eventResults.parking_listings){
+													if (eventResults.event_name && _.contains(base.options.modules, 'parking_locations')) {
+														base.$el.find('.parking_locations-mod h2').text('Parking Locations for ' + eventResults.event_name);
+													}
+													for (var i = 0, eventResultsLoop = eventResults.parking_listings.length; i < eventResultsLoop; i++) {
+														base.listings.push(eventResults.parking_listings[i]);
+													}
+													base.listings = _.uniq(base.listings, function(item, key) {
+														return item.listing_id;
+													});
+												}
+												base.LocationMarkers = base.LocationMarkers.concat({latLng: [eventResults.lat, eventResults.lng]});
+												callback();
+											}
+										});
+
+										var $li = $events.find('li');
+										$li.on('click', function() {
+											var $this = $(this);
+											base._clearMap();
+											$li.removeClass('active');
+											$li.off('click');
+											$this.addClass('active');
+											base._createMap(true);
+										});
+									}
+								}
+							} else {
+								if (!searchResults.events && _.contains(base.options.modules, 'event_list')) {
+									base.$el.find('.event_list-mod').slideUp().remove();
+								}
+								// Don't run the callback until all the ajax requests are done!
+								if (i === search.length) {
+									callback();
+								}
+							}
+						}
+					}
+				});
+			});
+		};
+
+		/**
+		* Create map inside container
+		* @private
+		*/
+		base._createMap = function (eventCall) {
+			base.$map.width(base.options.width);
+			base.$map.height(base.options.mapHeight);
+			var mapOptions = {
+					options: base.options.mapOptions
+				},
+				markerOptions = {},
+				allOptions = $.extend({}, {
+					map : mapOptions,
+					marker : markerOptions
+				}, base.options.overrideOptions);
+			base.$map.gmap3(allOptions);
+			base._getListings(base._putListingsOnMap, eventCall);
+		};
+
+		/**
+		* Refresh map with listings generated by _getListings.
+		* @private
+		*/
+		base._putListingsOnMap = function () {
+			var $parkingLocationsDiv = base.$el.find('.location-place'),
+				listings = base.listings,
+				LocationMarkers = base.LocationMarkers,
+				parkingMarkers = [],
+				showLocationMarkers = [],
+				locationMarkerBounds = new google.maps.LatLngBounds();
+
+			if (!_.isEmpty(listings)) {
+				// Monthly parking title
+				if (base.options.monthly && _.contains(base.options.modules, 'parking_locations')) {
+					base.$el.find('.parking_locations-mod h2').text('Monthly Parking Locations');
+				}
+				// Lets go through the parking location markers
+				for (var i = 0, listingsLoop = listings.length; i < listingsLoop; i++) {
+					var item = listings[i];
+					if (item.price) {
+						var icon = (item.available_spots <= 0 ? base._getIcons(0) : base._getIcons(item.price));
+						parkingMarkers.push({
+							latLng: [ item.lat, item.lng ],
+							id: item.listing_id,
+							data: { listing: item, icon: icon },
+							options: {
+								icon: icon.normal,
+								visible: true,
+								zIndex: base._zIndexFromLat(item.lat)
+							},
+							tag: 'listing'
+						});
+						// Only add locations to the list if there is a locations module
+						if (_.contains(base.options.modules, 'parking_locations')) {
+							// Check if the listing is sold out
+							if(item.available_spots <= 0) {
+								$parkingLocationsDiv.animate({height:175},600).append('<li><a href="'+item.parkwhiz_url+'" target="_blank" data-lat="'+item.lat+'" data-lng="'+item.lng+'" data-listing_id="'+item.listing_id+'" title="Parking for '+item.location_name+'">'+item.address+' <em>(Sold Out)</em></a></li>');
+							} else {
+								$parkingLocationsDiv.animate({height:175},600).append('<li><a href="'+item.parkwhiz_url+'" target="_blank" data-lat="'+item.lat+'" data-lng="'+item.lng+'" data-listing_id="'+item.listing_id+'" title="'+item.price_formatted+' Parking for '+item.location_name+'">'+item.address+' <em>('+item.price_formatted+')</em></a></li>');
+							}
+						}
+					}
+				}
+			} else {
+				if (_.contains(base.options.modules, 'parking_locations')) {
+					$parkingLocationsDiv.append('<li class="no-parking-available"><em>Sorry, parking is currently not available at that time or location....</em></li>').animate({height:'43px'},600);
+				}
+			}
+
+			// Make the list of locations interact with the map if they both exist & there is listings!
+			if (!_.isEmpty(listings) && _.contains(base.options.modules, 'parking_locations') && _.contains(base.options.modules, 'map')) {
+				if (_.isEmpty(base.options.location.center)) {
+					$parkingLocationsDiv.find('li a').on({
+						mouseover: function(){
+							var lat = $(this).attr('data-lat'),
+								lng = $(this).attr('data-lng');
+							base.$map.gmap3({
+								get: {
+									name: "marker",
+									id: $(this).attr('data-listing_id'),
+									callback: function(marker){
+										google.maps.event.trigger(marker, 'mouseover');
 									}
 								}
 							});
-							var $li = $events.find('li');
-							$li.click(function () {
-								base._clearMap();
-								var $this = $(this);
-								$li.removeClass('active').unbind('click');
-								$this.addClass('active');
-								base._createMap();
+							base.$map.gmap3('get').panTo(new google.maps.LatLng(lat,lng));
+						},
+						mouseout: function(){
+							base.$map.gmap3({
+								get: {
+									name: "marker",
+									id: $(this).attr('data-listing_id'),
+									callback: function(marker){
+										google.maps.event.trigger(marker, 'mouseout');
+									}
+								}
 							});
 						}
-						if (!searchResults.event_name && !searchResults.events && _.contains(base.options.modules, 'event_list')) {
-							base.$el.find('.event_list-mod').remove();
-						}
-						if (locations.length === search.length) {
-							callback();
-						} else {
-							if (_.contains(base.options.modules, 'parking_locations')) {
-								base.$el.find('.location-place').animate({height:40},600,'easeInBack').append('<li><em>Sorry, parking is currently not available....</em></li>');
-							}
-						}
-					}
-				});
-
-			});
-		};
-
-		/**
-		 * Create map inside container
-		 * @private
-		 */
-		base._createMap = function () {
-			base.$map.width(base.options.width);
-			base.$map.height(base.options.height);
-
-			var mapOptions = {
-					options : base.options.mapOptions
-				},
-				markerOptions = {};
-
-			if (base.options.location.center.destination) {
-				mapOptions.address = base.options.location.center.destination;
-				if (base.options.showLocationMarker) {
-					markerOptions.address = mapOptions.address;
-				}
-			} else if (base.options.location.center.lat && base.options.location.center.lng) {
-				mapOptions.latLng = [
-					base.options.location.center.lat,
-					base.options.location.center.lng
-				];
-				if (base.options.showLocationMarker) {
-					markerOptions.latLng = mapOptions.latLng;
-				}
-			}
-
-			var allOptions = $.extend({}, { map : mapOptions, marker : markerOptions }, base.options.overrideOptions);
-
-			base.$map.gmap3(allOptions);
-			base._getListings(base._putListingsOnMap);
-		};
-
-		/**
-		 * Refresh map with listings generated by _getListings.
-		 * @private
-		 */
-		base._putListingsOnMap = function () {
-			var $events = base.$el.find('.location-place'),
-				values = [];
-
-			for (var i = 0; i < base.listings.length; i++) {
-				if (base.listings[i].price) {
-					var icon = base._getIcons(base.listings[i].price);
-
-					if (base.options.additionalMarkers) {
-						icon.normal = base.options.additionalMarkers;
-					}
-					values.push({
-						latLng  : [ base.listings[i].lat, base.listings[i].lng ],
-						data    : { listing : base.listings[i], icon : icon },
-						options : {
-							icon    : icon.normal,
-							shadow  : base._iconMeta.shadow,
-							visible : true,
-							zIndex  : 997
-						},
-						tag     : 'listing'
 					});
-					$events.append('<li><a href="' + base.listings[i].parkwhiz_url + '" target="_blank" title="' + base.listings[i].price_formatted +' Parking for ' + base.listings[i].location_name + '">' + base.listings[i].address + '</a></li>');
 				}
 			}
 
-			var mapOptions = {
-				marker : {
-					values : values,
-					events : {
-						mouseover : function (marker, event, context) {
-							if (context.data.icon) {
-								marker.setZIndex(999);
-								marker.setIcon(context.data.icon.active);
+			// Only do map stuff if there is a map on the widget
+			if (_.contains(base.options.modules, 'map')) {
+				// Lets go through the location markers
+				for (var j = 0, LocationMarkersLoop = LocationMarkers.length; j < LocationMarkersLoop; j++) {
+					var locMarker = LocationMarkers[j];
+					showLocationMarkers.push({
+						latLng: [locMarker.latLng[0], locMarker.latLng[1]]
+					});
+					var locationMarker = new google.maps.LatLng(locMarker.latLng[0], locMarker.latLng[1]);
+					locationMarkerBounds.extend(locationMarker);
+				}
+				var mapOptions = {
+					marker: {
+						values: (base.options.showLocationMarkers ? parkingMarkers.concat(showLocationMarkers) : parkingMarkers), // Don't add the location markers to the markers array if we don't want them displayed
+						events: {
+							mouseover: function (marker, event, context) {
+								if (context.data && context.data.icon) {
+									marker.setZIndex(base._zIndexFromLat(0));
+									marker.setIcon(context.data.icon.active);
+								}
+							},
+							mouseout: function (marker, event, context) {
+								if (context.data && context.data.icon) {
+									marker.setZIndex(base._zIndexFromLat(marker.position.k));
+									marker.setIcon(context.data.icon.normal);
+								}
+							},
+							click: function (marker, event, context) {
+								if (context.data && context.data.listing.parkwhiz_url) {
+									window.open(context.data.listing.parkwhiz_url);
+								}
 							}
-						},
-						mouseout  : function (marker, event, context) {
-							if (context.data.icon) {
-								marker.setZIndex(998);
-								marker.setIcon(context.data.icon.normal);
-							}
-						},
-						click     : function (marker, event, context) {
-							window.open(context.data.listing.parkwhiz_url);
 						}
 					}
-				}
-			};
+				};
 
-			base.$map.gmap3(mapOptions);
+				base.$map.gmap3(mapOptions);
+
+				var getMap = base.$map.gmap3('get');
+
+				getMap.fitBounds(locationMarkerBounds);
+
+				// Let the user override the zoom level, if they want
+				if(base.options.mapOptions.zoom){
+					getMap.setZoom(base.options.mapOptions.zoom);
+				}
+
+				if (!_.isEmpty(listings)) {
+					// Lets set the map zoom to make sure there is at least 1 marker showing. (good for when map is over-zoomed by default)
+					base._setMapToShowMarkers(parkingMarkers);
+				} else {
+					getMap.setZoom(15);
+				}
+
+				// Let the user override the map centering
+				base._overrideMapCentering();
+			}
 		};
 
 		/**
-		 * Given an icon code and a color, return the offset for the icon sprite to be displayed.
-		 * @param icon
-		 * @param color
-		 * @returns {google.maps.Point}
-		 * @private
-		 */
-		base._spriteCoordinates = function (icon, color) {
-			if (icon === 'p') {
-				if (color === 'active') {
-					return new google.maps.Point(56, 693);
-				} else {
-					return new google.maps.Point(0, 693);
-				}
-			} else if (icon === 'number_shadow') {
-				return new google.maps.Point(396, 23);
-			} else if (icon === 'p_shadow') {
-				return new google.maps.Point(24, 693);
-			} else {
-				// money icon is 36x33, rows of 10, 100 blue (normal)
+		* Set the z-index from the lat provided
+		* @param lat
+		* @returns z-index number
+		* @private
+		*/
+		base._zIndexFromLat = function (lat) {
+			return Math.round((90 - lat) * 10000);
+		};
 
+		/**
+		* Set the map center based on the user override
+		* @private
+		*/
+		base._overrideMapCentering = function () {
+			if (base.options.location.center.destination) {
+				base.$map.gmap3({
+					getlatlng: {
+						address: base.options.location.center.destination,
+						callback: function(results){
+							if (!results) return;
+							if(results[0].geometry.location) {
+								base.$map.gmap3('get').setCenter(results[0].geometry.location);
+							}
+						}
+					},
+				});
+			} else if (base.options.location.center.lat && base.options.location.center.lng) {
+				var center = new google.maps.LatLng(base.options.location.center.lat,base.options.location.center.lng);
+				base.$map.gmap3('get').setCenter(center);
+			}
+		};
+
+		/**
+		* Given an array of markers, set the map to make sure at least one is showing.
+		* @param markers
+		* @private
+		*/
+		base._setMapToShowMarkers = function (markers) {
+			var getMap = base.$map.gmap3('get'),
+				bounds = new google.maps.LatLngBounds(),
+				markerIsInBounds = false,
+				markerInBoundsCount = 0;
+
+			bounds = getMap.getBounds();
+
+			for (var i = 0, markersLoop = markers.length; i < markersLoop; i++) {
+				var item = markers[i],
+					marker = new google.maps.LatLng(item.latLng[0],item.latLng[1]);
+				if(bounds.contains(marker)){
+					markerIsInBounds = true;
+					markerInBoundsCount++;
+				}
+			}
+
+			// Keep zooming out until we have at least 3 locations shown
+			if(!markerIsInBounds || (markerInBoundsCount < 3)){
+				var newMapZoom = getMap.getZoom() - 1;
+				getMap.setZoom(newMapZoom);
+				base._setMapToShowMarkers(markers);
+			}
+		};
+
+		/**
+		* Given an icon code and a color, return the offset for the icon sprite to be displayed.
+		* @param icon
+		* @param color
+		* @returns {google.maps.Point}
+		* @private
+		*/
+		base._spriteCoordinates = function (icon, color) {
+			if (icon == 'p') {
+				if (color == 'active') {
+					return new google.maps.Point(44, 0);
+				} else {
+					return new google.maps.Point(0, 0);
+				}
+			} else {
+				// Number = dollar ammount (icon) minus 1 for the sprites
 				var number = parseInt(icon) - 1;
 				if (number >= 1000) {
 					number = 999;
 				}
-
-				var double_digits = number % 100;
-				var hundreds = Math.floor(number / 100);
+				var double_digits = number % 100,
+					hundreds = Math.floor(number / 100);
 				if (hundreds > 0) {
 					hundreds = (hundreds - 1) % 2;
 				}
-
-				var top = Math.floor(double_digits / 10) * 34;
-				if (color === 'active') {
-					top += 339;
+				var left = ((double_digits % 10) + (10 * hundreds)) * 44,
+					top = Math.floor(double_digits / 10) * 76;
+				if (color == 'active') {
+					top += 760;
 				}
-
-				var left = ((double_digits % 10) + (10 * hundreds)) * 38;
 				return new google.maps.Point(left, top);
 			}
 		};
 
 		/**
-		 * Given a dollar amount, returns price icon
-		 * @param dollars
-		 * @private
-		 */
+		* Given a dollar amount, returns price icon
+		* @param dollars
+		* @private
+		*/
 		base._getIcons = function (dollars) {
 			if (!base._iconCache[dollars]) {
-				var sprite, scaledSize;
-
+				var sprite, scaledSize, normalOrigin, activeOrigin;
 				if (dollars <= 100) {
 					sprite = base.settings.MAIN_SPRITE;
-					scaledSize = new google.maps.Size(477, 1098);
+					scaledSize = new google.maps.Size(440, 1520);
 				} else if (dollars > 100 && dollars <= 300) {
 					sprite = base.settings.EXTENDED_SPRITE_101_300;
-					scaledSize = new google.maps.Size(760, 680);
+					scaledSize = new google.maps.Size(880, 1520);
 				} else if (dollars > 300 && dollars <= 500) {
 					sprite = base.settings.EXTENDED_SPRITE_301_500;
-					scaledSize = new google.maps.Size(760, 680);
+					scaledSize = new google.maps.Size(880, 1520);
 				} else if (dollars > 500 && dollars <= 700) {
 					sprite = base.settings.EXTENDED_SPRITE_501_700;
-					scaledSize = new google.maps.Size(760, 680);
+					scaledSize = new google.maps.Size(880, 1520);
 				} else if (dollars > 700 && dollars <= 900) {
 					sprite = base.settings.EXTENDED_SPRITE_701_900;
-					scaledSize = new google.maps.Size(760, 680);
+					scaledSize = new google.maps.Size(880, 1520);
 				} else if (dollars > 900) {
 					sprite = base.settings.EXTENDED_SPRITE_901_999;
-					scaledSize = new google.maps.Size(380, 680);
+					scaledSize = new google.maps.Size(440, 1520);
 				}
-
+				// set sold out markers
+				if (dollars === 0) {
+					sprite = base.settings.SPECIAL_SPRITE;
+					scaledSize = new google.maps.Size(176, 76);
+					normalOrigin = new google.maps.Point(88, 0);
+					activeOrigin = new google.maps.Point(132, 0);
+				} else {
+					normalOrigin = base._spriteCoordinates(dollars, 'normal');
+					activeOrigin = base._spriteCoordinates(dollars, 'active');
+				}
 				if (!base.options.showPrice) {
+					scaledSize = new google.maps.Size(176, 76);
 					base._iconCache[dollars] = {
-						'normal' : {
-							url        : sprite,
-							size       : base._iconMeta.size,
-							scaledSize : scaledSize,
-							origin     : (new google.maps.Point(0, 693))
+						'normal': {
+							url: base.settings.SPECIAL_SPRITE,
+							size: base._iconMeta.size,
+							scaledSize: scaledSize,
+							origin: base._spriteCoordinates('p', 'normal')
 						},
-						'active' : {
-							url        : sprite,
-							size       : base._iconMeta.size,
-							scaledSize : scaledSize,
-							origin     : (new google.maps.Point(56, 693) )
+						'active': {
+							url: base.settings.SPECIAL_SPRITE,
+							size: base._iconMeta.size,
+							scaledSize: scaledSize,
+							origin: base._spriteCoordinates('p', 'active')
 						}
 					};
 				} else {
 					base._iconCache[dollars] = {
-						'normal' : {
-							url        : sprite,
-							size       : base._iconMeta.size,
-							scaledSize : scaledSize,
-							origin     : (dollars === 0 ? new google.maps.Point(380, 645) : base._spriteCoordinates(dollars, 'normal') )
+						'normal': {
+							url: sprite,
+							size: base._iconMeta.size,
+							scaledSize: scaledSize,
+							origin: normalOrigin
 						},
-						'active' : {
-							url        : sprite,
-							size       : base._iconMeta.size,
-							scaledSize : scaledSize,
-							origin     : (dollars === 0 ? new google.maps.Point(418, 645) : base._spriteCoordinates(dollars, 'active') )
+						'active': {
+							url: sprite,
+							size: base._iconMeta.size,
+							scaledSize: scaledSize,
+							origin: activeOrigin
 						}
 					};
 				}
 
 			}
-
 			return base._iconCache[dollars];
 		};
 
 		/**
-		 * pairs all start datetimes in a container with end datetimes so that a valid time range is always available.
-		 */
-		base.init_datepair = function () {
-
-			var $container = $(this);
-
-			var startDateInput = $container.find('input.start.date');
-			var endDateInput = $container.find('input.end.date');
-			var dateDelta = moment.duration(0, "days");
-
+		* pairs all start datetimes in a container with end datetimes so that a valid time range is always available.
+		*/
+		base._initDatepair = function () {
+			var $container = $(this),
+				startDateInput = $container.find('input.start.date'),
+				endDateInput = $container.find('input.end.date'),
+				dateDelta = moment.duration(0, "days");
 			if (startDateInput.length && endDateInput.length) {
-				var startDate = moment(startDateInput.val(), DATEPICKER_FORMAT);
-				var endDate = moment(endDateInput.val(), DATEPICKER_FORMAT);
+				var startDate = moment(startDateInput.val(), DATEPICKER_FORMAT),
+					endDate = moment(endDateInput.val(), DATEPICKER_FORMAT);
 				dateDelta = endDate.diff(startDate, 'days');
-
 				$container.data('dateDelta', dateDelta);
 			}
-
-			var startTimeInput = $container.find('input.start.time');
-			var endTimeInput = $container.find('input.end.time');
-
+			var startTimeInput = $container.find('input.start.time'),
+				endTimeInput = $container.find('input.end.time');
 			if (startTimeInput.length && endTimeInput.length) {
-				var startInt = startTimeInput.timepicker('getSecondsFromMidnight');
-				var endInt = endTimeInput.timepicker('getSecondsFromMidnight');
-
+				var startInt = startTimeInput.timepicker('getSecondsFromMidnight'),
+					endInt = endTimeInput.timepicker('getSecondsFromMidnight');
 				$container.data('timeDelta', endInt - startInt);
-
 				if (dateDelta < 1) {
 					endTimeInput.timepicker('option', 'minTime', startInt);
 				}
@@ -623,46 +759,39 @@
 		};
 
 		/**
-		 * Update date pair
-		 */
-		$.fn.update_datepair = function () {
-			var target = $(this);
-			var container = target.closest('.datepair');
-
+		* Update date pair
+		*/
+		$.fn._updateDatepair = function () {
+			var target = $(this),
+				container = target.closest('.datepair');
 			if (target.hasClass('date')) {
 				base._update_date_pair(target, container);
-
 			} else if (target.hasClass('time')) {
 				base._update_time_pair(target, container);
 			}
 		};
 
 		/**
-		 * Update date pair
-		 */
+		* Update date pair
+		*/
 		base._update_date_pair = function (target, container) {
-			var start = container.find('input.start.date');
-			var end = container.find('input.end.date');
-
+			var start = container.find('input.start.date'),
+				end = container.find('input.end.date');
 			if (!start.length || !end.length) {
 				return;
 			}
-
-			var startDate = moment(start.val());
-			var endDate = moment(end.val());
-			var oldDelta = moment.duration(container.data('dateDelta'), 'days');
-
+			var startDate = moment(start.val()),
+				endDate = moment(end.val()),
+				oldDelta = moment.duration(container.data('dateDelta'), 'days');
 			if (oldDelta && target.hasClass('start')) {
 				// lock the dates - update end date and return
 				var newEnd = startDate;
 				newEnd.add(oldDelta);
 				end.val(newEnd.format(DATEPICKER_FORMAT)).datepicker('update');
 				return;
-
 			} else {
 				// change the date delta. possibly update the timepicker settings
 				var newDelta = endDate.diff(startDate, 'days');
-
 				if (newDelta < 0) {
 					newDelta = 0;
 					if (target.hasClass('start')) {
@@ -677,30 +806,24 @@
 				} else {
 					container.find('input.end.time').timepicker('option', {'minTime' : null});
 				}
-
 				container.data('dateDelta', newDelta);
 			}
 		};
 
 		base._update_time_pair = function (target, container) {
-			var start = { el : container.find('input.start.time') };
-			var end = { el : container.find('input.end.time') };
-
+			var start = { el : container.find('input.start.time') },
+				end = { el : container.find('input.end.time') };
 			if (!start.el.length || !end.el.length) {
 				return;
 			}
-
 			start.seconds = start.el.timepicker('getSecondsFromMidnight');
 			end.seconds = end.el.timepicker('getSecondsFromMidnight');
-
 			if (start.seconds === null || end.seconds === null) {
 				return;
 			}
-
-			var oldDelta = container.data('timeDelta');
-			var dateDelta = container.data('dateDelta');
-			var newDelta = end.seconds - start.seconds;
-
+			var oldDelta = container.data('timeDelta'),
+				dateDelta = container.data('dateDelta'),
+				newDelta = end.seconds - start.seconds;
 			if (target.hasClass('start')) {
 				if (!dateDelta || dateDelta < 1) {
 					end.el.timepicker('option', 'minTime', start.seconds);
@@ -708,34 +831,27 @@
 					end.el.timepicker('option', 'minTime', null);
 				}
 			}
-
 			// advance the end time only if the start time was advanced
 			if (oldDelta && target.hasClass('start') && newDelta < oldDelta) {
 				end.seconds = (start.seconds + oldDelta) % 86400;
 				end.el.timepicker('setTime', end.seconds);
 			}
-
 			container.data('timeDelta', end.seconds - start.seconds);
-
 			var endDateAdvance = moment.duration(0, "days");
 			if (end.seconds - start.seconds <= 0 && (!oldDelta || oldDelta > 0)) {
 				// overnight time span. advance the end date 1 day
 				endDateAdvance = moment.duration(1, "days");
-
 			} else if (end.seconds - start.seconds > 0 && oldDelta < 0 && target.hasClass('end')) {
 				// switching from overnight to same-day time span. decrease the end date 1 day
 				endDateAdvance = moment.duration(-1, "days");
 			}
-
-			var startInput = container.find('.start.date');
-			var endInput = container.find('.end.date');
-
+			var startInput = container.find('.start.date'),
+				endInput = container.find('.end.date');
 			if (startInput.val() && !endInput.val()) {
 				endInput.datepicker('setValue', startInput.val());
 				dateDelta = 0;
 				container.data('dateDelta', 0);
 			}
-
 			if (endDateAdvance !== 0) {
 				if (dateDelta || dateDelta === 0) {
 					var newEnd = moment(endInput.val(), DATEPICKER_FORMAT).add(endDateAdvance);
@@ -745,18 +861,16 @@
 				}
 			}
 		};
-
-		base.init();
+		base._init();
 	};
 
 	$.pwMap.parkingMap.defaultOptions = {
 		parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
-		additionalMarkers: false,
-		showLocationMarker: true,
+		showLocationMarkers: true,
 		showPrice: true,
 		monthly: false,
 		width: '100%',
-		height: '400px',
+		mapHeight: '400px',
 		modules: ['map', 'time_picker', 'parking_locations'],
 		moduleMarkup: {
 			map: '<div class="parking-map-widget-container map-mod mod"></div>',
@@ -786,8 +900,8 @@
 				</div>',
 		},
 		defaultTime: {
-			start : moment().unix(),
-			end   : moment().add('h', 8).unix() // + 8 hrs
+			start: moment().unix(), // Now
+			end: moment().add('h', 3).unix() // + 3 hrs
 		},
 		location: {
 			center: null,
@@ -797,7 +911,7 @@
 			venue: []
 		},
 		mapOptions: {
-			zoom: 14,
+			zoom: null,
 			mapTypeControl: false,
 			panControl: false,
 			scrollwheel: false,
@@ -805,9 +919,7 @@
 			zoomControlOptions: {
 				style: google.maps.ZoomControlStyle.SMALL
 			},
-			styles:[
-				{"stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#60a8f0"},{"saturation":50},{"lightness":15}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"saturation":0},{"lightness":30}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"lightness":20}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#7fbf6f"},{"lightness":20}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"},{"saturation":5},{"lightness":5}]},{"featureType":"poi.park","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"simplified"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"on"},{"saturation":30}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"road.local","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"all","elementType":"all","stylers":[{"lightness":14}]},{"featureType":"transit.line","elementType":"all","stylers":[{"visibility":"simplified"},{"lightness":35}]},{"featureType":"transit.station.rail","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"poi","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.bus","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"transit.station.airport","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"}]}
-			]
+			styles:[{"stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#60a8f0"},{"saturation":50},{"lightness":15}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"saturation":0},{"lightness":30}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"lightness":20}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#7fbf6f"},{"lightness":20}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"},{"saturation":5},{"lightness":5}]},{"featureType":"poi.park","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"simplified"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"on"},{"saturation":30}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"road.local","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"all","elementType":"all","stylers":[{"lightness":14}]},{"featureType":"transit.line","elementType":"all","stylers":[{"visibility":"simplified"},{"lightness":35}]},{"featureType":"transit.station.rail","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"poi","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.bus","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"transit.station.airport","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"}]}],
 		},
 		overrideOptions: {}
 	};

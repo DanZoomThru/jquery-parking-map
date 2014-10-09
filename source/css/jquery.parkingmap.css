@@ -2,7 +2,7 @@
 *
 *  @module pwMap
 *  @author ParkWhiz.com
-*  jquery.parkingmap.js : v1.0.1
+*  jquery.parkingmap.js : v2.0.0
 *  https://github.com/ParkWhiz/jquery-parking-map
 *  Copyright (c) 2014 ParkWhiz, Inc.
 *  MIT licensed
@@ -28,7 +28,7 @@
 	width: 100%;
 	display: block;
 	color: #fff;
-	background: #272727;
+	background: #013d75;
 	text-align: center;
 	padding: 8px 0;
 }
@@ -36,7 +36,7 @@
 .parkwhiz-widget-container .powered-by-pw span {
 	display: inline-block;
 	text-indent: -999999px;
-	background: #272727 url('https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/pw-white-logo.png') center center no-repeat;
+	background: #013d75 url('https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/pw-white-logo.png') center center no-repeat;
 	width: 84px;
 	margin: 0 0 0 2px;
 	padding: 0;
@@ -53,36 +53,39 @@
 	white-space: normal;
 }
 .parkwhiz-widget-container ul.parking, .parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events {
-	overflow: auto;
+	overflow: auto !important;
 	margin: 0;
 	position: relative;
 	padding: 0;
 }
-.parkwhiz-widget-container ul.parking { max-height: 175px; }
-.parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events { max-height: 175px }
+.parkwhiz-widget-container ul.parking { height: 0; max-height: 175px; }
+.parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events { height: 0; max-height: 175px }
 .parkwhiz-widget-container ul.parking li, .parkwhiz-widget-container ul.events li, .parkwhiz-widget-container ul.parking-events li {
 	border-top: 1px solid #ddd;
 	list-style: none;
 	white-space: normal;
 }
 .parkwhiz-widget-container ul.parking li { padding: 0 }
-.parkwhiz-widget-container ul.events li, .parkwhiz-widget-container ul.parking-events li { padding: 6px }
-.parkwhiz-widget-container ul.parking li a, .parkwhiz-widget-container ul.parking-events li a, .parkwhiz-widget-container ul.events li a {
+.parkwhiz-widget-container ul.events li, .parkwhiz-widget-container ul.parking-events li, .parkwhiz-widget-container ul.parking li.no-parking-available { padding: 6px }
+.parkwhiz-widget-container ul.parking li a, .parkwhiz-widget-container ul.parking-events li a, .parkwhiz-widget-container ul.events li a, .parkwhiz-widget-container ul.parking li.no-parking-available {
 	text-decoration: none;
-	color: #0f5ebc;
+	color: #025fb6;
 	display: block;
 	line-height: 30px;
+}
+.parkwhiz-widget-container ul.parking li.no-parking-available {
+	color: #272727;
 }
 .parkwhiz-widget-container ul.parking li a { padding: 6px 10px }
 .parkwhiz-widget-container ul.parking li a:hover, .parkwhiz-widget-container ul.parking-events li:hover, .parkwhiz-widget-container ul.events li:hover {
 	text-decoration: none;
-	background: #0f5ebc;
+	background: #025fb6;
 	color: #fff;
 	cursor: pointer;
 }
 .parkwhiz-widget-container ul.events li.active, .parkwhiz-widget-container ul.parking-events li.active, .parkwhiz-widget-container ul.parking li.active a {
 	text-decoration: none;
-	background: #0f5ebc;
+	background: #025fb6;
 	color: #fff;
 }
 .parkwhiz-widget-container .rail {
@@ -181,7 +184,7 @@
 	-moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 	border: none;
-	background: #0f5ebc;
+	background: #025fb6;
 	color: white;
 	text-transform: uppercase;
 	font-size: 14px !important;
@@ -220,7 +223,7 @@
 	font-size: 12px;
 }
 .parkwhiz-widget-container .cluster {
-	background: #0f5ebc;
+	background: #025fb6;
 	color: #fff;
 	border: 2px solid #fff;
 	padding: 10px;
@@ -234,8 +237,8 @@
 .parkwhiz-widget-container .active { z-index: 1000 !important }
 .parkwhiz-widget-container .active .cluster {
 	background: #fff;
-	color: #0f5ebc;
-	border: 2px solid #0f5ebc;
+	color: #025fb6;
+	border: 2px solid #025fb6;
 }
 .parkwhiz-widget-container .hide { display: none }
 .parkwhiz-widget-container:before,
