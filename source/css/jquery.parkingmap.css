@@ -411,8 +411,13 @@
 .parkwhiz-widget-datepicker.datepicker.days div.datepicker-days { display: block }
 .parkwhiz-widget-datepicker.datepicker.months div.datepicker-months { display: block }
 .parkwhiz-widget-datepicker.datepicker.years div.datepicker-years { display: block }
-.parkwhiz-widget-datepicker.datepicker table { margin: 0 }
+.parkwhiz-widget-datepicker.datepicker table {
+	margin: 0;
+	border-collapse: separate;
+}
 .parkwhiz-widget-datepicker.datepicker td, .datepicker th {
+	padding: 0;
+	border: none;
 	text-align: center;
 	width: 20px;
 	height: 20px;
