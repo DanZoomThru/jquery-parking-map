@@ -1,0 +1,531 @@
+/**
+*
+*  @module pwMap
+*  @author ParkWhiz.com
+*  jquery.parkingmap.js : v2.0.0
+*  https://github.com/ParkWhiz/jquery-parking-map
+*  Copyright (c) 2014 ParkWhiz, Inc.
+*  MIT licensed
+*
+*/
+.parkwhiz-widget-container {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 145%;
+	color: #333;
+	width: 100%;
+	height: auto;
+	white-space: nowrap;
+	border: 1px solid #272727;
+	background: #f8f8f8;
+	padding: 0;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background-clip: padding-box;
+}
+.parkwhiz-widget-container .powered-by-pw {
+	width: 100%;
+	display: block;
+	color: #fff;
+	background: #013d75;
+	text-align: center;
+	padding: 8px 0;
+}
+.parkwhiz-widget-container .powered-by-pw:hover, .parkwhiz-widget-container .powered-by-pw:active, .parkwhiz-widget-container .powered-by-pw:focus{ text-decoration: none; }
+.parkwhiz-widget-container .powered-by-pw span {
+	display: inline-block;
+	text-indent: -999999px;
+	background: #013d75 url('https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/pw-white-logo.png') center center no-repeat;
+	width: 84px;
+	margin: 0 0 0 2px;
+	padding: 0;
+	position: relative;
+	top: 2px;
+	height: 15px;
+	background-size: 84px 15px;
+}
+.parkwhiz-widget-container h2, .parkwhiz-widget-container h3, .parkwhiz-widget-container h4 {
+	margin: 0;
+	font-weight: 400;
+	color: #272727;
+	line-height: 1.5;
+	white-space: normal;
+}
+.parkwhiz-widget-container ul.parking, .parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events {
+	overflow: auto !important;
+	margin: 0;
+	position: relative;
+	padding: 0;
+}
+.parkwhiz-widget-container ul.parking { height: 0; max-height: 175px; }
+.parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events { height: 0; max-height: 175px }
+.parkwhiz-widget-container ul.parking li, .parkwhiz-widget-container ul.events li, .parkwhiz-widget-container ul.parking-events li {
+	border-top: 1px solid #ddd;
+	list-style: none;
+	white-space: normal;
+}
+.parkwhiz-widget-container ul.parking li { padding: 0 }
+.parkwhiz-widget-container ul.events li, .parkwhiz-widget-container ul.parking-events li, .parkwhiz-widget-container ul.parking li.no-parking-available { padding: 6px }
+.parkwhiz-widget-container ul.parking li a, .parkwhiz-widget-container ul.parking-events li a, .parkwhiz-widget-container ul.events li a, .parkwhiz-widget-container ul.parking li.no-parking-available {
+	text-decoration: none;
+	color: #025fb6;
+	display: block;
+	line-height: 30px;
+}
+.parkwhiz-widget-container ul.parking li.no-parking-available {
+	color: #272727;
+}
+.parkwhiz-widget-container ul.parking li a { padding: 6px 10px }
+.parkwhiz-widget-container ul.parking li a:hover, .parkwhiz-widget-container ul.parking-events li:hover, .parkwhiz-widget-container ul.events li:hover {
+	text-decoration: none;
+	background: #025fb6;
+	color: #fff;
+	cursor: pointer;
+}
+.parkwhiz-widget-container ul.events li.active, .parkwhiz-widget-container ul.parking-events li.active, .parkwhiz-widget-container ul.parking li.active a {
+	text-decoration: none;
+	background: #025fb6;
+	color: #fff;
+}
+.parkwhiz-widget-container .rail {
+	display: inline-block;
+	height: 400px;
+	width: 200px;
+}
+.parkwhiz-widget-container .mod {
+	border-top: 1px solid #272727;
+	background: #f8f8f8;
+}
+
+.parkwhiz-widget-container ul.parking:before, .parkwhiz-widget-container ul.parking-events:before, .parkwhiz-widget-container ul.events:before, .parkwhiz-widget-container ul.parking:after, .parkwhiz-widget-container ul.parking-events:after, .parkwhiz-widget-container ul.events:after, .parkwhiz-widget-container .mod:before, .parkwhiz-widget-container .mod:after {
+	content: " ";
+	display: table;
+}
+.parkwhiz-widget-container ul.parking:after, .parkwhiz-widget-container ul.parking-events:after, .parkwhiz-widget-container ul.events:after, .parkwhiz-widget-container .mod:after { clear: both; }
+
+.parkwhiz-widget-container ul.parking, .parkwhiz-widget-container ul.parking-events, .parkwhiz-widget-container ul.events, .parkwhiz-widget-container .mod { *zoom: 1; }
+.parkwhiz-widget-container .mod:first-child {
+	border: none;
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	background-clip: padding-box;
+}
+.parkwhiz-widget-container .mod:last-child,
+.parkwhiz-widget-container .mod:last-child ul.parking {
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	-moz-border-radius-bottomright: 5px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	background-clip: padding-box;
+}
+.parkwhiz-widget-container .mod h2 {
+	padding: 7px 10px;
+	margin: 0;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+	background-clip: padding-box;
+}
+.parkwhiz-widget-container .form-help {
+	padding: 0 10px 0;
+	margin: 0 0 10px 0;
+	font-size: 14px;
+	line-height: 1.5;
+	color: #535353;
+	white-space: normal;
+}
+.parkwhiz-widget-container .datepair { padding: 0 10px 10px }
+.parkwhiz-widget-container .datepair strong {
+	display: inline-block;
+	float: left;
+	margin: 7px 10px 0 0;
+}
+.parkwhiz-widget-container .datepair-end { margin-top: 5px; }
+.parkwhiz-widget-container .datepair .date, .parkwhiz-widget-container .datepair .time {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background-clip: padding-box;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	border: 1px solid #ddd;
+	font-size: 14px;
+	width: 80px;
+	text-align: center;
+	padding: 6px 0;
+	margin-right: 3px;
+}
+.parkwhiz-widget-container .datepair .date {
+	width: 100px;
+	padding: 6px 0;
+	margin-left: 3px;
+	margin-right: 0;
+}
+.parkwhiz-widget-container .parking-map-widget-container { display: inline-block }
+.parkwhiz-widget-container .additionalPlaces {
+	background-color: rgba(20, 120, 20, 0.4);
+	cursor: pointer;
+	color: white;
+}
+.parkwhiz-widget-container .map-button {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background-clip: padding-box;
+	-webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+	border: none;
+	background: #025fb6;
+	color: white;
+	text-transform: uppercase;
+	font-size: 14px !important;
+	font-weight: 700 !important;
+	display: inline-block;
+	padding: 10px;
+	line-height: 1;
+	position: relative;
+	margin: 0 10px;
+}
+.parkwhiz-widget-container .event-title {
+	padding-left: 76px;
+	padding-right: 86px;
+}
+.parkwhiz-widget-container .psf {
+	border: 1px solid #ddd;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background-clip: padding-box;
+	background-color: rgba(255, 255, 255, 0.9);
+	padding: 10px;
+	cursor: pointer;
+	width: 200px;
+	text-align: left;
+}
+.parkwhiz-widget-container .control { padding: 5px }
+.parkwhiz-widget-container .control-text {
+	padding-left: 4px;
+	padding-right: 4px;
+	font-size: 12px;
+	display: inline-block;
+}
+.parkwhiz-widget-container .control-text span {
+	font-weight: bold;
+	font-size: 12px;
+}
+.parkwhiz-widget-container .cluster {
+	background: #025fb6;
+	color: #fff;
+	border: 2px solid #fff;
+	padding: 10px;
+	border-radius: 20px;
+	background-clip: padding-box;
+	font-weight: bold;
+	font-size: 14px !important;
+	text-align: center;
+	line-height: 15px;
+}
+.parkwhiz-widget-container .active { z-index: 1000 !important }
+.parkwhiz-widget-container .active .cluster {
+	background: #fff;
+	color: #025fb6;
+	border: 2px solid #025fb6;
+}
+.parkwhiz-widget-container .hide { display: none }
+.parkwhiz-widget-container:before,
+.parkwhiz-widget-container:after { content: " "; display: table; }
+.parkwhiz-widget-container:after { clear: both; }
+
+/**
+*
+*  Timepicker.css
+*
+*/
+.parkwhiz-widget-timepicker.ui-timepicker-wrapper {
+	overflow-y: auto;
+	height: 150px;
+	width: 6.5em;
+	background: #fff;
+	border: 1px solid #ddd;
+	-webkit-box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+	box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+	outline: none;
+	z-index: 10001;
+	margin: 0;
+}
+.ui-timepicker-wrapper.parkwhiz-widget-timepicker.ui-timepicker-with-duration { width: 11em }
+.parkwhiz-widget-timepicker .ui-timepicker-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.parkwhiz-widget-timepicker .ui-timepicker-duration {
+	margin-left: 5px;
+	color: #888;
+}
+.parkwhiz-widget-timepicker .ui-timepicker-list:hover .ui-timepicker-duration { color: #888 }
+.parkwhiz-widget-timepicker .ui-timepicker-list li {
+	padding: 3px 0 3px 5px;
+	cursor: pointer;
+	white-space: nowrap;
+	color: #000;
+	list-style: none;
+	margin: 0;
+}
+.parkwhiz-widget-timepicker .ui-timepicker-list:hover .ui-timepicker-selected {
+	background: #fff;
+	color: #000;
+}
+.parkwhiz-widget-timepicker li.ui-timepicker-selected, .parkwhiz-widget-timepicker .ui-timepicker-list li:hover, .parkwhiz-widget-timepicker .ui-timepicker-list .ui-timepicker-selected:hover {
+	background: #1980EC;
+	color: #fff;
+}
+.parkwhiz-widget-timepicker li.ui-timepicker-selected .ui-timepicker-duration, .parkwhiz-widget-timepicker .ui-timepicker-list li:hover .ui-timepicker-duration { color: #ccc }
+.parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-disabled, .parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-disabled:hover, .parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled {
+	color: #888;
+	cursor: default;
+}
+.parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-disabled:hover, .parkwhiz-widget-timepicker .ui-timepicker-list li.ui-timepicker-selected.ui-timepicker-disabled { background: #f2f2f2 }
+
+/*!
+* Datepicker for Bootstrap
+*
+* Copyright 2012 Stefan Petre
+* Improvements by Andrew Rowls
+* Licensed under the Apache License v2.0
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+*/
+.parkwhiz-widget-datepicker.dropdown-menu {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	float: left;
+	display: none;
+	min-width: 160px;
+	max-width: 220px;
+	_width: 160px;
+	padding: 4px 0;
+	margin: 0;
+	list-style: none;
+	background-color: #ffffff;
+	border-color: #cccccc;
+	border-color: rgba(0,0,0,0.2);
+	border-style: solid;
+	border-width: 1px;
+	-webkit-border-radius: 0 0 5px 5px;
+	-moz-border-radius: 0 0 5px 5px;
+	border-radius: 0 0 5px 5px;
+	-webkit-box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+	box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+	-webkit-background-clip: padding-box;
+	-moz-background-clip: padding;
+	background-clip: padding-box;
+	*border-right-width: 2px;
+	*border-bottom-width: 2px;
+}
+.parkwhiz-widget-datepicker.dropdown-menu.bottom-up {
+	top: auto;
+	bottom: 100%;
+	margin-bottom: 2px;
+}
+.parkwhiz-widget-datepicker.dropdown-menu .divider {
+	height: 1px;
+	margin: 5px 1px;
+	overflow: hidden;
+	background-color: #e5e5e5;
+	border-bottom: 1px solid #ffffff;
+	*width: 100%;
+	*margin: -5px 0 5px;
+}
+.parkwhiz-widget-datepicker.dropdown-menu a {
+	display: block;
+	padding: 3px 15px;
+	clear: both;
+	font-weight: normal;
+	line-height: 18px;
+	color: #555555;
+	white-space: nowrap;
+}
+.parkwhiz-widget-datepicker.dropdown-menu li > a:hover, .parkwhiz-widget-datepicker.dropdown-menu .active > a, .parkwhiz-widget-datepicker.dropdown-menu .active > a:hover {
+	color: #ffffff;
+	text-decoration: none;
+	background-color: #0060b6;
+}
+.parkwhiz-widget-datepicker.dropdown.open { *z-index: 1000 }
+.dropdown.open .dropdown-toggle {
+	color: #ffffff;
+	background: #cccccc;
+	background: rgba(0,0,0,0.3);
+}
+.parkwhiz-widget-datepicker.dropdown.open .dropdown-menu { display: block }
+.parkwhiz-widget-datepicker .typeahead {
+	margin-top: 2px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.parkwhiz-widget-datepicker.datepicker {
+	top: 0;
+	left: 0;
+	padding: 4px;
+	margin-top: 1px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.parkwhiz-widget-datepicker.datepicker:before {
+	content: '';
+	display: inline-block;
+	border-left: 7px solid transparent;
+	border-right: 7px solid transparent;
+	border-bottom: 7px solid #ccc;
+	border-bottom-color: rgba(0, 0, 0, 0.2);
+	position: absolute;
+	top: -7px;
+	left: 6px;
+}
+.parkwhiz-widget-datepicker.datepicker:after {
+	content: '';
+	display: inline-block;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-bottom: 6px solid #ffffff;
+	position: absolute;
+	top: -6px;
+	left: 7px;
+}
+.parkwhiz-widget-datepicker.datepicker > div { display: none }
+.parkwhiz-widget-datepicker.datepicker.days div.datepicker-days { display: block }
+.parkwhiz-widget-datepicker.datepicker.months div.datepicker-months { display: block }
+.parkwhiz-widget-datepicker.datepicker.years div.datepicker-years { display: block }
+.parkwhiz-widget-datepicker.datepicker table {
+	margin: 0;
+	border-collapse: separate;
+}
+.parkwhiz-widget-datepicker.datepicker td, .datepicker th {
+	padding: 0;
+	border: none;
+	text-align: center;
+	width: 20px;
+	height: 20px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.parkwhiz-widget-datepicker.datepicker td.day:hover {
+	background: #eeeeee;
+	cursor: pointer;
+}
+.parkwhiz-widget-datepicker.datepicker td.old, .parkwhiz-widget-datepicker.datepicker td.new { color: #999999 }
+.parkwhiz-widget-datepicker.datepicker td.disabled, .parkwhiz-widget-datepicker.datepicker td.disabled:hover {
+	background: none;
+	color: #999999;
+	cursor: default;
+}
+.parkwhiz-widget-datepicker.datepicker td.today, .parkwhiz-widget-datepicker.datepicker td.today:hover, .parkwhiz-widget-datepicker.datepicker td.today.disabled, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover {
+	background-color: #fde19a;
+	background-image: -moz-linear-gradient(top, #fdd49a, #fdf59a);
+	background-image: -ms-linear-gradient(top, #fdd49a, #fdf59a);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fdd49a), to(#fdf59a));
+	background-image: -webkit-linear-gradient(top, #fdd49a, #fdf59a);
+	background-image: -o-linear-gradient(top, #fdd49a, #fdf59a);
+	background-image: linear-gradient(top, #fdd49a, #fdf59a);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdd49a', endColorstr='#fdf59a', GradientType=0);
+	border-color: #fdf59a #fdf59a #fbed50;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:dximagetransform.microsoft.gradient(enabled=false);
+}
+.parkwhiz-widget-datepicker.datepicker td.today:hover, .parkwhiz-widget-datepicker.datepicker td.today:hover:hover, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover:hover, .parkwhiz-widget-datepicker.datepicker td.today:active, .parkwhiz-widget-datepicker.datepicker td.today:hover:active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td.today.active, .parkwhiz-widget-datepicker.datepicker td.today:hover.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled, .parkwhiz-widget-datepicker.datepicker td.today:hover.disabled, .parkwhiz-widget-datepicker.datepicker td.today.disabled.disabled, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover.disabled, .parkwhiz-widget-datepicker.datepicker td.today[disabled], .parkwhiz-widget-datepicker.datepicker td.today:hover[disabled], .parkwhiz-widget-datepicker.datepicker td.today.disabled[disabled], .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover[disabled] { background-color: #fdf59a }
+.parkwhiz-widget-datepicker.datepicker td.today:active, .parkwhiz-widget-datepicker.datepicker td.today:hover:active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td.today.active, .parkwhiz-widget-datepicker.datepicker td.today:hover.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled.active, .parkwhiz-widget-datepicker.datepicker td.today.disabled:hover.active { background-color: #fbf069 \9 }
+.parkwhiz-widget-datepicker.datepicker td.active, .parkwhiz-widget-datepicker.datepicker td.active:hover, .parkwhiz-widget-datepicker.datepicker td.active.disabled, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover {
+	background-color: #006dcc;
+	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -ms-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+	background-image: linear-gradient(top, #0088cc, #0044cc);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0088cc', endColorstr='#0044cc', GradientType=0);
+	border-color: #0044cc #0044cc #002a80;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:dximagetransform.microsoft.gradient(enabled=false);
+	color: #fff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.parkwhiz-widget-datepicker.datepicker td.active:hover, .parkwhiz-widget-datepicker.datepicker td.active:hover:hover, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover:hover, .parkwhiz-widget-datepicker.datepicker td.active:active, .parkwhiz-widget-datepicker.datepicker td.active:hover:active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td.active.active, .parkwhiz-widget-datepicker.datepicker td.active:hover.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled, .parkwhiz-widget-datepicker.datepicker td.active:hover.disabled, .parkwhiz-widget-datepicker.datepicker td.active.disabled.disabled, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover.disabled, .parkwhiz-widget-datepicker.datepicker td.active[disabled], .parkwhiz-widget-datepicker.datepicker td.active:hover[disabled], .parkwhiz-widget-datepicker.datepicker td.active.disabled[disabled], .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover[disabled] { background-color: #0044cc }
+.parkwhiz-widget-datepicker.datepicker td.active:active, .parkwhiz-widget-datepicker.datepicker td.active:hover:active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td.active.active, .parkwhiz-widget-datepicker.datepicker td.active:hover.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled.active, .parkwhiz-widget-datepicker.datepicker td.active.disabled:hover.active { background-color: #003399 \9 }
+.parkwhiz-widget-datepicker.datepicker td span {
+	display: block;
+	width: 23%;
+	height: 54px;
+	line-height: 54px;
+	float: left;
+	margin: 1%;
+	cursor: pointer;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.parkwhiz-widget-datepicker.datepicker td span:hover { background: #eeeeee }
+.parkwhiz-widget-datepicker.datepicker td span.disabled, .parkwhiz-widget-datepicker.datepicker td span.disabled:hover {
+	background: none;
+	color: #999999;
+	cursor: default;
+}
+.parkwhiz-widget-datepicker.datepicker td span.active, .parkwhiz-widget-datepicker.datepicker td span.active:hover, .parkwhiz-widget-datepicker.datepicker td span.active.disabled, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover {
+	background-color: #006dcc;
+	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -ms-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+	background-image: linear-gradient(top, #0088cc, #0044cc);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0088cc', endColorstr='#0044cc', GradientType=0);
+	border-color: #0044cc #0044cc #002a80;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:dximagetransform.microsoft.gradient(enabled=false);
+	color: #fff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.parkwhiz-widget-datepicker.datepicker td span.active:hover, .parkwhiz-widget-datepicker.datepicker td span.active:hover:hover, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover:hover, .parkwhiz-widget-datepicker.datepicker td span.active:active, .parkwhiz-widget-datepicker.datepicker td span.active:hover:active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td span.active.active, .parkwhiz-widget-datepicker.datepicker td span.active:hover.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled, .parkwhiz-widget-datepicker.datepicker td span.active:hover.disabled, .parkwhiz-widget-datepicker.datepicker td span.active.disabled.disabled, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover.disabled, .parkwhiz-widget-datepicker.datepicker td span.active[disabled], .parkwhiz-widget-datepicker.datepicker td span.active:hover[disabled], .parkwhiz-widget-datepicker.datepicker td span.active.disabled[disabled], .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover[disabled] { background-color: #0044cc }
+.parkwhiz-widget-datepicker.datepicker td span.active:active, .parkwhiz-widget-datepicker.datepicker td span.active:hover:active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover:active, .parkwhiz-widget-datepicker.datepicker td span.active.active, .parkwhiz-widget-datepicker.datepicker td span.active:hover.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled.active, .parkwhiz-widget-datepicker.datepicker td span.active.disabled:hover.active { background-color: #003399 \9 }
+.parkwhiz-widget-datepicker.datepicker td span.old { color: #999999 }
+.parkwhiz-widget-datepicker.datepicker th.switch { width: 145px }
+.parkwhiz-widget-datepicker.datepicker thead tr:first-child th, .parkwhiz-widget-datepicker.datepicker tfoot tr:first-child th { cursor: pointer }
+.parkwhiz-widget-datepicker.datepicker thead tr:first-child th:hover, .parkwhiz-widget-datepicker.datepicker tfoot tr:first-child th:hover { background: #eeeeee }
+.parkwhiz-widget-datepicker .input-append.date .add-on i, .input-prepend.date .add-on i {
+	display: block;
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+}
+.parkwhiz-widget-datepicker.datepicker [class^="icon-"], .datepicker [class*=" icon-"] {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	*margin-right: .3em;
+	line-height: 14px;
+	vertical-align: text-top;
+	background-image: url("https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/glyphicons-halflings.png");
+	background-position: 14px 14px;
+	background-repeat: no-repeat;
+}
+.parkwhiz-widget-datepicker.datepicker [class^="icon-"]:last-child, .datepicker [class*=" icon-"]:last-child { *margin-left: 0 }
+.parkwhiz-widget-datepicker.datepicker .icon-arrow-left { background-position: -240px -96px }
+.parkwhiz-widget-datepicker.datepicker .icon-arrow-right { background-position: -264px -96px }

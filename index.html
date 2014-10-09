@@ -1,71 +1,90 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Jquery-parking-map by ParkWhiz</title>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<title>Jquery-parking-map by ParkWhiz</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Jquery-parking-map</h1>
-        <p></p>
+	<link rel="stylesheet" href="stylesheets/styles.css">
+	<link rel="stylesheet" href="stylesheets/pygment_trac.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+<body>
+	<div class="wrapper cf">
+		<header class="header">
+			<img src="https://camo.githubusercontent.com/ef575e6e16eb89fe6be90a7376eb04c2443f2ace/687474703a2f2f73332e7061726b7768697a2e636f6d2f70772d626c75652d6c6f676f2e706e67" alt="ParkWhiz Logo"/>
+			<h1>jQuery ParkWhiz Parking Map</h1>
+			<p>A jQuery plugin that creates a ParkWhiz parking map widget.</p>
+			<p class="view"><a href="https://github.com/ParkWhiz/jquery-parking-map">View the Project on GitHub</a></p>
+			<ul>
+				<li><a href="https://github.com/ParkWhiz/jquery-parking-map/zipball/master">Download <strong>ZIP File</strong></a></li>
+				<li><a href="https://github.com/ParkWhiz/jquery-parking-map/tarball/master">Download <strong>TAR Ball</strong></a></li>
+				<li><a href="https://github.com/ParkWhiz/jquery-parking-map">View On <strong>GitHub</strong></a></li>
+			</ul>
+		</header>
+		<section>
+			<h2 class="title"><a class="anchor" href="#welcome"><span class="octicon octicon-link"></span></a>jQuery ParkWhiz Parking Map (v2.0.0)</h2>
+			<ul>
+				<li>jquery.parkingmap.js : v2.0.0</li>
+				<li>Released under the MIT License.</li>
+				<li><a href="http://www.parkwhiz.com/developers/" title="Parkwhiz.com/developers">Parkwhiz.com/developers</a></li>
+				<li>Copyright &copy; 2014 ParkWhiz, Inc.</li>
+			</ul>
 
-        <p class="view"><a href="https://github.com/ParkWhiz/jquery-parking-map">View the Project on GitHub <small>ParkWhiz/jquery-parking-map</small></a></p>
+			<h3><a class="anchor" href="#demos"><span class="octicon octicon-link"></span></a>Demos</h3>
+			<ul>
+				<li><a href="demo1.html">Single Address (results)</a></li>
+				<li><a href="demo3.html">Single Address (no results)</a></li>
+				<li><a href="demo4.html">Single Address (results, zoom override, special center)</a></li>
+				<li><a href="demo2.html">Multiple Addresses</a></li>
+				<li><a href="demo5.html">Monthly Parking</a></li>
+				<li><a href="demo6.html">Single Venue</a></li>
+				<li><a href="demo7.html">Multiple Venues (with a default event)</a></li>
+				<li><a href="demo8.html">Single Event</a></li>
+				<li><a href="demo9.html">Custom Google Overrides</a></li>
+			</ul>
 
+			<h3><a class="anchor" href="#started"><span class="octicon octicon-link"></span></a>Getting Started</h3>
+			<p>First, include all the plugin js/css in the `head` of your page.</p>
+			<pre><code>&lt;!-- jquery.parkingmap.css --&gt;
+&lt;link rel="stylesheet" type="text/css" href="../source/css/jquery.parkingmap.css"&gt;
 
-        <ul>
-          <li><a href="https://github.com/ParkWhiz/jquery-parking-map/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/ParkWhiz/jquery-parking-map/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/ParkWhiz/jquery-parking-map">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+&lt;!-- jQuery,Google Maps, & jquery.parkingmap.js  --&gt;
+&lt;script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="../source/jquery.parkingmap.js"&gt;&lt;/script&gt;
+</code></pre>
+			<p>Then, init the plugin by calling it inside a jQuery ready function. Something like this:</p>
+			<pre><code>$(function() {
+	$("#parkwhiz-widget-venue").parkingMap({
+		parkwhizKey: '...',
+		location: {
+			venue: 'united-center-parking',
+		},
+		// etc...
+	});
+});
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+			<h3><a class="anchor" href="#settings"><span class="octicon octicon-link"></span></a>Configuration Settings</h3>
+			<p>See the full list of settings on the <a href="https://github.com/ParkWhiz/jquery-parking-map">github repo readme.md</a> file.</p>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+			<h3><a class="anchor" href="#contact"><span class="octicon octicon-link"></span></a>Contact, FAQ, Etc.</h3>
+			<p><strong>I found a bug or have a feature request.</strong> Please submit any bugs you might find on the repo <a href="https://github.com/ParkWhiz/jquery-parking-map/issues">issues tab</a></p>
+			<p>Feel free to <a href="mailto:dev@parkwhiz.com">contact us</a> if you have any further questions about jquery.parkingmap.js.</p>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/ParkWhiz">ParkWhiz</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
-  </body>
+			<h3><a class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h3>
+			<p>The MIT License (MIT)</p>
+			<p>Copyright &copy; ParkWhiz, Inc., <a href="http://parkwhiz.com" title="Visit parkwhiz.com">http://parkwhiz.com</a></p>
+			<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+			<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+			<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+		</section>
+		<footer>
+			<p>This project is maintained by <a href="https://github.com/ParkWhiz">ParkWhiz</a></p>
+		</footer>
+	</div>
+	<script src="javascripts/scale.fix.js"></script>
+</body>
 </html>

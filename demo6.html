@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<title>Jquery-parking-map Demo by ParkWhiz</title>
+	<link rel="stylesheet" href="stylesheets/styles.css">
+	<link rel="stylesheet" href="stylesheets/pygment_trac.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<!-- jquery.parkingmap.css -->
+	<link rel="stylesheet" type="text/css" href="stylesheets/jquery.parkingmap.css">
+	<!-- jQuery & Google Maps -->
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="//maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+	<!-- jquery.parkingmap.js -->
+	<script type="text/javascript" src="javascripts/jquery.parkingmap-dependencies.js"></script>
+	<script type="text/javascript" src="javascripts/jquery.parkingmap.min.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			// Single venue
+			$("#parkwhiz-widget-venue").pwMap_parkingMap({
+				parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+				location: {
+					venue: 'madison-square-garden-parking',
+					defaultEvent: '234037',
+				},
+				mapHeight: '300px',
+				modules: ['map', 'event_list', 'parking_locations']
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="wrapper cf">
+		<header class="header">
+			<img src="https://camo.githubusercontent.com/ef575e6e16eb89fe6be90a7376eb04c2443f2ace/687474703a2f2f73332e7061726b7768697a2e636f6d2f70772d626c75652d6c6f676f2e706e67" alt="ParkWhiz Logo"/>
+			<h1>jQuery ParkWhiz Parking Map</h1>
+			<p>A jQuery plugin that creates a ParkWhiz parking map widget.</p>
+			<p class="view"><a href="https://github.com/ParkWhiz/jquery-parking-map">View the Project on GitHub</a></p>
+			<ul>
+				<li><a href="https://github.com/ParkWhiz/jquery-parking-map/zipball/master">Download <strong>ZIP File</strong></a></li>
+				<li><a href="https://github.com/ParkWhiz/jquery-parking-map/tarball/master">Download <strong>TAR Ball</strong></a></li>
+				<li><a href="https://github.com/ParkWhiz/jquery-parking-map">View On <strong>GitHub</strong></a></li>
+			</ul>
+		</header>
+		<section>
+			<h2 class="title"><a class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Widget Single Venue</h2>
+			<p><a href="http://parkwhiz.github.io/jquery-parking-map/">&larr; Back to demo list</a></p>
+			<div class="widget-example"><div id="parkwhiz-widget-venue"></div></div>
+			<p><strong>Code Snippet:</strong></p>
+			<pre><code>$("#parkwhiz-widget-venue").pwMap_parkingMap({
+	parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+	location: {
+		venue: 'madison-square-garden-parking',
+		defaultEvent: '234037',
+	},
+	mapHeight: '300px',
+	modules: ['map', 'event_list', 'parking_locations']
+});
+</code></pre>
+			<p><a href="http://parkwhiz.github.io/jquery-parking-map/">&larr; Back to demo list</a></p>
+		</section>
+		<footer>
+			<p>This project is maintained by <a href="https://github.com/ParkWhiz">ParkWhiz</a></p>
+		</footer>
+	</div>
+	<script src="javascripts/scale.fix.js"></script>
+</body>
+</html>
