@@ -301,34 +301,34 @@
 									});
 
 									if (i === search.length) {
-										if(!eventCall){
-											$.when(
-												$.each(eventList, function(index, event) {
-													$event = $('<li>'+moment.unix(event.start).format(DATEPICKER_FORMAT)+': <span>'+event.event_name+'</span></li>');
-													$event.data('event_id', event.event_id);
-													$event.data('api_url', event.api_url);
-													if (default_event && parseInt(event.event_id, 10) === parseInt(default_event, 10)) {
-														api_url = event.api_url;
-														$event.addClass('active');
-													}
-													$events.append($event);
-												})
-											).then(function() {
-												if(eventList.length > 1){
-													$events.animate({height:175},300);
-													$events.animate({scrollTop: 0}, 50, function(){
-														var activeEvent = $events.find('li.active').position();
-														if(!_.isUndefined(activeEvent)){
-															$events.animate({scrollTop: activeEvent.top+'px'}, 600, function(){
-																$events.clearQueue();
-															});
-														}
-													});
-												} else {
-													$events.animate({height:43},300);
+										$.when(
+											$.each(eventList, function(index, event) {
+												$event = $('<li>'+moment.unix(event.start).format(DATEPICKER_FORMAT)+': <span>'+event.event_name+'</span></li>');
+												$event.data('event_id', event.event_id);
+												$event.data('api_url', event.api_url);
+												if (default_event && parseInt(event.event_id, 10) === parseInt(default_event, 10)) {
+													api_url = event.api_url;
+													$event.addClass('active');
 												}
-											});
-										}
+												if(!eventCall){
+													$events.append($event);
+												}
+											})
+										).then(function() {
+											if(eventList.length > 1){
+												$events.animate({height:175},300);
+												$events.animate({scrollTop: 0}, 50, function(){
+													var activeEvent = $events.find('li.active').position();
+													if(!_.isUndefined(activeEvent)){
+														$events.animate({scrollTop: activeEvent.top+'px'}, 600, function(){
+															$events.clearQueue();
+														});
+													}
+												});
+											} else {
+												$events.animate({height:43},300);
+											}
+										});
 
 										if (!api_url) {
 											api_url = eventList[0].api_url;
