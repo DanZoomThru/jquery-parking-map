@@ -70,9 +70,6 @@
 			base._iconMeta = {
 				size: new google.maps.Size(44, 76),
 			};
-			if (base.settings.HDPI) {
-				base._iconMeta.shadow.scaledSize = new google.maps.Size(477, 1098);
-			}
 			base.searchOptions.key = base.options.parkwhizKey;
 			if (base.options.monthly) { base.searchOptions.monthly = 1; }
 				var start = moment.unix(base.options.defaultTime.start).add('m', 15),
