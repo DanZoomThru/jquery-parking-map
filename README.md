@@ -1,9 +1,9 @@
 ![ParkWhiz](http://s3.parkwhiz.com/pw-blue-logo.png)
-# jQuery ParkWhiz Parking Map (2.0.0)
+# jQuery ParkWhiz Parking Map (2.0.1)
 
 A jQuery plugin that creates a ParkWhiz parking map widget.
 
-*   jquery.parkingmap.js : v2.0.0
+*   jquery.parkingmap.js : v2.0.1
 *   Released under the MIT License.
 *   [Parkwhiz.com/developers](http://www.parkwhiz.com/developers/)
 *   *Copyright (c) 2014 ParkWhiz, Inc.*
@@ -59,6 +59,7 @@ Then, init the plugin by calling it inside a jQuery ready function. Something li
 | `defaultTime`        | `Object`  | [*See details below*](#defaulttime-object)    | An object containing default timestamps for the timepicker, if present.                                                                                               |
 | `mapOptions`         | `Object`  |                                               | An object with any option you can pass through to [Google Maps' MapOptions object](https://developers.google.com/maps/documentation/javascript/reference#MapOptions). |
 | `overrideOptions`    | `Object`  |                                               | An object with any option you can pass through to the [gmap3 plugin](http://gmap3.net/en/), upon which this plugin is based.                                          |
+| `affiliateCode`      | `string`  |                                               | Your ParkWhiz affiliate code                                                                                                                                          |
 
 >#### `defaultTime` Object
 
@@ -88,6 +89,9 @@ Then, init the plugin by calling it inside a jQuery ready function. Something li
 Coming soon.
 
 ## Changelog
+
+Version 2.0.1 - August 28, 2015
+* Added new affiliateCode parameter for ParkWhiz affiliates
 
 Version 2.0.0 - October 8, 2014
 * Refactored

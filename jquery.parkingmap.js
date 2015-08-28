@@ -140,8 +140,22 @@
 				});
 				$datepair.each(base._initDatepair);
 			}
-			base.$el.find('.mod:last-child').after('<a href="http://www.parkwhiz.com/" target="_blank" title="Powered by ParkWhiz" class="powered-by-pw">Powered by <span>ParkWhiz</span></a>');
+			base.$el.find('.mod:last-child').after('<a href="' + base._affiliateLink('http://www.parkwhiz.com/') + '" target="_blank" title="Powered by ParkWhiz" class="powered-by-pw">Powered by <span>ParkWhiz</span></a>');
 			base._createMap();
+		};
+
+		/**
+		* Transforms a link into an affiliate link if the affiliateCode was
+		* set.  If no affiliateCode was set then it just returns the original link.
+		*
+		* @private
+		*/
+		base._affiliateLink = function(link) {
+			if (base.options.affiliateCode !== null) {
+				return link + ((/\?/.test(link) ? '&' : '?') + 'pwa=' + encodeURIComponent(base.options.affiliateCode));
+			} else {
+				return link;
+			}
 		};
 
 		/**
@@ -254,6 +268,7 @@
 								base.LocationMarkers = base.LocationMarkers.concat({latLng: [searchResults.lat, searchResults.lng]});
 								if(searchResults.parking_listings){
 									$.each(searchResults.parking_listings, function(index, location) {
+										location.parkwhiz_url = base._affiliateLink(location.parkwhiz_url);
 										base.listings.push(location);
 									});
 									base.listings = _.uniq(base.listings, function(item, key) {
@@ -270,7 +285,7 @@
 								if (_.contains(base.options.modules, 'event_list')) {
 									if (_.contains(base.options.modules, 'time_picker')) {
 										base.$el.find('.datepair, .datepair-end').hide();
-										base.$el.find('.parking-timepicker-widget-container .form-help').html('ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. <strong>However, if you have additional plans be sure to <a href="http://www.parkwhiz.com/" target="_blank" title="ParkWhiz.com">book extra time via the ParkWhiz website &rarr;</a></strong>');
+										base.$el.find('.parking-timepicker-widget-container .form-help').html('ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. <strong>However, if you have additional plans be sure to <a href="' + base._affiliateLink('http://www.parkwhiz.com/') + '" target="_blank" title="ParkWhiz.com">book extra time via the ParkWhiz website &rarr;</a></strong>');
 									}
 
 									var api_url,
@@ -360,6 +375,7 @@
 														base.$el.find('.parking_locations-mod h2').text('Parking Locations for ' + eventResults.event_name);
 													}
 													for (var i = 0, eventResultsLoop = eventResults.parking_listings.length; i < eventResultsLoop; i++) {
+														eventResults.parking_listings[i].parkwhiz_url = base._affiliateLink(eventResults.parking_listings[i].parkwhiz_url);
 														base.listings.push(eventResults.parking_listings[i]);
 													}
 													base.listings = _.uniq(base.listings, function(item, key) {
@@ -918,7 +934,8 @@
 			},
 			styles:[{"stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#60a8f0"},{"saturation":50},{"lightness":15}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"saturation":0},{"lightness":30}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"lightness":20}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#7fbf6f"},{"lightness":20}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"},{"saturation":5},{"lightness":5}]},{"featureType":"poi.park","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"simplified"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"on"},{"saturation":30}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"road.local","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"all","elementType":"all","stylers":[{"lightness":14}]},{"featureType":"transit.line","elementType":"all","stylers":[{"visibility":"simplified"},{"lightness":35}]},{"featureType":"transit.station.rail","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"poi","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.bus","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"transit.station.airport","elementType":"labels.icon","stylers":[{"saturation":-100}]},{"featureType":"road","elementType":"all","stylers":[{"visibility":"on"}]}],
 		},
-		overrideOptions: {}
+		overrideOptions: {},
+		affiliateCode: null
 	};
 
 	$.fn.pwMap_parkingMap = function(options) {

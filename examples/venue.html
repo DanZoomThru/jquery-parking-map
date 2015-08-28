@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>ParkWhiz Parking Widgets</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=us-ascii"/>
+
+	<!-- demo.css for examples -->
+	<link rel="stylesheet" type="text/css" href="examples.css">
+
+	<!-- jquery.parkingmap.css -->
+	<link rel="stylesheet" type="text/css" href="../source/css/jquery.parkingmap.css">
+
+	<!-- jQuery & Google Maps -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+
+	<!-- Dependencies
+	<script type="text/javascript" src="../source/dependencies/gmap3.min.js"></script>
+	<script type="text/javascript" src="../source/dependencies/moment.min.js"></script>
+	<script type="text/javascript" src="../source/dependencies/underscore.min.js"></script>
+	<script type="text/javascript" src="../source/dependencies/timepicker.min.js"></script>
+	<script type="text/javascript" src="../source/dependencies/datepicker.min.js"></script>-->
+
+	<!-- jquery.parkingmap.js -->
+	<script type="text/javascript" src="../source/jquery.parkingmap-dependencies.js"></script>
+	<script type="text/javascript" src="../jquery.parkingmap.min.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		$(function() {
+      $("#parkwhiz-widget-affiliate").pwMap_parkingMap({
+      	parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+      	location: {
+      		venue: 'madison-square-garden-parking',
+      		defaultEvent: '234037',
+      	},
+      	mapHeight: '300px',
+      	modules: ['map', 'event_list', 'parking_locations'],
+        affiliateCode: 'pa-1'
+      });
+
+      $("#parkwhiz-widget-nonaffiliate").pwMap_parkingMap({
+      	parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+      	location: {
+      		venue: 'madison-square-garden-parking',
+      		defaultEvent: '234037',
+      	},
+      	mapHeight: '300px',
+      	modules: ['map', 'event_list', 'parking_locations']
+      });
+		});
+	</script>
+	<h1>Single address (results)</h1>
+	<div class="widget-example" style="float: left;"><h1>With Affiliate Code</h1><div id="parkwhiz-widget-affiliate"></div></div>
+	<div class="widget-example" style="float: left;"><h1>No Affiliate Code</h1><div id="parkwhiz-widget-nonaffiliate"></div></div>
+</body>
+</html>
