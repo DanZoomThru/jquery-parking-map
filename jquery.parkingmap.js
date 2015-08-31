@@ -2,7 +2,7 @@
 *
 *	@module pwMap
 *	@author ParkWhiz.com
-*	jquery.parkingmap.js : v2.0.0
+*	jquery.parkingmap.js : v2.0.1
 *	https://github.com/ParkWhiz/jquery-parking-map
 *	Copyright (c) 2014 ParkWhiz, Inc.
 *	MIT licensed
