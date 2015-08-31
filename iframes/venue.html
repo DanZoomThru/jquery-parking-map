@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="//s3.amazonaws.com/widgets.parkwhiz/stylesheets/jquery.parkingmap.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  	<script src="http://maps.googleapis.com/maps/api/js?sensor=false" type="text/javascript"></script>
+    <script type="text/javascript" src="//s3.amazonaws.com/widgets.parkwhiz/javascript/jquery.parkingmap.min.js"></script>
+    <script type="text/javascript" src="//s3.amazonaws.com/widgets.parkwhiz/javascript/iframeResizer.contentWindow.min.js"></script>
+  </head>
+  <body>
+    <div id="parkwhiz-widget-affiliate"></div>
+
+    <script type="text/javascript">
+  		$(function() {
+        function getURLParameter(name) {
+          return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20')) || null;
+        }
+
+        $("#parkwhiz-widget-affiliate").pwMap_parkingMap({
+        	parkwhizKey: 'd4c5b1639a3e443de77c43bb4d4bc888',
+        	location: {
+        		venue: getURLParameter('venueSlug')
+        	},
+        	mapHeight: '300px',
+        	modules: ['map', 'event_list', 'parking_locations'],
+          affiliateCode: getURLParameter('affiliateCode')
+        });
+  		});
+    </script>
+  </body>
+</html>
