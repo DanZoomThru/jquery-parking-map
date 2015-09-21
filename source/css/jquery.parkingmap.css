@@ -37,13 +37,13 @@
 	display: inline-block;
 	text-indent: -999999px;
 	background: #013d75 url('https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/pw-white-logo.png') center center no-repeat;
-	width: 84px;
+	width: 110px;
 	margin: 0 0 0 2px;
 	padding: 0;
 	position: relative;
 	top: 2px;
 	height: 15px;
-	background-size: 84px 15px;
+	background-size: 105px 15px;
 }
 .parkwhiz-widget-container h2, .parkwhiz-widget-container h3, .parkwhiz-widget-container h4 {
 	margin: 0;
