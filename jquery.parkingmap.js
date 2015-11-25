@@ -140,7 +140,7 @@
 				});
 				$datepair.each(base._initDatepair);
 			}
-			base.$el.find('.mod:last-child').after('<a href="' + base._affiliateLink('http://www.parkwhiz.com/') + '" target="_blank" title="Powered by ParkWhiz" class="powered-by-pw">Powered by <span>ParkWhiz</span></a>');
+			base.$el.find('.mod:last-child').after('<a href="' + base._affiliateLink('https://www.parkwhiz.com/') + '" target="_blank" title="Powered by ParkWhiz" class="powered-by-pw">Powered by <span>ParkWhiz</span></a>');
 			base._createMap();
 		};
 
@@ -252,7 +252,7 @@
 			}
 
 			$.each(search, function (index, searchQuery) {
-				$.ajax('//api.parkwhiz.com/' + searchQuery.uri, {
+				$.ajax('https://api.parkwhiz.com/' + searchQuery.uri, {
 					dataType: 'jsonp',
 					data: searchQuery.options,
 					cache: true,
@@ -285,7 +285,7 @@
 								if (_.contains(base.options.modules, 'event_list')) {
 									if (_.contains(base.options.modules, 'time_picker')) {
 										base.$el.find('.datepair, .datepair-end').hide();
-										base.$el.find('.parking-timepicker-widget-container .form-help').html('ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. <strong>However, if you have additional plans be sure to <a href="' + base._affiliateLink('http://www.parkwhiz.com/') + '" target="_blank" title="ParkWhiz.com">book extra time via the ParkWhiz website &rarr;</a></strong>');
+										base.$el.find('.parking-timepicker-widget-container .form-help').html('ParkWhiz passes are valid for the entire event, even if the event runs late. You also have plenty of time before and after to get to and from your car. <strong>However, if you have additional plans be sure to <a href="' + base._affiliateLink('https://www.parkwhiz.com/') + '" target="_blank" title="ParkWhiz.com">book extra time via the ParkWhiz website &rarr;</a></strong>');
 									}
 
 									var api_url,
@@ -358,6 +358,7 @@
 											}
 										}
 
+										api_url = api_url.replace('http://', 'https://')
 										$.ajax(api_url, {
 											dataType: 'jsonp',
 											data: searchQuery.options,
