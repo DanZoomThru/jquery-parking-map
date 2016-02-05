@@ -600,7 +600,9 @@
 			var getMap = base.$map.gmap3('get'),
 				bounds = new google.maps.LatLngBounds(),
 				markerIsInBounds = false,
-				markerInBoundsCount = 0;
+				markerInBoundsCount = 0,
+				// Keep zooming out until we have at least 3 locations shown
+				targetMarkers = Math.min(3,markers.length);
 
 			bounds = getMap.getBounds();
 
@@ -613,8 +615,7 @@
 				}
 			}
 
-			// Keep zooming out until we have at least 3 locations shown
-			if(!markerIsInBounds || (markerInBoundsCount < 3)){
+			if (!markerIsInBounds || (markerInBoundsCount < targetMarkers)) {
 				var newMapZoom = getMap.getZoom() - 1;
 				getMap.setZoom(newMapZoom);
 				base._setMapToShowMarkers(markers);
