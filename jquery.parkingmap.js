@@ -616,6 +616,9 @@
 			}
 
 			if (!markerIsInBounds || (markerInBoundsCount < targetMarkers)) {
+				if (getMap.getZoom() < 2) {
+					return
+				}
 				var newMapZoom = getMap.getZoom() - 1;
 				getMap.setZoom(newMapZoom);
 				base._setMapToShowMarkers(markers);
