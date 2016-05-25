@@ -241,7 +241,6 @@
 					}
 				});
 			}
-			var listing_list;
 			$.each(search, function (index, searchQuery) {
 				$.ajax('//api.parkwhiz.com/' + searchQuery.uri, {
 					dataType: 'jsonp',
@@ -261,7 +260,6 @@
 							if(searchResults.locations && searchResults.parking_listings || searchResults.events){
 								base.LocationMarkers = base.LocationMarkers.concat({latLng: [searchResults.lat, searchResults.lng]});
 								if(searchResults.parking_listings){
-									listing_list = searchResults.parking_listings;
 									$.each(searchResults.parking_listings, function(index, location) {
 										base.listings.push(location);
 									});
