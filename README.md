@@ -1,4 +1,4 @@
-![ParkWhiz](http://s3.parkwhiz.com/pw-blue-logo.png)
+![ParkWhiz](http://cf1.parkwhiz.com/valet-dos/images/header-logo.png)
 # jQuery ParkWhiz Parking Map (2.0.0)
 
 A jQuery plugin that creates a ParkWhiz parking map widget.
