@@ -28,23 +28,23 @@
 		};
 		if (base.settings.HDPI) {
 			$.extend(base.settings, {
-				MAIN_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-1-100@2x.png',
-				SPECIAL_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-special@2x.png',
-				EXTENDED_SPRITE_101_300: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-101-300@2x.png',
-				EXTENDED_SPRITE_301_500: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-301-500@2x.png',
-				EXTENDED_SPRITE_501_700: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-501-700@2x.png',
-				EXTENDED_SPRITE_701_900: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-701-900@2x.png',
-				EXTENDED_SPRITE_901_999: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-901-999@2x.png'
-			});
-		} else {
-			$.extend(base.settings, {
-				MAIN_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-1-100.png',
-				SPECIAL_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-special.png',
-				EXTENDED_SPRITE_101_300: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-101-300.png',
-				EXTENDED_SPRITE_301_500: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-301-500.png',
-				EXTENDED_SPRITE_501_700: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-501-700.png',
-				EXTENDED_SPRITE_701_900: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-701-900.png',
-				EXTENDED_SPRITE_901_999: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-sprite-901-999.png'
+                MAIN_SPRITE: 'http://cf1.parkwhiz.com/images/markers-1-100@2x.png',
+                SPECIAL_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-special@2x.png',
+                EXTENDED_SPRITE_101_300: 'http://cf1.parkwhiz.com/images/markers-101-300@2x.png',
+                EXTENDED_SPRITE_301_500: 'http://cf1.parkwhiz.com/images/markers-301-500@2x.png',
+                EXTENDED_SPRITE_501_700: 'http://cf1.parkwhiz.com/images/markers-501-700@2x.png',
+                EXTENDED_SPRITE_701_900: 'http://cf1.parkwhiz.com/images/markers-701-900@2x.png',
+                EXTENDED_SPRITE_901_999: 'http://cf1.parkwhiz.com/images/markers-901-999@2x.png'
+            });
+        } else {
+            $.extend(base.settings, {
+                MAIN_SPRITE: 'http://cf1.parkwhiz.com/images/markers-1-100.png',
+                SPECIAL_SPRITE: 'https://dbmgns9xjyk0b.cloudfront.net/parkingmapjs/images/new-markers/pw-map-special.png',
+                EXTENDED_SPRITE_101_300: 'http://cf1.parkwhiz.com/images/markers-101-300.png',
+                EXTENDED_SPRITE_301_500: 'http://cf1.parkwhiz.com/images/markers-301-500.png',
+                EXTENDED_SPRITE_501_700: 'http://cf1.parkwhiz.com/images/markers-501-700.png',
+                EXTENDED_SPRITE_701_900: 'http://cf1.parkwhiz.com/images/markers-701-900.png',
+                EXTENDED_SPRITE_901_999: 'http://cf1.parkwhiz.com/images/markers-901-999.png'
 			});
 		}
 
